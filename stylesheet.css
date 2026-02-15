@@ -1,13 +1,13 @@
-
 :root{
+	--bg: #262626;
 	--b1: #023047;
 	--b2: #3d5a80;
-	--b3: #b9d0de;
+	--light-bluegray: #b9d0de;
 	--b4: #98c1d9;
 	--w1: #e0fbfc;
 	--w2: #DEE3ED; 
 	--a1: #eeb34d; 
-	--menu-height: 50px;
+	--menu-height: 75px;
 }
 
 *{
@@ -15,9 +15,9 @@
 	margin: 0;
 	box-sizing: border-box;
 }
+
 header {
-	background-color: #262626;
-	color: #262626;
+	background-color: var(--bg);
 }
 header a,li {
 	color: var(--w1);
@@ -39,7 +39,7 @@ header a,li {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0 24px;
+	padding: 0 23px 0 0;
 }
 .nav-menu {
 	display: flex;
@@ -85,9 +85,7 @@ header a,li {
 	background-color: var(--w1);
 }
 
-section {
-	scroll-margin-top: 60px;
-}
+
 /* @media screen and (max-width: 600px) { */
 @media(max-width: 600px) {
 	.hamburger{
@@ -106,7 +104,7 @@ section {
 	.nav-menu {
 		position: fixed;
 		left: -100%;
-		top: 63px; /*var(--menu-height); */
+		top: 3rem; /*63px; /*var(--menu-height); */
 		gap: 0;
 		flex-direction: column;
 		background-color: #262626;
@@ -122,8 +120,6 @@ section {
 		left: 0;
 	}
 }
-
-
 body {
 	margin: 0;
 	padding: 0;
@@ -132,30 +128,36 @@ body {
 	background-color: var(--b1);
 }
 section{
-	margin: 10px;
-	background-color: var(--b3);
-	/* border: 1px solid black; */
+	scroll-margin-top: 75px; /* so link-movements account for fixed nav-bar height */
+	margin: 15px 0px;
+	padding: 5px 10px;
+
+	background-color: var(--light-bluegray);
+	border: 1px solid yellow;
 }
 /* problematic this top_edge */
-#top_edge{
+/* #top_edge{
 	display: block;
 	height: 50px;
-}
-
-section#hero_image {
-	background-image: url(./images/2962m_t.webp);
+	color: var(--w1);
+	font-size: 3rem;
+} */
+section#top_image {
+	border-top: 75px solid var(--bg);
+	scroll-margin-top: 100px;	
+	background-color: var(--b1);
+	background-image: url(./images/2962m.webp);
 	background-size: cover;
 	background-repeat: no-repeat;
-	height: 400px;
+	height: 450px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	margin: 0;
 }
-section#hero_image h1 {
-	padding: 1rem;
-	font-size: 3rem;
-	color: var(--w2);
+section#top_image p { 
+	text-align: center;
+	z-index: -1; /* hide caption behind image */
 }
 
 
