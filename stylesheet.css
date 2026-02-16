@@ -1,49 +1,100 @@
 :root{
 	--b1: #023047;
-	--b2: #3d5a80;
 	--b4: #98c1d9;
 	--w2: #DEE3ED; 
 	--menu-height: 75px;
 }
 
 *{
-	/* universal selector to reset default margins and paddings */
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box; /* means padding and borders are included in overall width and height */
+	scroll-margin-top: 86px; /* put here for non-mobile device; changed in media query later on */
+	padding: 0; /* reset */
+	margin: 0;  /* reset */
+	box-sizing: border-box; /* simpler */
+	scroll-behavior: smooth; 
 }
 
 body {
 	margin: 0;
 	padding: 0;
-	line-height: 1.6;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	background-color: var(--b1); /* darker background behind everything */
+	color: #262626;
+	
+	/* darker background behind everything */
+	background-color: #023047; 
+	/* background-color: #262626;  */
 }
-
+h1, h2, h3 {
+	font-family: "IM Fell English", serif;
+	font-style: normal;
+}
+h3{
+	font-size: 1.5rem;
+	color: #262626;
+}
 h2 {
-	/* font-family: "IM Fell English", serif; */
+	font-size: 2.5rem;
+ 	text-indent: 1rem;
+	/* padding-bottom: 1rem; */
+	color: #262626;
 }
 
 section{
-	scroll-margin-top: var(--menu-height); /* adjust link-movements to account for fixed nav-bar height */
-	margin: 15px 0px;
-	padding: 5px 10px;
-
+	margin: 75px 1vh; /* 75px is the same as the nav-bar height */
+	padding: 20px 1vh;
 	background-color: #b9d0de;
-	border: 1px solid #eeb34d;
+	border-radius: 18px;
+	border: 2px solid #eeb34d;
+
+	/* FONT OF REGULAR TEXT IN WEBPAGE */
+	/* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+	/* font-size: 1.1rem; */
+	font-family: "Montserrat", sans-serif; /* consider also Fira sans */
+	font-weight: 600;
+	font-style: normal;
+	line-height: 2;
+}
+section li {
+	color: #262626;
+	margin-left: 2rem;
+	list-style-type: disc;
+	font-family: "Montserrat", sans-serif; /* consider also Fira sans */
+	font-style: normal;
+	line-height: 2;
 }
 
+table {
+	border: 3px solid #3d5a80; 
+	/* padding: 1px 1px; */
+}
+table th {
+	/* border-bottom: 1px solid #023047; */
+	padding: 5px 10px;
+	background-color: #3d5a80;
+	color: #e0fbfc;
+}
 
+.flex-container{ /* at least used in hike route options */
+	display: flex;
+	flex-wrap: wrap;
+	flex: 1; 
+	gap: 20px; 
+	justify-content: space-evenly; 
+	align-items: center; 
+}
+/* ============ TOP-IMAGE ==================================================== */
 /* top image section */
 section#top_image {
-	border-top: 75px solid #262626;
-	scroll-margin-top: 100px;	
+	/*undo styling which is applicable to other sections */
+	border-radius: 0; /* other sections use border-radius for better curved section boundaries */
+	border: none;
+	
+	/* other styles for this section */
+	border-top: 85px solid #262626;
 	background-color: var(--b1);
-	background-image: url(./images/2962m.webp);
+	background-image: url("images/2962m.jpg"); 
 	background-size: cover;
 	background-repeat: no-repeat;
-	height: 450px;
+	
+	height: 400px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -55,16 +106,17 @@ section#top_image h1 {
 header {
 	background-color: #262626;
 }
-header a,li {
+header a, header li {
 	color: #e0fbfc;
 	text-decoration: none;	
-	list-style: none;
+	list-style-type: none;
+	font-size: 1.2rem;
 }
 .center-viewport {
-	max-width: 1000px;
+	max-width: 1280px; /* limit width of viewport to prevent too wide */
 	margin: 0 auto; /* centers the content horizontally */
 }
-
+/* ========= NAV-BAR AND NAV-MENU ============================================ */
 /* placement of nav-bar and nav-menu */
 .nav-bar {
 	min-height: var(--menu-height);
@@ -72,44 +124,51 @@ header a,li {
 	width: 100%;
 	background-color: rgb(0,0,0, 0.4);
 	
-
-	display: flex;
+    display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 0 2rem 0 1rem;
+
+	transition: transform 0.3s ease-in-out; /* Smooth transition */
 }
-.nav-menu {
-	display: flex;
+.nav-up { /* class added to nav-bar when user scrolls down, removed when user scrolls up */
+    transform: translateY(-100%); /* Move nav-bar up by 100% of its height to hide it */
+}
+.nav-menu { /* the nav-menu is the ul element containing the nav-links */
+	display: flex; /* ordinarily nav-menu is a horizontal list of nav-links 
+				but becomes vertical in smallScreen view (see media query below) */
 	justify-content: space-between;
 	align-items: center;
 	gap: 1rem;
 }
-.nav-bar .nav-branding {
+.nav-bar .nav-branding { /* nav-branding is the h1 element with "2,962m asl" text */
+	/* nav-bar is the entire top bar including the 2962m text and the nav-links */
 	padding: 0rem 1rem;
 	color: #e0fbfc;
-	font-size: 3rem
+	
+	font-family: "IM Fell English", serif; /* font of "2,962m asl" in nav-bar */
+	font-size: 3rem;
+	font-style: italic;	
 }
 .nav-branding {
 	transition: 0.2s ease;
 }
 .nav-branding:hover {
-	color: whitesmoke;
-	text-shadow: whitesmoke 0px 0px 8px;
-	/* font-weight: 600; */
+	color: white;
+	text-shadow: #B79047 1px 1px 6px;
 }
 .nav-link {
 	transition: 0.2s ease;
 }
 .nav-link:hover {
-	color: whitesmoke;
-	text-shadow: whitesmoke 0px 0px 5px;
-	/* font-weight: 600; */
+	color: white;
+	text-shadow: #B79047 1px 1px 8px;
 }
 .hamburger {
 	display: none;
 	cursor: pointer;
 }
-.bar {
+.slice {
 	display: block;
 	width: 25px;
 	height: 3px;
@@ -118,16 +177,19 @@ header a,li {
 	transition: all 0.3s ease-in-out;
 	background-color: #e0fbfc;
 }
+/* ====== MEDIA QUERY FOR MOBILE SIZE SCREENS ================================ */
+@media screen and (max-width: 600px) { /* if 600px is changed, also need to change the script.js file at "innerWidth" */
+	
 
-@media(max-width: 600px) { /* older version better? --> @media screen and (max-width: 600px) { */
 	.hamburger{ display: block; }
-	.hamburger.active .bar:nth-child(2){ opacity: 0; }
-	.hamburger.active .bar:nth-child(1){ transform: translateY(8px) rotate(45deg); }
-	.hamburger.active .bar:nth-child(3){ transform: translateY(-8px) rotate(-45deg); }
+	.hamburger.active .slice:nth-child(2){ opacity: 0; }
+	.hamburger.active .slice:nth-child(1){ transform: translateY(8px) rotate(45deg); }
+	.hamburger.active .slice:nth-child(3){ transform: translateY(-8px) rotate(-45deg); }
 	.nav-menu {
 		position: fixed;
 		left: -100%;
-		top: 75px; /*3rem; /*63px; /*var(--menu-height); */
+		top: 75px; /* same as nav-bar height */
+		display: flex;
 		gap: 0;
 		flex-direction: column;
 		background-color: #262626;
@@ -141,16 +203,9 @@ header a,li {
 	.nav-menu.active{
 		left: 0;
 	}
+	header>a,header>li 
+	{
+		font-size: 1.3em;
+	}
 }
 
-/* font-family: "IM Fell English", serif; */
-.im-fell-english-regular {
-  font-family: "IM Fell English", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-.im-fell-english-regular-italic {
-  font-family: "IM Fell English", serif;
-  font-weight: 400;
-  font-style: italic;
-}
