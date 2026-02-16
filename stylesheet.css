@@ -19,7 +19,7 @@ body {
 	color: #262626;
 	
 	/* darker background behind everything */
-	background-color: #023047; 
+	background-color: #023047; /* dark navy-ish blue */
 	/* background-color: #262626;  */
 }
 h1, h2, h3 {
@@ -28,12 +28,12 @@ h1, h2, h3 {
 }
 h3{
 	font-size: 1.5rem;
+	padding-top: 1rem;
 	color: #262626;
 }
 h2 {
 	font-size: 2.5rem;
  	text-indent: 1rem;
-	/* padding-bottom: 1rem; */
 	color: #262626;
 }
 
@@ -53,12 +53,13 @@ section{
 	line-height: 2;
 }
 section li {
-	color: #262626;
+	margin-top: 1rem;
 	margin-left: 2rem;
 	list-style-type: disc;
-	font-family: "Montserrat", sans-serif; /* consider also Fira sans */
-	font-style: normal;
-	line-height: 2;
+	
+}
+section p {
+	margin-top: 1rem;
 }
 
 table {
@@ -71,8 +72,13 @@ table th {
 	background-color: #3d5a80;
 	color: #e0fbfc;
 }
+table td {
+	padding: 0 2px;
+	border-top: 1px solid #3d5a80;
+}
 
-.flex-container{ /* at least used in hike route options */
+
+.flex-container-1{ /* at least used in hike route options */
 	display: flex;
 	flex-wrap: wrap;
 	flex: 1; 
@@ -80,6 +86,40 @@ table th {
 	justify-content: space-evenly; 
 	align-items: center; 
 }
+.flex-container-2 table { /* at least used in hike route options */
+	margin: 0 auto;
+}
+.flex-container-2 td {
+	padding: 3px 10px;
+	border-left: 1px solid #3d5a80;
+}
+.flex-container-2 td:nth-child(1) {
+	border-left: none;
+}
+
+/* ========== CONTACT FORM =================================================== */
+input,
+button,
+select,
+textarea {
+	font: inherit;
+}
+form {
+	display: grid;
+	gap: 1rem;
+	/* @media screen and (width > 600px) {
+		
+		grid-template-columns: 1fr 1fr
+	} */
+}
+label {
+	font-size: 1rem;
+}
+input {
+	background: #3d5a80;
+	color:#b9d0de
+}
+
 /* ============ TOP-IMAGE ==================================================== */
 /* top image section */
 section#top_image {
