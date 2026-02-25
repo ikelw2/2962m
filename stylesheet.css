@@ -12,7 +12,11 @@
 	box-sizing: border-box; /* simpler */
 	scroll-behavior: smooth; 
 }
-
+html, body{
+	/* to prevent Cumulative Layout Shift (CLS) */
+	overflow-x: hidden;
+    width: 100%;
+}
 body {
 	margin: 0;
 	padding: 0;
@@ -28,7 +32,8 @@ h1, h2, h3 {
 }
 h3{
 	font-size: 1.5rem;
-	padding-top: 1rem;
+	padding-top: 0.7rem;
+	padding-bottom: 0.6rem;
 	color: #262626;
 }
 h2 {
@@ -38,7 +43,8 @@ h2 {
 }
 
 section{
-	margin: 75px 1vh; /* 75px is the same as the nav-bar height */
+	margin: 75px 0; /* 75px is the same as the nav-bar height */
+	/* changed 1vh to 0 on wide margins... to prevent Cumulative Layout Shift (CLS) */
 	padding: 20px 1vh;
 	background-color: #b9d0de;
 	border-radius: 18px;
@@ -58,16 +64,17 @@ section li {
 	list-style-type: disc;
 	
 }
-section p {
-	margin-top: 1rem;
+section p, section ul {
+	padding-bottom: 1rem;
+	padding-top: 1rem;
 }
+
 
 table {
 	border: 3px solid #3d5a80; 
-	/* padding: 1px 1px; */
+	/* ///padding: 1px 1px; */
 }
 table th {
-	/* border-bottom: 1px solid #023047; */
 	padding: 5px 10px;
 	background-color: #3d5a80;
 	color: #e0fbfc;
@@ -85,6 +92,13 @@ table td {
 	gap: 20px; 
 	justify-content: space-evenly; 
 	align-items: center; 
+}
+.flex-container-1 td {
+	padding: 3px 10px;
+	border-left: 1px solid #3d5a80;
+}
+.flex-container-1 td:nth-child(1) {
+	border-left: none;
 }
 .flex-container-2 table { /* at least used in hike route options */
 	margin: 0 auto;
@@ -128,7 +142,7 @@ section#top_image {
 	border: none;
 	
 	/* other styles for this section */
-	border-top: 85px solid #262626;
+	border-top: 86px solid #262626;
 	background-color: var(--b1);
 	background-image: url("images/2962m.jpg"); 
 	background-size: cover;
@@ -218,7 +232,7 @@ header a, header li {
 	background-color: #e0fbfc;
 }
 /* ====== MEDIA QUERY FOR MOBILE SIZE SCREENS ================================ */
-@media screen and (max-width: 600px) { /* if 600px is changed, also need to change the script.js file at "innerWidth" */
+@media screen and (max-width: 650px) { /* if 600px is changed, also need to change the script.js file at "innerWidth" */
 	
 
 	.hamburger{ display: block; }
@@ -228,7 +242,7 @@ header a, header li {
 	.nav-menu {
 		position: fixed;
 		left: -100%;
-		top: 75px; /* same as nav-bar height */
+		top: 75px; /* close to nav-bar height */
 		display: flex;
 		gap: 0;
 		flex-direction: column;
@@ -249,3 +263,94 @@ header a, header li {
 	}
 }
 
+
+
+
+/* *********************** Career Goals styles *********************** */
+
+#career-goals h1 {
+    padding-left: 0;
+}
+
+#career-goals li, #other-goals li {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+form {
+    margin-left: 1vw;
+    margin-right: auto;
+}
+
+.contact-me-form-flex {
+    display: flex;
+    width: 21rem;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: #b6b2b2;
+    color: black;
+    border-radius: 1rem;
+    box-shadow: 5px 5px 5px rgb(29, 46, 0);
+    margin-bottom: 1rem;
+    padding-top: 0.7rem;
+}
+
+.form-group {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem;
+    
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+input {
+    background-color: white;
+    padding: 0.2rem;
+}
+
+/* changes color of textarea when typing there citing help from
+   https://www.w3schools.com/cssref/sel_focus.php */
+input:focus {
+    background-color: rgb(203, 233, 255);
+}
+
+.align-center {
+    /* useful for centering flex-box items that would ordinarily be justified right */
+    align-self: center;
+}
+
+textarea {
+    align-self: center;
+    background-color: white;
+    width: 18rem;
+    /* width: 100%; // this causes 50% right-justified here, poss due to flex-box */
+    /* https://stackoverflow.com/questions/27939344/textarea-max-width
+       helped me to fix the resize so it will not resize horizontally */
+    resize: vertical;
+    padding: 0.2rem;
+}
+
+/* changes color of textarea when typing there citing help from
+   https://www.w3schools.com/cssref/sel_focus.php */
+textarea:focus {
+    background-color: rgb(203, 233, 255);
+}
+
+button {
+    font-weight: 600;
+    font-size: large;
+    background-color: #B8A68E;
+    padding: 0.5rem 2rem;
+    margin: 1rem 0rem;
+    align-self: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px rgb(29, 46, 0);
+    cursor: pointer;
+}
+
+/* this youtube video helped with adding the shadow effect to the 
+   submit button https://www.youtube.com/watch?v=TGXRxYsfrZU */
+button:active {
+    box-shadow: -1px -1px rgb(29, 46, 0);
+}
