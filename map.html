@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html xmlns="https://www.w3.org/1999/xhtml">
+	<head>
+		<title>route</title>
+		<base target="_top"></base>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<meta name="geo.position" content="47.441425; 11.052866" />
+		<meta name="ICBM" content="47.441425, 11.052866" />
+	</head>
+	<body style="margin:0px;">
+		
+		<script type="text/javascript">
+			API = 'leaflet'; // can be either 'leaflet' or 'google'
+			if (self.API && API.match(/^g/i)) {
+				google_api_key = ''; // Your project's Google Maps API key goes here (https://code.google.com/apis/console)
+				language_code = '';
+				document.writeln('<script src="https://maps.googleapis.com/maps/api/js?v=3&amp;libraries=geometry&amp;language='+(self.language_code?self.language_code:'')+'&amp;key='+(self.google_api_key?self.google_api_key:'')+'" type="text/javascript"><'+'/script>');
+			} else {
+				document.writeln('<link href="https://maps.gpsvisualizer.com/leaflet/leaflet.css" rel="stylesheet" />');
+				document.writeln('<script src="https://maps.gpsvisualizer.com/leaflet/leaflet.js" type="text/javascript"><'+'/script>');
+			}
+			thunderforest_api_key = ''; // To display OpenStreetMap tiles from ThunderForest (https://www.thunderforest.com/docs/apikeys/)
+			tracestrack_api_key = ''; // To display topo tiles from Tracestrack (https://console.tracestrack.com/explorer)
+			os_api_key = ''; // To display topo tiles from the UK Ordnance Survey (https://docs.os.uk/os-apis/core-concepts/getting-started-with-an-api-project)
+		</script>
+
+		
+		<!--
+			If you want to transplant this map into another Web page, by far the best method is to
+			simply include it in a IFRAME tag (see https://www.gpsvisualizer.com/faq.html#google_html).
+			But, if you must paste the code into another page, be sure to include all of these parts:
+			   1. The "div" tags that contain the map and its widgets, below
+			   2. Three sections of JavaScript code:
+			      a. The API code (from googleapis.com or /leaflet), above
+			      b. "gv_options" and the code that calls a .js file on gpsvisualizer.com
+			      c. The "GV_Map" function, which contains all the geographic info for the map
+		-->
+		<div style="margin-left:0px; margin-right:0px; margin-top:0px; margin-bottom:0px;">
+			<div id="gmap_div" style="width:100%; height:100%; margin:0px; margin-right:12px; background-color:#f0f0f0; float:left; overflow:hidden;">
+				<p style="text-align:center; font:10px Arial;">This map was created using <a target="_blank" href="https://www.gpsvisualizer.com/">GPS Visualizer</a>'s do-it-yourself geographic utilities.<br /><br />Please wait while the map data loads...</p>
+			</div>
+				
+			<div id="gv_infobox" class="gv_infobox" style="font:11px Arial; border:solid #666666 1px; background-color:#ffffff; padding:4px; overflow:auto; display:none; ">
+				<div id="gv_legend_header" style="padding-bottom:2px;"><b>Slope [est.] (%)</b></div>
+				<div class="gv_legend_item"><span style="color:#e60000;"><div class="legend_block" style="background:#e60000"><!-- --></div> 35.0</span></div>
+				<div class="gv_legend_item"><span style="color:#e67300;"><div class="legend_block" style="background:#e67300"><!-- --></div> 23.3</span></div>
+				<div class="gv_legend_item"><span style="color:#e5e600;"><div class="legend_block" style="background:#e5e600"><!-- --></div> 11.7</span></div>
+				<div class="gv_legend_item"><span style="color:#73e600;"><div class="legend_block" style="background:#73e600"><!-- --></div> 0.0</span></div>
+			</div>
+
+
+			<div id="gv_tracklist" class="gv_tracklist" style="font:11px Arial; line-height:11px; background-color:#ffffff; overflow:auto; display:none;"><!-- --></div>
+
+			<div id="gv_marker_list" class="gv_marker_list" style="background-color:#ffffff; overflow:auto; display:none;"><!-- --></div>
+
+			<div id="gv_clear_margins" style="height:0px; clear:both;"><!-- clear the "float" --></div>
+		</div>
+
+		
+		<!-- begin GPS Visualizer setup script (must come after loading of API code) -->
+		<script type="text/javascript">
+			/* Global variables used by the GPS Visualizer functions (20260227224311): */
+			gv_options = {};
+			
+			// basic map parameters:
+			gv_options.center = [47.441425,11.052866];  // [latitude,longitude] - be sure to keep the square brackets
+			gv_options.zoom = 12;  // higher number means closer view; can also be 'auto' for automatic zoom/center based on map elements
+			gv_options.map_type = 'GV_OSM_RELIEF';  // popular map_type choices are 'GV_STREET', 'GV_SATELLITE', 'GV_HYBRID', 'GV_TERRAIN', 'GV_OSM', 'GV_TOPO_US', 'GV_TOPO_WORLD' (https://www.gpsvisualizer.com/misc/leaflet_map_types.html)
+			gv_options.map_opacity = 1.00;  // number from 0 to 1
+			gv_options.full_screen = true;  // true|false: should the map fill the entire page (or frame)?
+			gv_options.width = 700;  // width of the map, in pixels
+			gv_options.height = 584;  // height of the map, in pixels
+			
+			gv_options.map_div = 'gmap_div';  // the name of the HTML "div" tag containing the map itself; usually 'gmap_div'
+			gv_options.doubleclick_zoom = true;  // true|false: zoom in when mouse is double-clicked?
+			gv_options.doubleclick_center = true;  // true|false: re-center the map on the point that was double-clicked?
+			gv_options.scroll_zoom = true; // true|false; or 'reverse' for down=in and up=out
+			gv_options.page_scrolling = true; // true|false; does the map relenquish control of the scroll wheel when embedded in scrollable pages?
+			gv_options.autozoom_adjustment = 0; gv_options.autozoom_default = 11;
+			gv_options.centering_options = { 'open_info_window':true, 'partial_match':true, 'center_key':'center', 'default_zoom':null } // URL-based centering (e.g., ?center=name_of_marker&zoom=14)
+			gv_options.street_view = false; // true|false: allow Google Street View on the map (Google Maps only)
+			gv_options.tilt = false; // true|false: allow Google Maps to show 45-degree tilted aerial imagery?
+			gv_options.disable_google_pois = false;  // true|false: if you disable clickable POIs on Google Maps, you also lose the labels on parks, airports, etc.
+			gv_options.animated_zoom = true; // true|false: only affects Leaflet maps
+			
+			// widgets on the map:
+			gv_options.zoom_control = 'auto'; // 'auto'|'large'|'small'|'none'
+			gv_options.recenter_button = true; // true|false: is there a 'click to recenter' button above the zoom control?
+			gv_options.geolocation_control = false; // true|false; only works on secure servers
+			gv_options.geolocation_options = { center:true, zoom:null, marker:true, info_window:true };
+			gv_options.scale_control = true; // true|false
+			gv_options.map_opacity_control = false;  // true|false
+			gv_options.map_type_control = {};  // widget to change the background map
+			  gv_options.map_type_control.visible = 'auto'; // true|false|'auto': is a map type control placed on the map itself?
+			  gv_options.map_type_control.filter = false;  // true|false: when map loads, are irrelevant maps ignored?
+			  gv_options.map_type_control.excluded = [];  // comma-separated list of quoted map IDs that will never show in the list ('included' also works)
+			gv_options.center_coordinates = true;  // true|false: show a "center coordinates" box and crosshair?
+			gv_options.measurement_tools = true; // true|false: put a measurement ruler on the map?
+			gv_options.measurement_options = { visible:false, distance_color:'', area_color:'' };
+			gv_options.crosshair_hidden = true;  // true|false: hide the crosshair initially?
+			gv_options.crosshair_permanent = false; // if true, overrides crosshair_hidden
+			gv_options.mouse_coordinates = false;  // true|false: show a "mouse coordinates" box?
+			gv_options.utilities_menu = { 'maptype':true, 'opacity':true, 'measure':true, 'geolocate':true, 'profile':true };
+			gv_options.allow_export = false;  // true|false
+			
+			gv_options.infobox_options = {}; // options for a floating info box (id="gv_infobox"), which can contain anything
+			  gv_options.infobox_options.enabled = true;  // true|false: enable or disable the info box altogether
+			  gv_options.infobox_options.position = ['LEFT_BOTTOM',3,50];  // [Google anchor name, relative x, relative y]
+			  gv_options.infobox_options.draggable = true;  // true|false: can it be moved around the screen?
+			  gv_options.infobox_options.collapsible = true;  // true|false: can it be collapsed by double-clicking its top bar?
+			
+			// track-related options:
+			gv_options.track_optimization = 1; // sets Leaflet's smoothFactor parameter
+			gv_options.track_tooltips = false; // true|false: should the name of a track appear on the map when you mouse over the track itself?
+			gv_options.tracklist_options = {}; // options for a floating list of the tracks visible on the map
+			  gv_options.tracklist_options.enabled = true;  // true|false: enable or disable the tracklist altogether
+			  gv_options.tracklist_options.position = ['RIGHT_TOP',4,32];  // [Google anchor name, relative x, relative y]
+			  gv_options.tracklist_options.min_width = 100; // minimum width of the tracklist, in pixels
+			  gv_options.tracklist_options.max_width = 180; // maximum width of the tracklist, in pixels
+			  gv_options.tracklist_options.min_height = 0; // minimum height of the tracklist, in pixels; if the list is longer, scrollbars will appear
+			  gv_options.tracklist_options.max_height = 252; // maximum height of the tracklist, in pixels; if the list is longer, scrollbars will appear
+			  gv_options.tracklist_options.desc = true;  // true|false: should tracks' descriptions be shown in the list
+			  gv_options.tracklist_options.toggle = false;  // true|false: should clicking on a track's name turn it on or off?
+			  gv_options.tracklist_options.checkboxes = true;  // true|false: should there be a separate icon/checkbox for toggling visibility?
+			  gv_options.tracklist_options.zoom_links = true;  // true|false: should each item include a small icon that will zoom to that track?
+			  gv_options.tracklist_options.highlighting = true;  // true|false: should the track be highlighted when you mouse over the name in the list?
+			  gv_options.tracklist_options.tooltips = false;  // true|false: should the name of the track appear on the map when you mouse over the name in the list?
+			  gv_options.tracklist_options.draggable = true;  // true|false: can it be moved around the screen?
+			  gv_options.tracklist_options.collapsible = true;  // true|false: can it be collapsed by double-clicking its top bar?
+			  gv_options.tracklist_options.header = 'Tracks:'; // HTML code; be sure to put backslashes in front of any single quotes, and don't include any line breaks
+			  gv_options.tracklist_options.footer = ''; // HTML code
+			gv_options.profile_options = { visible:false, icon:true, units:'us', filled:true, waypoints:true, height:120, width:'100%', y_min:null, y_max:null, gap_between_tracks:false }; // see https://www.gpsvisualizer.com/tutorials/profiles_in_maps.html
+
+
+			// marker-related options:
+			gv_options.default_marker = { color:'red',icon:'googlemini',scale:1 }; // icon can be a URL, but be sure to also include size:[w,h] and optionally anchor:[x,y]
+			gv_options.vector_markers = true; // are the icons on the map in embedded SVG format?
+			gv_options.marker_tooltips = true; // do the names of the markers show up when you mouse-over them?
+			gv_options.marker_shadows = true; // true|false: do the standard markers have "shadows" behind them?
+			gv_options.marker_link_target = '_blank'; // the name of the window or frame into which markers' URLs will load
+			gv_options.info_window_width = 0;  // in pixels, the width of the markers' pop-up info "bubbles" (can be overridden by 'window_width' in individual markers)
+			gv_options.thumbnail_width = 0;  // in pixels, the width of the markers' thumbnails (can be overridden by 'thumbnail_width' in individual markers)
+			gv_options.photo_size = [0,0];  // in pixels, the size of the photos in info windows (can be overridden by 'photo_width' or 'photo_size' in individual markers)
+			gv_options.hide_labels = false;  // true|false: hide labels when map first loads?
+			gv_options.labels_behind_markers = false; // true|false: are the labels behind other markers (true) or in front of them (false)?
+			gv_options.label_offset = [0,0];  // [x,y]: shift all markers' labels (positive numbers are right and down)
+			gv_options.label_centered = false;  // true|false: center labels with respect to their markers?  (label_left is also a valid option.)
+			gv_options.driving_directions = false;  // put a small "driving directions" form in each marker's pop-up window? (override with dd:true or dd:false in a marker's options)
+			gv_options.garmin_icon_set = '24x24'; // 'gpsmap' are the small 16x16 icons; change it to '24x24' for larger icons
+			gv_options.marker_list_options = {};  // options for a dynamically-created list of markers
+			  gv_options.marker_list_options.enabled = false;  // true|false: enable or disable the marker list altogether
+			  gv_options.marker_list_options.floating = true;  // is the list a floating box inside the map itself?
+			  gv_options.marker_list_options.position = ['RIGHT_BOTTOM',6,38];  // floating list only: position within map
+			  gv_options.marker_list_options.min_width = 160; // minimum width, in pixels, of the floating list
+			  gv_options.marker_list_options.max_width = 160;  // maximum width
+			  gv_options.marker_list_options.min_height = 0;  // minimum height, in pixels, of the floating list
+			  gv_options.marker_list_options.max_height = 252;  // maximum height
+			  gv_options.marker_list_options.draggable = true;  // true|false, floating list only: can it be moved around the screen?
+			  gv_options.marker_list_options.collapsible = true;  // true|false, floating list only: can it be collapsed by double-clicking its top bar?
+			  gv_options.marker_list_options.include_tickmarks = false;  // true|false: are distance/time tickmarks included in the list?
+			  gv_options.marker_list_options.include_trackpoints = false;  // true|false: are "trackpoint" markers included in the list?
+			  gv_options.marker_list_options.dividers = false;  // true|false: will a thin line be drawn between each item in the list?
+			  gv_options.marker_list_options.desc = false;  // true|false: will the markers' descriptions be shown below their names in the list?
+			  gv_options.marker_list_options.icons = true;  // true|false: should the markers' icons appear to the left of their names in the list?
+			  gv_options.marker_list_options.icon_scale = 'x1'; // size of the icons in the list; you can also supply a size in pixels (e.g. '16px')
+			  gv_options.marker_list_options.thumbnails = false;  // true|false: should markers' thumbnails be shown in the list?
+			  gv_options.marker_list_options.folders_collapsed = false;  // true|false: do folders in the list start out in a collapsed state?
+			  gv_options.marker_list_options.folders_hidden = false;  // true|false: do folders in the list start out in a hidden state?
+			  gv_options.marker_list_options.collapsed_folders = []; // an array of folder names
+			  gv_options.marker_list_options.hidden_folders = []; // an array of folder names
+			  gv_options.marker_list_options.count_folder_items = false;  // true|false: list the number of items in each folder?
+			  gv_options.marker_list_options.folder_zoom = true;  // true|false: is there a zoom link next to each folder name?
+			  gv_options.marker_list_options.folders_first = true;  // true|false: do folders in the list come before un-foldered markers?
+			  gv_options.marker_list_options.wrap_names = true;  // true|false: should marker's names be allowed to wrap onto more than one line?
+			  gv_options.marker_list_options.unnamed = '[unnamed]';  // what 'name' should be assigned to  unnamed markers in the list?
+			  gv_options.marker_list_options.colors = false;  // true|false: should the names/descs of the points in the list be colorized the same as their markers?
+			  gv_options.marker_list_options.default_color = '';  // default HTML color code for the names/descs in the list
+			  gv_options.marker_list_options.limit = 0;  // how many markers to show in the list; 0 for no limit
+			  gv_options.marker_list_options.center = false;  // true|false: does the map center upon a marker when you click its name in the list?
+			  gv_options.marker_list_options.zoom = false;  // true|false: does the map zoom to a certain level when you click on a marker's name in the list?
+			  gv_options.marker_list_options.zoom_level = 15;  // if 'zoom' is true, what level should the map zoom to?
+			  gv_options.marker_list_options.info_window = true;  // true|false: do info windows pop up when the markers' names are clicked in the list?
+			  gv_options.marker_list_options.url_links = false;  // true|false: do the names in the list become instant links to the markers' URLs?
+			  gv_options.marker_list_options.toggle = false;  // true|false: does a marker disappear if you click on its name in the list?
+			  gv_options.marker_list_options.help_tooltips = false;  // true|false: do "tooltips" appear on marker names that tell you what happens when you click?
+			  gv_options.marker_list_options.id = 'gv_marker_list';  // id of a DIV tag that holds the list
+			  gv_options.marker_list_options.header = ''; // HTML code; be sure to put backslashes in front of any single quotes, and don't include any line breaks
+			  gv_options.marker_list_options.footer = ''; // HTML code
+			gv_options.marker_filter_options = {};  // options for removing waypoints that are out of the current view
+			  gv_options.marker_filter_options.enabled = false;  // true|false: should out-of-range markers be removed?
+			  gv_options.marker_filter_options.movement_threshold = 8;  // in pixels, how far the map has to move to trigger filtering
+			  gv_options.marker_filter_options.limit = 0;  // maximum number of markers to display on the map; 0 for no limit
+			  gv_options.marker_filter_options.update_list = true;  // true|false: should the marker list be updated with only the filtered markers?
+			  gv_options.marker_filter_options.sort_list_by_distance = false;  // true|false: should the marker list be sorted by distance from the center of the map?
+			  gv_options.marker_filter_options.min_zoom = 0;  // below this zoom level, don't show any markers at all
+			  gv_options.marker_filter_options.zoom_message = '';  // message to put in the marker list if the map is below the min_zoom threshold
+			gv_options.synthesize_fields = {}; // for example: {label:'{name}'} would cause all markers' names to become visible labels
+				
+
+			
+			// Load GPS Visualizer's mapping functions (this must be loaded AFTER gv_options are set):
+			var script_file = (self.API && API.match(/^g/i)) ? 'google_maps/functions3.js' : 'leaflet/functions.js';
+			document.writeln('<script src="https://maps.gpsvisualizer.com/'+script_file+'" type="text/javascript"><'+'/script>');
+		</script>
+		<style type="text/css">
+			/* Put any custom style definitions here (e.g., .gv_marker_info_window, .gv_marker_info_window_name, .gv_marker_list_item, .gv_tooltip, .gv_label, etc.) */
+			#gmap_div .gv_marker_info_window {
+				font-size:11px !important;
+			}
+			#gmap_div .gv_label {
+				opacity:0.90; filter:alpha(opacity=90);
+				color:white; background:#333333; border:1px solid black; padding:1px;
+				font-family:Verdana !important; font-size:10px;
+				font-weight:normal !important;
+			}
+			.gv_tooltip {
+				font:10px Verdana,sans-serif; color:black; background-color:white; border:1px solid #666666; padding:0px; opacity:1 !important;
+			}
+			.legend_block {
+				display:inline-block; border:solid 1px black; width:9px; height:9px; margin:0px 2px 0px 0px;
+			}
+			
+		</style>
+		
+		<!-- end GPSV setup script and styles; begin map-drawing script (they must be separate) -->
+		<script type="text/javascript">
+			function GV_Map() {
+				GV_Setup_Map();
+				
+				// Track #1
+				t = 1; trk[t] = {info:[],segments:[]};
+				trk[t].info.name = 'New file 1'; trk[t].info.desc = '13.55 mi'; trk[t].info.clickable = true;
+				trk[t].info.color = '#73e600'; trk[t].info.width = 3; trk[t].info.opacity = 0.9; trk[t].info.hidden = false; trk[t].info.z_index = null;
+				trk[t].info.outline_color = 'black'; trk[t].info.outline_width = 5; trk[t].info.fill_color = '#e60000'; trk[t].info.fill_opacity = 0;
+				trk[t].info.elevation = true;
+				trk[t].segments.push({ color:'#8de600', points:[ [47.481238,11.116379,735], [47.481071,11.11642,735.5] ] });
+				trk[t].segments.push({ color:'#7ee600', points:[ [47.481071,11.11642,735.5], [47.480865,11.116369,735.75] ] });
+				trk[t].segments.push({ color:'#8ae600', points:[ [47.480865,11.116369,735.75], [47.480775,11.116313,736] ] });
+				trk[t].segments.push({ color:'#88e600', points:[ [47.480775,11.116313,736], [47.480496,11.116124,736.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.480496,11.116124,736.75], [47.480259,11.115813,736.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.480259,11.115813,736.5], [47.480115,11.115532,736] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.480115,11.115532,736], [47.480006,11.1153,735.25] ] });
+				trk[t].segments.push({ color:'#e6b500', points:[ [47.480006,11.1153,735.25], [47.47992,11.115073,738.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.47992,11.115073,738.5], [47.479918,11.115066,738.75] ] });
+				trk[t].segments.push({ color:'#e64200', points:[ [47.479918,11.115066,738.75], [47.479473,11.114556,756.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.479473,11.114556,756.5], [47.479245,11.114076,755.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.479245,11.114076,755.75], [47.47921,11.114035,755.75] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.47921,11.114035,755.75], [47.478881,11.113645,757] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.478881,11.113645,757], [47.478655,11.113426,755.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.478655,11.113426,755.75], [47.47847,11.113191,753.75] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.47847,11.113191,753.75], [47.478397,11.113128,754] ] });
+				trk[t].segments.push({ color:'#9be600', points:[ [47.478397,11.113128,754], [47.47807,11.113039,755.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.47807,11.113039,755.5], [47.477716,11.112872,754.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.477716,11.112872,754.5], [47.477425,11.112682,750.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.477425,11.112682,750.5], [47.477109,11.112572,746.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.477109,11.112572,746.75], [47.477014,11.112548,746] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.477014,11.112548,746], [47.476913,11.112562,746] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.476913,11.112562,746], [47.476747,11.11259,745.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.476747,11.11259,745.75], [47.476719,11.112607,745.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.476719,11.112607,745.75], [47.476703,11.112617,745.75] ] });
+				trk[t].segments.push({ color:'#e2e600', points:[ [47.476703,11.112617,745.75], [47.476445,11.112984,750.25] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.476445,11.112984,750.25], [47.476172,11.113306,751] ] });
+				trk[t].segments.push({ color:'#a4e600', points:[ [47.476172,11.113306,751], [47.475366,11.114345,757] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.475366,11.114345,757], [47.475225,11.114434,758.25] ] });
+				trk[t].segments.push({ color:'#92e600', points:[ [47.475225,11.114434,758.25], [47.475158,11.114463,758.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.475158,11.114463,758.5], [47.475042,11.114485,758.5] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.475042,11.114485,758.5], [47.474811,11.1145,761.25] ] });
+				trk[t].segments.push({ color:'#e2e600', points:[ [47.474811,11.1145,761.25], [47.474693,11.114523,762.75] ] });
+				trk[t].segments.push({ color:'#9ce600', points:[ [47.474693,11.114523,762.75], [47.474597,11.114594,763.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.474597,11.114594,763.25], [47.474377,11.114918,760] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.474377,11.114918,760], [47.474275,11.115064,758.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.474275,11.115064,758.5], [47.474192,11.115143,758] ] });
+				trk[t].segments.push({ color:'#e6bd00', points:[ [47.474192,11.115143,758], [47.473973,11.115297,762.25] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.473973,11.115297,762.25], [47.473689,11.115439,766.75] ] });
+				trk[t].segments.push({ color:'#7ce600', points:[ [47.473689,11.115439,766.75], [47.473475,11.115584,767] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.473475,11.115584,767], [47.473413,11.115649,766] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.473413,11.115649,766], [47.473345,11.115719,764.5] ] });
+				trk[t].segments.push({ color:'#e6c000', points:[ [47.473345,11.115719,764.5], [47.47307,11.116003,770.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.47307,11.116003,770.25], [47.472636,11.116519,770.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.472636,11.116519,770.25], [47.472411,11.116677,768.5] ] });
+				trk[t].segments.push({ color:'#93e600', points:[ [47.472411,11.116677,768.5], [47.471935,11.117086,770.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.471935,11.117086,770.5], [47.471701,11.11724,768] ] });
+				trk[t].segments.push({ color:'#cfe600', points:[ [47.471701,11.11724,768], [47.471448,11.117361,770.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.471448,11.117361,770.75], [47.471392,11.117405,770.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.471392,11.117405,770.75], [47.471324,11.117458,770.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.471324,11.117458,770.75], [47.470792,11.118314,766.75] ] });
+				trk[t].segments.push({ color:'#e63e00', points:[ [47.470792,11.118314,766.75], [47.470663,11.118547,773.25] ] });
+				trk[t].segments.push({ color:'#e67d00', points:[ [47.470663,11.118547,773.25], [47.470655,11.118556,773.5] ] });
+				trk[t].segments.push({ color:'#e65800', points:[ [47.470655,11.118556,773.5], [47.470616,11.118606,775] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.470616,11.118606,775], [47.47055,11.118661,776.25] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.47055,11.118661,776.25], [47.470419,11.118741,777.5] ] });
+				trk[t].segments.push({ color:'#93e600', points:[ [47.470419,11.118741,777.5], [47.470243,11.118891,778.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.470243,11.118891,778.25], [47.470075,11.119035,777.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.470075,11.119035,777.25], [47.470022,11.119058,776.5] ] });
+				trk[t].segments.push({ color:'#dde600', points:[ [47.470022,11.119058,776.5], [47.46992,11.119089,777.75] ] });
+				trk[t].segments.push({ color:'#e6c900', points:[ [47.46992,11.119089,777.75], [47.469886,11.119136,778.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.469886,11.119136,778.5], [47.469792,11.119242,783.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.469792,11.119242,783.5], [47.469717,11.119332,789] ] });
+				trk[t].segments.push({ color:'#e63900', points:[ [47.469717,11.119332,789], [47.469679,11.119341,790.25] ] });
+				trk[t].segments.push({ color:'#e6e100', points:[ [47.469679,11.119341,790.25], [47.469478,11.119289,793] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.469478,11.119289,793], [47.4694,11.11935,797.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.4694,11.11935,797.5], [47.469295,11.119391,802] ] });
+				trk[t].segments.push({ color:'#e65500', points:[ [47.469295,11.119391,802], [47.469227,11.119397,804] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.469227,11.119397,804], [47.469085,11.119373,804.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.469085,11.119373,804.25], [47.468991,11.119347,803] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.468991,11.119347,803], [47.468875,11.119287,800] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.468875,11.119287,800], [47.468802,11.119261,798.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.468802,11.119261,798.75], [47.468718,11.119245,797.75] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.468718,11.119245,797.75], [47.468572,11.119263,798.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.468572,11.119263,798.25], [47.468389,11.119262,798] ] });
+				trk[t].segments.push({ color:'#e6bf00', points:[ [47.468389,11.119262,798], [47.468334,11.119287,799] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.468334,11.119287,799], [47.468197,11.119392,808.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.468197,11.119392,808.5], [47.468118,11.119489,814.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.468118,11.119489,814.25], [47.468069,11.119614,818.75] ] });
+				trk[t].segments.push({ color:'#e61100', points:[ [47.468069,11.119614,818.75], [47.468031,11.119684,821] ] });
+				trk[t].segments.push({ color:'#e65300', points:[ [47.468031,11.119684,821], [47.467992,11.119708,822.25] ] });
+				trk[t].segments.push({ color:'#e6ae00', points:[ [47.467992,11.119708,822.25], [47.467928,11.119724,823.5] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.467928,11.119724,823.5], [47.467615,11.119932,826.75] ] });
+				trk[t].segments.push({ color:'#e64f00', points:[ [47.467615,11.119932,826.75], [47.467354,11.120148,835.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.467354,11.120148,835.75], [47.467302,11.120253,840.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.467302,11.120253,840.5], [47.467207,11.120332,845.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.467207,11.120332,845.25], [47.46719,11.120293,844.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.46719,11.120293,844.5], [47.467135,11.120127,841.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.467135,11.120127,841.25], [47.467097,11.120008,839.25] ] });
+				trk[t].segments.push({ color:'#e6a000', points:[ [47.467097,11.120008,839.25], [47.467085,11.120007,839.5] ] });
+				trk[t].segments.push({ color:'#e60a00', points:[ [47.467085,11.120007,839.5], [47.466748,11.11999,852.25] ] });
+				trk[t].segments.push({ color:'#e60800', points:[ [47.466748,11.11999,852.25], [47.466439,11.119974,864] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.466439,11.119974,864], [47.46621,11.119994,873.5] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.46621,11.119994,873.5], [47.465827,11.12038,877.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465827,11.12038,877.25], [47.465705,11.120741,870.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465705,11.120741,870.25], [47.465657,11.121035,868.75] ] });
+				trk[t].segments.push({ color:'#cbe600', points:[ [47.465657,11.121035,868.75], [47.465534,11.121313,871] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465534,11.121313,871], [47.465552,11.121333,870.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465552,11.121333,870.5], [47.465684,11.121468,867.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465684,11.121468,867.75], [47.465686,11.121471,867.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465686,11.121471,867.5], [47.465735,11.121521,867.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465735,11.121521,867.25], [47.465777,11.121322,866] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465777,11.121322,866], [47.465907,11.121193,864.5] ] });
+				trk[t].segments.push({ color:'#d4e600', points:[ [47.465907,11.121193,864.5], [47.465892,11.121291,865.25] ] });
+				trk[t].segments.push({ color:'#a1e600', points:[ [47.465892,11.121291,865.25], [47.465812,11.121467,866] ] });
+				trk[t].segments.push({ color:'#e6d700', points:[ [47.465812,11.121467,866], [47.465794,11.12151,866.5] ] });
+				trk[t].segments.push({ color:'#a1e600', points:[ [47.465794,11.12151,866.5], [47.465803,11.121649,867] ] });
+				trk[t].segments.push({ color:'#e6b300', points:[ [47.465803,11.121649,867], [47.46582,11.121765,868.5] ] });
+				trk[t].segments.push({ color:'#c4e600', points:[ [47.46582,11.121765,868.5], [47.465741,11.121796,869.25] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.465741,11.121796,869.25], [47.465632,11.122041,872.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465632,11.122041,872.5], [47.465717,11.122037,872.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465717,11.122037,872.5], [47.465819,11.121999,872] ] });
+				trk[t].segments.push({ color:'#e6e400', points:[ [47.465819,11.121999,872], [47.465876,11.122005,872.75] ] });
+				trk[t].segments.push({ color:'#cae600', points:[ [47.465876,11.122005,872.75], [47.465781,11.122127,874] ] });
+				trk[t].segments.push({ color:'#cce600', points:[ [47.465781,11.122127,874], [47.465646,11.122339,876] ] });
+				trk[t].segments.push({ color:'#e6be00', points:[ [47.465646,11.122339,876], [47.465624,11.122591,879] ] });
+				trk[t].segments.push({ color:'#e6aa00', points:[ [47.465624,11.122591,879], [47.465628,11.122741,881] ] });
+				trk[t].segments.push({ color:'#e6af00', points:[ [47.465628,11.122741,881], [47.465658,11.122948,883.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465658,11.122948,883.75], [47.465661,11.122962,883.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465661,11.122962,883.75], [47.465658,11.122948,883.75] ] });
+				trk[t].segments.push({ color:'#e6d900', points:[ [47.465658,11.122948,883.75], [47.465611,11.123142,885.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465611,11.123142,885.75], [47.465521,11.123196,885.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465521,11.123196,885.5], [47.465453,11.123264,885.5] ] });
+				trk[t].segments.push({ color:'#d6e600', points:[ [47.465453,11.123264,885.5], [47.4653,11.123502,888] ] });
+				trk[t].segments.push({ color:'#e6dd00', points:[ [47.4653,11.123502,888], [47.465169,11.123685,890.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465169,11.123685,890.5], [47.465138,11.123701,890.5] ] });
+				trk[t].segments.push({ color:'#9be600', points:[ [47.465138,11.123701,890.5], [47.465086,11.123729,890.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.465086,11.123729,890.75], [47.464882,11.123782,890.25] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.464882,11.123782,890.25], [47.464778,11.123823,890.5] ] });
+				trk[t].segments.push({ color:'#97e600', points:[ [47.464778,11.123823,890.5], [47.464546,11.123936,891.5] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.464546,11.123936,891.5], [47.464342,11.124062,892.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.464342,11.124062,892.25], [47.464068,11.124142,891.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.464068,11.124142,891.25], [47.46398,11.124172,890.5] ] });
+				trk[t].segments.push({ color:'#94e600', points:[ [47.46398,11.124172,890.5], [47.463861,11.124261,891] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.463861,11.124261,891], [47.463726,11.124339,891.25] ] });
+				trk[t].segments.push({ color:'#90e600', points:[ [47.463726,11.124339,891.25], [47.463659,11.124391,891.5] ] });
+				trk[t].segments.push({ color:'#b1e600', points:[ [47.463659,11.124391,891.5], [47.463601,11.124451,892] ] });
+				trk[t].segments.push({ color:'#e6a200', points:[ [47.463601,11.124451,892], [47.463559,11.124539,893.5] ] });
+				trk[t].segments.push({ color:'#e64f00', points:[ [47.463559,11.124539,893.5], [47.463524,11.124703,897] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463524,11.124703,897], [47.463466,11.124747,897] ] });
+				trk[t].segments.push({ color:'#8ee600', points:[ [47.463466,11.124747,897], [47.463395,11.124799,897.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463395,11.124799,897.25], [47.463335,11.124831,897] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463335,11.124831,897], [47.463244,11.12485,895.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463244,11.12485,895.5], [47.463114,11.124793,891.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463114,11.124793,891.5], [47.463079,11.124777,890.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.463079,11.124777,890.5], [47.462839,11.124737,884.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.462839,11.124737,884.75], [47.462598,11.124738,879.75] ] });
+				trk[t].segments.push({ color:'#e65100', points:[ [47.462598,11.124738,879.75], [47.462472,11.125184,889.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.462472,11.125184,889.5], [47.462425,11.12539,897.75] ] });
+				trk[t].segments.push({ color:'#e61400', points:[ [47.462425,11.12539,897.75], [47.462369,11.125478,900.75] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.462369,11.125478,900.75], [47.462237,11.12553,901] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.462237,11.12553,901], [47.462145,11.125431,894.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.462145,11.125431,894.75], [47.461698,11.12524,876] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461698,11.12524,876], [47.461607,11.125052,865.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461607,11.125052,865.75], [47.461381,11.12495,865] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.461381,11.12495,865], [47.461248,11.125064,872] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461248,11.125064,872], [47.461154,11.124967,869.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461154,11.124967,869.25], [47.46108,11.124815,863.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.46108,11.124815,863.75], [47.46108,11.124691,858.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.46108,11.124691,858.25], [47.460976,11.124413,845.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460976,11.124413,845.5], [47.461046,11.1243,841] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461046,11.1243,841], [47.460888,11.124058,832.75] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.460888,11.124058,832.75], [47.460969,11.124082,834] ] });
+				trk[t].segments.push({ color:'#e6a400', points:[ [47.460969,11.124082,834], [47.461018,11.124084,835] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.461018,11.124084,835], [47.460989,11.124006,834.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460989,11.124006,834.75], [47.460946,11.123855,834] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460946,11.123855,834], [47.460916,11.12375,833.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460916,11.12375,833.75], [47.460891,11.123697,833] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460891,11.123697,833], [47.46085,11.12367,831.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.46085,11.12367,831.75], [47.460729,11.123649,829] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460729,11.123649,829], [47.460618,11.123658,826.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460618,11.123658,826.5], [47.460337,11.123763,821.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460337,11.123763,821.5], [47.460229,11.123828,820] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.460229,11.123828,820], [47.46011,11.124009,820.75] ] });
+				trk[t].segments.push({ color:'#cae600', points:[ [47.46011,11.124009,820.75], [47.460079,11.124068,821.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460079,11.124068,821.25], [47.46006,11.124065,821] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.46006,11.124065,821], [47.460049,11.124043,820.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460049,11.124043,820.25], [47.460047,11.124038,820] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.460047,11.124038,820], [47.459987,11.123875,816.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459987,11.123875,816.75], [47.459933,11.123762,815.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459933,11.123762,815.75], [47.459896,11.123641,814.25] ] });
+				trk[t].segments.push({ color:'#e6b400', points:[ [47.459896,11.123641,814.25], [47.459829,11.123635,815.5] ] });
+				trk[t].segments.push({ color:'#ade600', points:[ [47.459829,11.123635,815.5], [47.459794,11.123613,815.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459794,11.123613,815.75], [47.459747,11.123543,815.75] ] });
+				trk[t].segments.push({ color:'#e66c00', points:[ [47.459747,11.123543,815.75], [47.459712,11.123589,817] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459712,11.123589,817], [47.459747,11.123543,815.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459747,11.123543,815.75], [47.459762,11.123449,814] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459762,11.123449,814], [47.459756,11.123334,812.5] ] });
+				trk[t].segments.push({ color:'#dde600', points:[ [47.459756,11.123334,812.5], [47.459716,11.12316,814] ] });
+				trk[t].segments.push({ color:'#aae600', points:[ [47.459716,11.12316,814], [47.459701,11.123044,814.5] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.459701,11.123044,814.5], [47.459685,11.122922,815.5] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.459685,11.122922,815.5], [47.45966,11.122588,816.5] ] });
+				trk[t].segments.push({ color:'#e6b300', points:[ [47.45966,11.122588,816.5], [47.459631,11.122457,818.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.459631,11.122457,818.25], [47.459583,11.122327,823] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.459583,11.122327,823], [47.459534,11.122264,824.5] ] });
+				trk[t].segments.push({ color:'#a9e600', points:[ [47.459534,11.122264,824.5], [47.459388,11.122152,825.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459388,11.122152,825.5], [47.459228,11.122023,825] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459228,11.122023,825], [47.45912,11.12199,824.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.45912,11.12199,824.25], [47.459082,11.121986,824.25] ] });
+				trk[t].segments.push({ color:'#90e600', points:[ [47.459082,11.121986,824.25], [47.459008,11.121979,824.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.459008,11.121979,824.5], [47.458665,11.122027,824.25] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.458665,11.122027,824.25], [47.458521,11.122023,824.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.458521,11.122023,824.75], [47.458069,11.121925,824.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.458069,11.121925,824.5], [47.457967,11.12189,823.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.457967,11.12189,823.75], [47.457867,11.121822,823] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.457867,11.121822,823], [47.457741,11.121691,821.25] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.457741,11.121691,821.25], [47.457567,11.121474,825] ] });
+				trk[t].segments.push({ color:'#e6d900', points:[ [47.457567,11.121474,825], [47.457479,11.121393,826.5] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.457479,11.121393,826.5], [47.457359,11.121329,827.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.457359,11.121329,827.5], [47.457196,11.121271,827.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.457196,11.121271,827.25], [47.456717,11.121212,823] ] });
+				trk[t].segments.push({ color:'#98e600', points:[ [47.456717,11.121212,823], [47.456479,11.121174,824] ] });
+				trk[t].segments.push({ color:'#ade600', points:[ [47.456479,11.121174,824], [47.456227,11.121043,825.75] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.456227,11.121043,825.75], [47.456134,11.12095,826] ] });
+				trk[t].segments.push({ color:'#b2e600', points:[ [47.456134,11.12095,826], [47.456044,11.120792,827] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.456044,11.120792,827], [47.455703,11.120063,840.5] ] });
+				trk[t].segments.push({ color:'#e6af00', points:[ [47.455703,11.120063,840.5], [47.455598,11.119774,844.75] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.455598,11.119774,844.75], [47.45553,11.119606,846] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.45553,11.119606,846], [47.455459,11.119471,846.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.455459,11.119471,846.25], [47.455063,11.118848,841.75] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.455063,11.118848,841.75], [47.45492,11.118591,843.5] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.45492,11.118591,843.5], [47.454859,11.118443,845.5] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.454859,11.118443,845.5], [47.454817,11.118309,847] ] });
+				trk[t].segments.push({ color:'#e65800', points:[ [47.454817,11.118309,847], [47.454793,11.118173,849.75] ] });
+				trk[t].segments.push({ color:'#e64e00', points:[ [47.454793,11.118173,849.75], [47.454787,11.118051,852.25] ] });
+				trk[t].segments.push({ color:'#e67a00', points:[ [47.454787,11.118051,852.25], [47.454768,11.117937,854.25] ] });
+				trk[t].segments.push({ color:'#e6cd00', points:[ [47.454768,11.117937,854.25], [47.454729,11.117835,855.5] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.454729,11.117835,855.5], [47.454464,11.117323,856.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.454464,11.117323,856.75], [47.454371,11.117166,856.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.454371,11.117166,856.25], [47.45429,11.117071,855.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.45429,11.117071,855.25], [47.454149,11.116957,853.5] ] });
+				trk[t].segments.push({ color:'#dde600', points:[ [47.454149,11.116957,853.5], [47.454083,11.116883,854.5] ] });
+				trk[t].segments.push({ color:'#e6c300', points:[ [47.454083,11.116883,854.5], [47.453848,11.116521,860.25] ] });
+				trk[t].segments.push({ color:'#e6a100', points:[ [47.453848,11.116521,860.25], [47.453788,11.116461,861.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.453788,11.116461,861.75], [47.453756,11.116452,861.75] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.453756,11.116452,861.75], [47.453714,11.11644,862.25] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.453714,11.11644,862.25], [47.453288,11.116388,863.5] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.453288,11.116388,863.5], [47.453053,11.116375,866.25] ] });
+				trk[t].segments.push({ color:'#9ce600', points:[ [47.453053,11.116375,866.25], [47.452894,11.116399,867] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.452894,11.116399,867], [47.452774,11.11645,866.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.452774,11.11645,866.25], [47.452604,11.116568,863.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.452604,11.116568,863.5], [47.452526,11.116586,863.5] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.452526,11.116586,863.5], [47.452443,11.116564,864.25] ] });
+				trk[t].segments.push({ color:'#e6b800', points:[ [47.452443,11.116564,864.25], [47.45236,11.116492,866] ] });
+				trk[t].segments.push({ color:'#e6a800', points:[ [47.45236,11.116492,866], [47.452077,11.116156,873.25] ] });
+				trk[t].segments.push({ color:'#cfe600', points:[ [47.452077,11.116156,873.25], [47.45192,11.115991,875.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.45192,11.115991,875.25], [47.451862,11.11595,875.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.451862,11.11595,875.25], [47.451784,11.115926,874.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.451784,11.115926,874.25], [47.451669,11.115917,872] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.451669,11.115917,872], [47.45125,11.11576,873] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.45125,11.11576,873], [47.451138,11.11575,872.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.451138,11.11575,872.5], [47.450918,11.115766,870.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.450918,11.115766,870.5], [47.450866,11.115761,870.5] ] });
+				trk[t].segments.push({ color:'#9ee600', points:[ [47.450866,11.115761,870.5], [47.450817,11.115739,870.75] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.450817,11.115739,870.75], [47.450761,11.115684,872.25] ] });
+				trk[t].segments.push({ color:'#e6bd00', points:[ [47.450761,11.115684,872.25], [47.450561,11.115414,877] ] });
+				trk[t].segments.push({ color:'#e1e600', points:[ [47.450561,11.115414,877], [47.450466,11.115262,878.75] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.450466,11.115262,878.75], [47.450205,11.114676,885.25] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.450205,11.114676,885.25], [47.450137,11.114586,885.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.450137,11.114586,885.5], [47.450062,11.114526,885] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.450062,11.114526,885], [47.449823,11.114445,881] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.449823,11.114445,881], [47.449676,11.114331,879.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.449676,11.114331,879.25], [47.449449,11.11411,876.5] ] });
+				trk[t].segments.push({ color:'#aae600', points:[ [47.449449,11.11411,876.5], [47.449187,11.113743,878.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.449187,11.113743,878.75], [47.449008,11.113582,878.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.449008,11.113582,878.75], [47.448697,11.113339,875.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.448697,11.113339,875.75], [47.448468,11.113203,872] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.448468,11.113203,872], [47.448134,11.11298,871] ] });
+				trk[t].segments.push({ color:'#94e600', points:[ [47.448134,11.11298,871], [47.447922,11.112741,872] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.447922,11.112741,872], [47.447588,11.112452,870.75] ] });
+				trk[t].segments.push({ color:'#e67f00', points:[ [47.447588,11.112452,870.75], [47.447417,11.11232,875.5] ] });
+				trk[t].segments.push({ color:'#b3e600', points:[ [47.447417,11.11232,875.5], [47.447144,11.112245,877.5] ] });
+				trk[t].segments.push({ color:'#b1e600', points:[ [47.447144,11.112245,877.5], [47.446898,11.112191,879.25] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.446898,11.112191,879.25], [47.446371,11.112077,883.5] ] });
+				trk[t].segments.push({ color:'#88e600', points:[ [47.446371,11.112077,883.5], [47.446069,11.112047,884.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.446069,11.112047,884.25], [47.445912,11.112019,884.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.445912,11.112019,884.25], [47.445763,11.11193,884.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.445763,11.11193,884.25], [47.445438,11.111469,883] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.445438,11.111469,883], [47.444996,11.11099,876] ] });
+				trk[t].segments.push({ color:'#a2e600', points:[ [47.444996,11.11099,876], [47.44487,11.110789,877] ] });
+				trk[t].segments.push({ color:'#e60100', points:[ [47.44487,11.110789,877], [47.44488,11.110628,881.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.44488,11.110628,881.25], [47.444886,11.110622,881.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.444886,11.110622,881.25], [47.44488,11.110628,881.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.44488,11.110628,881.25], [47.444816,11.11061,881.25] ] });
+				trk[t].segments.push({ color:'#79e600', points:[ [47.444816,11.11061,881.25], [47.444429,11.110433,881.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.444429,11.110433,881.5], [47.44419,11.110288,880.5] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.44419,11.110288,880.5], [47.444106,11.110262,881.25] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.444106,11.110262,881.25], [47.44398,11.110273,882.75] ] });
+				trk[t].segments.push({ color:'#a1e600', points:[ [47.44398,11.110273,882.75], [47.443796,11.110346,883.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.443796,11.110346,883.75], [47.443793,11.110348,884] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.443793,11.110348,884], [47.443652,11.11048,883.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.443652,11.11048,883.75], [47.443471,11.110597,883.75] ] });
+				trk[t].segments.push({ color:'#81e600', points:[ [47.443471,11.110597,883.75], [47.443323,11.110655,884] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.443323,11.110655,884], [47.443262,11.110656,884] ] });
+				trk[t].segments.push({ color:'#a3e600', points:[ [47.443262,11.110656,884], [47.44308,11.110612,885] ] });
+				trk[t].segments.push({ color:'#e6e200', points:[ [47.44308,11.110612,885], [47.442776,11.110396,889.5] ] });
+				trk[t].segments.push({ color:'#8fe600', points:[ [47.442776,11.110396,889.5], [47.442543,11.110374,890.25] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.442543,11.110374,890.25], [47.442305,11.110369,890.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.442305,11.110369,890.75], [47.442083,11.110445,890.25] ] });
+				trk[t].segments.push({ color:'#9ae600', points:[ [47.442083,11.110445,890.25], [47.441806,11.110408,891.5] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.441806,11.110408,891.5], [47.441626,11.110269,894.25] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.441626,11.110269,894.25], [47.441427,11.109983,897.5] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.441427,11.109983,897.5], [47.44123,11.109683,901.75] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.44123,11.109683,901.75], [47.441098,11.109522,902.5] ] });
+				trk[t].segments.push({ color:'#96e600', points:[ [47.441098,11.109522,902.5], [47.440971,11.109315,903.25] ] });
+				trk[t].segments.push({ color:'#ace600', points:[ [47.440971,11.109315,903.25], [47.440871,11.109069,904.5] ] });
+				trk[t].segments.push({ color:'#e6a400', points:[ [47.440871,11.109069,904.5], [47.440745,11.108696,910.25] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.440745,11.108696,910.25], [47.440607,11.108326,915] ] });
+				trk[t].segments.push({ color:'#95e600', points:[ [47.440607,11.108326,915], [47.440397,11.1081,916] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.440397,11.1081,916], [47.440272,11.108026,916.25] ] });
+				trk[t].segments.push({ color:'#e6a200', points:[ [47.440272,11.108026,916.25], [47.440261,11.107956,917.25] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.440261,11.107956,917.25], [47.440251,11.107892,918.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.440251,11.107892,918.25], [47.440248,11.107874,918.75] ] });
+				trk[t].segments.push({ color:'#e67c00', points:[ [47.440248,11.107874,918.75], [47.440322,11.107753,921.5] ] });
+				trk[t].segments.push({ color:'#e5e600', points:[ [47.440322,11.107753,921.5], [47.440514,11.107619,924.25] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.440514,11.107619,924.25], [47.440882,11.107381,928] ] });
+				trk[t].segments.push({ color:'#e6dd00', points:[ [47.440882,11.107381,928], [47.441004,11.107333,929.75] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.441004,11.107333,929.75], [47.441189,11.107356,931.25] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.441189,11.107356,931.25], [47.441395,11.107351,933.5] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.441395,11.107351,933.5], [47.441471,11.10726,935] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.441471,11.10726,935], [47.441517,11.107071,937.25] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.441517,11.107071,937.25], [47.441492,11.106837,939] ] });
+				trk[t].segments.push({ color:'#e6bf00', points:[ [47.441492,11.106837,939], [47.441488,11.106795,939.5] ] });
+				trk[t].segments.push({ color:'#e0e600', points:[ [47.441488,11.106795,939.5], [47.441431,11.106603,941.25] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.441431,11.106603,941.25], [47.441342,11.106376,944] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.441342,11.106376,944], [47.441181,11.106129,947.5] ] });
+				trk[t].segments.push({ color:'#e6e200', points:[ [47.441181,11.106129,947.5], [47.441008,11.105962,950.25] ] });
+				trk[t].segments.push({ color:'#e6b600', points:[ [47.441008,11.105962,950.25], [47.440881,11.105811,953.25] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.440881,11.105811,953.25], [47.440616,11.10571,957] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.440616,11.10571,957], [47.440336,11.10559,961.75] ] });
+				trk[t].segments.push({ color:'#dbe600', points:[ [47.440336,11.10559,961.75], [47.440065,11.105524,965] ] });
+				trk[t].segments.push({ color:'#e6c400', points:[ [47.440065,11.105524,965], [47.439664,11.105527,971.75] ] });
+				trk[t].segments.push({ color:'#d6e600', points:[ [47.439664,11.105527,971.75], [47.439379,11.105607,975] ] });
+				trk[t].segments.push({ color:'#a4e600', points:[ [47.439379,11.105607,975], [47.438949,11.10582,977.5] ] });
+				trk[t].segments.push({ color:'#a7e600', points:[ [47.438949,11.10582,977.5], [47.438716,11.105966,979] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.438716,11.105966,979], [47.438323,11.106147,982.25] ] });
+				trk[t].segments.push({ color:'#cde600', points:[ [47.438323,11.106147,982.25], [47.437936,11.106208,986.25] ] });
+				trk[t].segments.push({ color:'#e6e300', points:[ [47.437936,11.106208,986.25], [47.437709,11.106216,989.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.437709,11.106216,989.25], [47.437418,11.106347,989] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.437418,11.106347,989], [47.43729,11.106449,987] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.43729,11.106449,987], [47.437067,11.106629,983.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.437067,11.106629,983.75], [47.436863,11.106758,982.25] ] });
+				trk[t].segments.push({ color:'#e69100', points:[ [47.436863,11.106758,982.25], [47.436673,11.10667,986.75] ] });
+				trk[t].segments.push({ color:'#e69b00', points:[ [47.436673,11.10667,986.75], [47.436438,11.106416,993] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.436438,11.106416,993], [47.436323,11.10626,996.5] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.436323,11.10626,996.5], [47.436183,11.106126,999.25] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.436183,11.106126,999.25], [47.436063,11.10608,999.5] ] });
+				trk[t].segments.push({ color:'#c2e600', points:[ [47.436063,11.10608,999.5], [47.435962,11.106013,1000.5] ] });
+				trk[t].segments.push({ color:'#92e600', points:[ [47.435962,11.106013,1000.5], [47.435827,11.105956,1001] ] });
+				trk[t].segments.push({ color:'#e63300', points:[ [47.435827,11.105956,1001], [47.435716,11.105789,1006.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.435716,11.105789,1006.25], [47.435629,11.105538,1014] ] });
+				trk[t].segments.push({ color:'#e61200', points:[ [47.435629,11.105538,1014], [47.435522,11.105272,1021.75] ] });
+				trk[t].segments.push({ color:'#aae600', points:[ [47.435522,11.105272,1021.75], [47.435402,11.105259,1022.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.435402,11.105259,1022.5], [47.435307,11.105436,1018.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.435307,11.105436,1018.5], [47.435212,11.105677,1013] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.435212,11.105677,1013], [47.435001,11.105865,1010.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.435001,11.105865,1010.25], [47.434902,11.106087,1005.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.434902,11.106087,1005.75], [47.434776,11.106332,1001.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.434776,11.106332,1001.25], [47.434564,11.106448,1000.5] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.434564,11.106448,1000.5], [47.4343,11.106507,1001.25] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.4343,11.106507,1001.25], [47.433798,11.10651,1002.75] ] });
+				trk[t].segments.push({ color:'#88e600', points:[ [47.433798,11.10651,1002.75], [47.433178,11.106372,1004.25] ] });
+				trk[t].segments.push({ color:'#e67d00', points:[ [47.433178,11.106372,1004.25], [47.43308,11.106096,1009.5] ] });
+				trk[t].segments.push({ color:'#e6b100', points:[ [47.43308,11.106096,1009.5], [47.43296,11.105889,1013] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.43296,11.105889,1013], [47.432823,11.105681,1016] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.432823,11.105681,1016], [47.432569,11.105571,1016] ] });
+				trk[t].segments.push({ color:'#c3e600', points:[ [47.432569,11.105571,1016], [47.432389,11.105385,1018] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.432389,11.105385,1018], [47.432217,11.105263,1017.75] ] });
+				trk[t].segments.push({ color:'#96e600', points:[ [47.432217,11.105263,1017.75], [47.432066,11.105101,1018.5] ] });
+				trk[t].segments.push({ color:'#e6e300', points:[ [47.432066,11.105101,1018.5], [47.431924,11.104675,1022.75] ] });
+				trk[t].segments.push({ color:'#97e600', points:[ [47.431924,11.104675,1022.75], [47.431774,11.104394,1023.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.431774,11.104394,1023.75], [47.431619,11.104327,1022] ] });
+				trk[t].segments.push({ color:'#aee600', points:[ [47.431619,11.104327,1022], [47.43144,11.104128,1023.5] ] });
+				trk[t].segments.push({ color:'#b3e600', points:[ [47.43144,11.104128,1023.5], [47.431349,11.104053,1024.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.431349,11.104053,1024.25], [47.431248,11.104044,1023.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.431248,11.104044,1023.5], [47.43112,11.104082,1021.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.43112,11.104082,1021.5], [47.430987,11.104171,1018.25] ] });
+				trk[t].segments.push({ color:'#7ce600', points:[ [47.430987,11.104171,1018.25], [47.430755,11.104097,1018.5] ] });
+				trk[t].segments.push({ color:'#e6d500', points:[ [47.430755,11.104097,1018.5], [47.430559,11.10395,1021.75] ] });
+				trk[t].segments.push({ color:'#e69900', points:[ [47.430559,11.10395,1021.75], [47.43039,11.103716,1026.75] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.43039,11.103716,1026.75], [47.430219,11.103149,1038.5] ] });
+				trk[t].segments.push({ color:'#c4e600', points:[ [47.430219,11.103149,1038.5], [47.430151,11.103083,1039.25] ] });
+				trk[t].segments.push({ color:'#e6b600', points:[ [47.430151,11.103083,1039.25], [47.430071,11.10292,1041.75] ] });
+				trk[t].segments.push({ color:'#ade600', points:[ [47.430071,11.10292,1041.75], [47.429958,11.102889,1042.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429958,11.102889,1042.5], [47.429767,11.103148,1040] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429767,11.103148,1040], [47.429633,11.103255,1039] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429633,11.103255,1039], [47.429547,11.103424,1035.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429547,11.103424,1035.75], [47.429481,11.103532,1033.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429481,11.103532,1033.5], [47.429354,11.103617,1032] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.429354,11.103617,1032], [47.429251,11.103653,1031.5] ] });
+				trk[t].segments.push({ color:'#8ae600', points:[ [47.429251,11.103653,1031.5], [47.429153,11.103665,1031.75] ] });
+				trk[t].segments.push({ color:'#c3e600', points:[ [47.429153,11.103665,1031.75], [47.429043,11.103659,1032.75] ] });
+				trk[t].segments.push({ color:'#e6ce00', points:[ [47.429043,11.103659,1032.75], [47.428917,11.103634,1034.75] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.428917,11.103634,1034.75], [47.428853,11.10363,1035.5] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.428853,11.10363,1035.5], [47.42878,11.103644,1035.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.42878,11.103644,1035.75], [47.428681,11.103691,1035] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.428681,11.103691,1035], [47.428596,11.103749,1033.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.428596,11.103749,1033.5], [47.428538,11.103777,1032.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.428538,11.103777,1032.75], [47.428476,11.103791,1032.75] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.428476,11.103791,1032.75], [47.428391,11.10378,1033.75] ] });
+				trk[t].segments.push({ color:'#e6a200', points:[ [47.428391,11.10378,1033.75], [47.428214,11.103713,1037.5] ] });
+				trk[t].segments.push({ color:'#8ae600', points:[ [47.428214,11.103713,1037.5], [47.428122,11.103715,1037.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.428122,11.103715,1037.75], [47.428057,11.103743,1037] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.428057,11.103743,1037], [47.427931,11.10387,1033.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.427931,11.10387,1033.5], [47.427775,11.104054,1029.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.427775,11.104054,1029.75], [47.427754,11.104116,1028.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.427754,11.104116,1028.75], [47.427718,11.104228,1027] ] });
+				trk[t].segments.push({ color:'#abe600', points:[ [47.427718,11.104228,1027], [47.427651,11.104288,1027.5] ] });
+				trk[t].segments.push({ color:'#e69800', points:[ [47.427651,11.104288,1027.5], [47.427594,11.10428,1028.75] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.427594,11.10428,1028.75], [47.427464,11.104184,1031] ] });
+				trk[t].segments.push({ color:'#e69b00', points:[ [47.427464,11.104184,1031], [47.42735,11.103945,1035.25] ] });
+				trk[t].segments.push({ color:'#a4e600', points:[ [47.42735,11.103945,1035.25], [47.427266,11.103896,1035.75] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.427266,11.103896,1035.75], [47.427199,11.103798,1036.5] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.427199,11.103798,1036.5], [47.427174,11.103615,1037.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.427174,11.103615,1037.5], [47.42709,11.103516,1036.75] ] });
+				trk[t].segments.push({ color:'#8ee600', points:[ [47.42709,11.103516,1036.75], [47.427034,11.103292,1037.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.427034,11.103292,1037.25], [47.426893,11.10329,1033.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426893,11.10329,1033.75], [47.426752,11.10332,1029.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426752,11.10332,1029.25], [47.426643,11.103354,1027.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426643,11.103354,1027.25], [47.42651,11.103325,1027.25] ] });
+				trk[t].segments.push({ color:'#b4e600', points:[ [47.42651,11.103325,1027.25], [47.426303,11.103148,1029] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426303,11.103148,1029], [47.426199,11.10293,1029] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426199,11.10293,1029], [47.426087,11.102771,1026.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.426087,11.102771,1026.75], [47.42596,11.102617,1022.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.42596,11.102617,1022.5], [47.425852,11.102604,1018.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.425852,11.102604,1018.75], [47.425766,11.102537,1017.5] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.425766,11.102537,1017.5], [47.425719,11.102412,1018.25] ] });
+				trk[t].segments.push({ color:'#e69100', points:[ [47.425719,11.102412,1018.25], [47.425734,11.10225,1020.75] ] });
+				trk[t].segments.push({ color:'#e69800', points:[ [47.425734,11.10225,1020.75], [47.425713,11.102135,1022.5] ] });
+				trk[t].segments.push({ color:'#d9e600', points:[ [47.425713,11.102135,1022.5], [47.425646,11.101935,1024.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.425646,11.101935,1024.25], [47.425573,11.101818,1024] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.425573,11.101818,1024], [47.425468,11.101788,1022] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.425468,11.101788,1022], [47.425061,11.101765,1012.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.425061,11.101765,1012.25], [47.424948,11.101673,1011.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.424948,11.101673,1011.25], [47.424891,11.101555,1015.75] ] });
+				trk[t].segments.push({ color:'#e65600', points:[ [47.424891,11.101555,1015.75], [47.424803,11.101505,1018.5] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.424803,11.101505,1018.5], [47.424729,11.101506,1019.5] ] });
+				trk[t].segments.push({ color:'#b2e600', points:[ [47.424729,11.101506,1019.5], [47.424694,11.101507,1019.75] ] });
+				trk[t].segments.push({ color:'#e1e600', points:[ [47.424694,11.101507,1019.75], [47.424614,11.10151,1020.75] ] });
+				trk[t].segments.push({ color:'#e6cd00', points:[ [47.424614,11.10151,1020.75], [47.424466,11.101335,1023.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.424466,11.101335,1023.75], [47.42429,11.101231,1023.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.42429,11.101231,1023.5], [47.424167,11.101176,1022.5] ] });
+				trk[t].segments.push({ color:'#e6ce00', points:[ [47.424167,11.101176,1022.5], [47.424019,11.101088,1025] ] });
+				trk[t].segments.push({ color:'#ace600', points:[ [47.424019,11.101088,1025], [47.423927,11.100985,1025.75] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.423927,11.100985,1025.75], [47.42383,11.100778,1026.25] ] });
+				trk[t].segments.push({ color:'#e69400', points:[ [47.42383,11.100778,1026.25], [47.42373,11.10067,1029] ] });
+				trk[t].segments.push({ color:'#d8e600', points:[ [47.42373,11.10067,1029], [47.423461,11.100543,1032.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.423461,11.100543,1032.25], [47.423337,11.100403,1031.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.423337,11.100403,1031.75], [47.423189,11.10028,1031.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.423189,11.10028,1031.5], [47.42299,11.100145,1030.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.42299,11.100145,1030.25], [47.422844,11.100069,1028.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.422844,11.100069,1028.75], [47.422669,11.100029,1027.75] ] });
+				trk[t].segments.push({ color:'#dbe600', points:[ [47.422669,11.100029,1027.75], [47.422502,11.100073,1029.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.422502,11.100073,1029.75], [47.422408,11.100121,1033.75] ] });
+				trk[t].segments.push({ color:'#e68700', points:[ [47.422408,11.100121,1033.75], [47.422271,11.100121,1037] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.422271,11.100121,1037], [47.422149,11.099946,1035.5] ] });
+				trk[t].segments.push({ color:'#e6c900', points:[ [47.422149,11.099946,1035.5], [47.422061,11.099759,1038] ] });
+				trk[t].segments.push({ color:'#dee600', points:[ [47.422061,11.099759,1038], [47.421665,11.099583,1043] ] });
+				trk[t].segments.push({ color:'#e6bb00', points:[ [47.421665,11.099583,1043], [47.421293,11.099289,1050.5] ] });
+				trk[t].segments.push({ color:'#98e600', points:[ [47.421293,11.099289,1050.5], [47.421161,11.099118,1051.25] ] });
+				trk[t].segments.push({ color:'#8ee600', points:[ [47.421161,11.099118,1051.25], [47.421056,11.098943,1051.75] ] });
+				trk[t].segments.push({ color:'#78e600', points:[ [47.421056,11.098943,1051.75], [47.420682,11.098624,1052] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.420682,11.098624,1052], [47.420442,11.098509,1054.75] ] });
+				trk[t].segments.push({ color:'#e6b600', points:[ [47.420442,11.098509,1054.75], [47.419993,11.098464,1063] ] });
+				trk[t].segments.push({ color:'#81e600', points:[ [47.419993,11.098464,1063], [47.41957,11.098098,1063.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41957,11.098098,1063.75], [47.419483,11.097861,1061.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.419483,11.097861,1061.5], [47.419339,11.097535,1059] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.419339,11.097535,1059], [47.419326,11.097523,1059] ] });
+				trk[t].segments.push({ color:'#dbe600', points:[ [47.419326,11.097523,1059], [47.419255,11.097455,1060] ] });
+				trk[t].segments.push({ color:'#e6b000', points:[ [47.419255,11.097455,1060], [47.419134,11.097339,1062.75] ] });
+				trk[t].segments.push({ color:'#e6b800', points:[ [47.419134,11.097339,1062.75], [47.418882,11.097022,1068.75] ] });
+				trk[t].segments.push({ color:'#b1e600', points:[ [47.418882,11.097022,1068.75], [47.418784,11.096803,1070] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.418784,11.096803,1070], [47.418722,11.096642,1070] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.418722,11.096642,1070], [47.418646,11.096584,1070.25] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.418646,11.096584,1070.25], [47.418594,11.096601,1070.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.418594,11.096601,1070.75], [47.418452,11.096247,1067.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.418452,11.096247,1067.5], [47.418151,11.095652,1065.75] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.418151,11.095652,1065.75], [47.418017,11.095266,1068.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.418017,11.095266,1068.5], [47.41771,11.09459,1067.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41771,11.09459,1067.5], [47.417752,11.094395,1066.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417752,11.094395,1066.75], [47.417753,11.094393,1066.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417753,11.094393,1066.75], [47.417847,11.094301,1066.75] ] });
+				trk[t].segments.push({ color:'#a0e600', points:[ [47.417847,11.094301,1066.75], [47.417984,11.094225,1067.5] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.417984,11.094225,1067.5], [47.41804,11.094235,1068] ] });
+				trk[t].segments.push({ color:'#ade600', points:[ [47.41804,11.094235,1068], [47.418036,11.094179,1068.25] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.418036,11.094179,1068.25], [47.418019,11.09391,1070.25] ] });
+				trk[t].segments.push({ color:'#e6d700', points:[ [47.418019,11.09391,1070.25], [47.417996,11.093557,1073.75] ] });
+				trk[t].segments.push({ color:'#bfe600', points:[ [47.417996,11.093557,1073.75], [47.417898,11.093109,1076.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417898,11.093109,1076.5], [47.417741,11.092487,1076.25] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.417741,11.092487,1076.25], [47.417745,11.092275,1076.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417745,11.092275,1076.5], [47.417651,11.091729,1073] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.417651,11.091729,1073], [47.417697,11.091364,1076] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417697,11.091364,1076], [47.417674,11.091135,1075.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417674,11.091135,1075.75], [47.417396,11.090298,1073.5] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.417396,11.090298,1073.5], [47.417263,11.089975,1076.5] ] });
+				trk[t].segments.push({ color:'#e67e00', points:[ [47.417263,11.089975,1076.5], [47.417265,11.089811,1079.25] ] });
+				trk[t].segments.push({ color:'#e6d900', points:[ [47.417265,11.089811,1079.25], [47.417144,11.089473,1083] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.417144,11.089473,1083], [47.416869,11.08909,1082.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.416869,11.08909,1082.75], [47.416727,11.088766,1080.75] ] });
+				trk[t].segments.push({ color:'#e2e600', points:[ [47.416727,11.088766,1080.75], [47.41677,11.087947,1087.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41677,11.087947,1087.75], [47.416641,11.087567,1086.25] ] });
+				trk[t].segments.push({ color:'#e6c300', points:[ [47.416641,11.087567,1086.25], [47.416605,11.086914,1093.75] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.416605,11.086914,1093.75], [47.416427,11.08571,1100.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.416427,11.08571,1100.25], [47.416453,11.085247,1097.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.416453,11.085247,1097.75], [47.416635,11.084632,1092.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.416635,11.084632,1092.75], [47.416628,11.084238,1091] ] });
+				trk[t].segments.push({ color:'#d4e600', points:[ [47.416628,11.084238,1091], [47.416259,11.08374,1096.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.416259,11.08374,1096.5], [47.416021,11.083229,1096] ] });
+				trk[t].segments.push({ color:'#aee600', points:[ [47.416021,11.083229,1096], [47.415494,11.0826,1100.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415494,11.0826,1100.5], [47.415424,11.082449,1100.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415424,11.082449,1100.5], [47.415269,11.081723,1096.25] ] });
+				trk[t].segments.push({ color:'#7ee600', points:[ [47.415269,11.081723,1096.25], [47.414705,11.080811,1097.25] ] });
+				trk[t].segments.push({ color:'#a3e600', points:[ [47.414705,11.080811,1097.25], [47.414494,11.080285,1099.5] ] });
+				trk[t].segments.push({ color:'#a9e600', points:[ [47.414494,11.080285,1099.5], [47.414428,11.079939,1101] ] });
+				trk[t].segments.push({ color:'#83e600', points:[ [47.414428,11.079939,1101], [47.414039,11.0791,1102.25] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.414039,11.0791,1102.25], [47.414065,11.078934,1102.75] ] });
+				trk[t].segments.push({ color:'#bfe600', points:[ [47.414065,11.078934,1102.75], [47.414253,11.078559,1105.5] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.414253,11.078559,1105.5], [47.414498,11.077843,1117.75] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.414498,11.077843,1117.75], [47.41457,11.077428,1122.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41457,11.077428,1122.25], [47.414527,11.077326,1121.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414527,11.077326,1121.75], [47.414389,11.077238,1118.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414389,11.077238,1118.5], [47.414141,11.076829,1116.25] ] });
+				trk[t].segments.push({ color:'#cce600', points:[ [47.414141,11.076829,1116.25], [47.414138,11.07639,1119.25] ] });
+				trk[t].segments.push({ color:'#d5e600', points:[ [47.414138,11.07639,1119.25], [47.41398,11.075878,1123.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41398,11.075878,1123.5], [47.413986,11.075318,1123.5] ] });
+				trk[t].segments.push({ color:'#88e600', points:[ [47.413986,11.075318,1123.5], [47.413924,11.074874,1124.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413924,11.074874,1124.25], [47.413772,11.074606,1124.25] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.413772,11.074606,1124.25], [47.413762,11.07445,1125.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413762,11.07445,1125.25], [47.413627,11.074431,1122] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413627,11.074431,1122], [47.413511,11.074163,1120.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413511,11.074163,1120.25], [47.413284,11.07406,1117.5] ] });
+				trk[t].segments.push({ color:'#e66700', points:[ [47.413284,11.07406,1117.5], [47.412697,11.073261,1139.25] ] });
+				trk[t].segments.push({ color:'#e64900', points:[ [47.412697,11.073261,1139.25], [47.412578,11.0727,1151.5] ] });
+				trk[t].segments.push({ color:'#e6c500', points:[ [47.412578,11.0727,1151.5], [47.412494,11.072574,1153.5] ] });
+				trk[t].segments.push({ color:'#e69400', points:[ [47.412494,11.072574,1153.5], [47.41244,11.07241,1156.25] ] });
+				trk[t].segments.push({ color:'#e6ce00', points:[ [47.41244,11.07241,1156.25], [47.412392,11.072315,1157.5] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.412392,11.072315,1157.5], [47.412329,11.072244,1158.25] ] });
+				trk[t].segments.push({ color:'#e67900', points:[ [47.412329,11.072244,1158.25], [47.412292,11.072017,1162.25] ] });
+				trk[t].segments.push({ color:'#97e600', points:[ [47.412292,11.072017,1162.25], [47.412099,11.071797,1163.25] ] });
+				trk[t].segments.push({ color:'#b6e600', points:[ [47.412099,11.071797,1163.25], [47.41186,11.071399,1166] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.41186,11.071399,1166], [47.411663,11.0709,1172.5] ] });
+				trk[t].segments.push({ color:'#e68000', points:[ [47.411663,11.0709,1172.5], [47.411628,11.070649,1176.75] ] });
+				trk[t].segments.push({ color:'#e69f00', points:[ [47.411628,11.070649,1176.75], [47.41138,11.069717,1191] ] });
+				trk[t].segments.push({ color:'#e3e600', points:[ [47.41138,11.069717,1191], [47.411285,11.069532,1193] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.411285,11.069532,1193], [47.410879,11.069152,1188.5] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.410879,11.069152,1188.5], [47.410803,11.068971,1189] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.410803,11.068971,1189], [47.410784,11.06877,1191.25] ] });
+				trk[t].segments.push({ color:'#e6b500', points:[ [47.410784,11.06877,1191.25], [47.41083,11.068377,1196.25] ] });
+				trk[t].segments.push({ color:'#e6c000', points:[ [47.41083,11.068377,1196.25], [47.410744,11.067992,1201] ] });
+				trk[t].segments.push({ color:'#e68800', points:[ [47.410744,11.067992,1201], [47.41075,11.067758,1204.75] ] });
+				trk[t].segments.push({ color:'#e63c00', points:[ [47.41075,11.067758,1204.75], [47.410806,11.067607,1208.5] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.410806,11.067607,1208.5], [47.410839,11.067378,1210] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410839,11.067378,1210], [47.410852,11.067184,1209] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410852,11.067184,1209], [47.410858,11.066937,1207.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410858,11.066937,1207.5], [47.410814,11.066841,1205.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410814,11.066841,1205.75], [47.41077,11.066683,1204] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41077,11.066683,1204], [47.410797,11.066536,1202.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410797,11.066536,1202.5], [47.410646,11.066294,1198] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410646,11.066294,1198], [47.410401,11.065935,1193.75] ] });
+				trk[t].segments.push({ color:'#e6dd00', points:[ [47.410401,11.065935,1193.75], [47.410407,11.065486,1198] ] });
+				trk[t].segments.push({ color:'#afe600', points:[ [47.410407,11.065486,1198], [47.410107,11.063995,1205.25] ] });
+				trk[t].segments.push({ color:'#e2e600', points:[ [47.410107,11.063995,1205.25], [47.410127,11.063526,1209.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.410127,11.063526,1209.25], [47.41003,11.063229,1207.75] ] });
+				trk[t].segments.push({ color:'#e6af00', points:[ [47.41003,11.063229,1207.75], [47.409992,11.062712,1214.5] ] });
+				trk[t].segments.push({ color:'#e68a00', points:[ [47.409992,11.062712,1214.5], [47.410017,11.062414,1219.25] ] });
+				trk[t].segments.push({ color:'#e62500', points:[ [47.410017,11.062414,1219.25], [47.410078,11.062245,1223.75] ] });
+				trk[t].segments.push({ color:'#e6cd00', points:[ [47.410078,11.062245,1223.75], [47.410101,11.061592,1230.75] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.410101,11.061592,1230.75], [47.410015,11.06087,1232.25] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.410015,11.06087,1232.25], [47.409971,11.060652,1233.5] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.409971,11.060652,1233.5], [47.40989,11.05991,1241.25] ] });
+				trk[t].segments.push({ color:'#e6a600', points:[ [47.40989,11.05991,1241.25], [47.409424,11.058146,1267.25] ] });
+				trk[t].segments.push({ color:'#e6ba00', points:[ [47.409424,11.058146,1267.25], [47.409257,11.057123,1280] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.409257,11.057123,1280], [47.409146,11.056656,1280.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.409146,11.056656,1280.75], [47.408856,11.055981,1270.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408856,11.055981,1270.75], [47.408699,11.055231,1268] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408699,11.055231,1268], [47.408649,11.054885,1267.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408649,11.054885,1267.5], [47.408645,11.054789,1267.5] ] });
+				trk[t].segments.push({ color:'#e6a700', points:[ [47.408645,11.054789,1267.5], [47.408653,11.054735,1268.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408653,11.054735,1268.25], [47.408672,11.054701,1269.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408672,11.054701,1269.5], [47.408695,11.05468,1271] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408695,11.05468,1271], [47.408734,11.054681,1273.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408734,11.054681,1273.5], [47.40877,11.054657,1275.75] ] });
+				trk[t].segments.push({ color:'#e62c00', points:[ [47.40877,11.054657,1275.75], [47.408783,11.054618,1276.75] ] });
+				trk[t].segments.push({ color:'#c4e600', points:[ [47.408783,11.054618,1276.75], [47.408784,11.054578,1277] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408784,11.054578,1277], [47.40872,11.054335,1274] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40872,11.054335,1274], [47.408695,11.054043,1273.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408695,11.054043,1273.75], [47.408672,11.053916,1273.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408672,11.053916,1273.25], [47.40863,11.053735,1272] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40863,11.053735,1272], [47.408441,11.053346,1263] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.408441,11.053346,1263], [47.408465,11.053159,1264] ] });
+				trk[t].segments.push({ color:'#e65f00', points:[ [47.408465,11.053159,1264], [47.408688,11.05264,1275.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408688,11.05264,1275.75], [47.408575,11.052208,1273] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408575,11.052208,1273], [47.408706,11.051992,1284.25] ] });
+				trk[t].segments.push({ color:'#7ae600', points:[ [47.408706,11.051992,1284.25], [47.408634,11.051613,1284.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408634,11.051613,1284.5], [47.408611,11.051388,1280.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408611,11.051388,1280.75], [47.408545,11.051039,1273.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408545,11.051039,1273.25], [47.408544,11.050828,1271] ] });
+				trk[t].segments.push({ color:'#e61300', points:[ [47.408544,11.050828,1271], [47.408623,11.050641,1276.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408623,11.050641,1276.5], [47.408509,11.050343,1271] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408509,11.050343,1271], [47.4084,11.050178,1265.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.4084,11.050178,1265.25], [47.408286,11.049582,1261.75] ] });
+				trk[t].segments.push({ color:'#9de600', points:[ [47.408286,11.049582,1261.75], [47.408279,11.04943,1262.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408279,11.04943,1262.25], [47.408217,11.049269,1261.5] ] });
+				trk[t].segments.push({ color:'#88e600', points:[ [47.408217,11.049269,1261.5], [47.408218,11.049119,1261.75] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.408218,11.049119,1261.75], [47.408245,11.048935,1262] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408245,11.048935,1262], [47.408224,11.048715,1261.25] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.408224,11.048715,1261.25], [47.408282,11.048585,1261.5] ] });
+				trk[t].segments.push({ color:'#93e600', points:[ [47.408282,11.048585,1261.5], [47.408336,11.048526,1261.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408336,11.048526,1261.75], [47.408438,11.048495,1269.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408438,11.048495,1269.25], [47.40848,11.048444,1272.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40848,11.048444,1272.5], [47.408477,11.048364,1272] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408477,11.048364,1272], [47.408454,11.04829,1271] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408454,11.04829,1271], [47.408389,11.048141,1268.25] ] });
+				trk[t].segments.push({ color:'#9ce600', points:[ [47.408389,11.048141,1268.25], [47.408292,11.047769,1269.5] ] });
+				trk[t].segments.push({ color:'#e66f00', points:[ [47.408292,11.047769,1269.5], [47.408341,11.047456,1275.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408341,11.047456,1275.25], [47.408435,11.047,1291] ] });
+				trk[t].segments.push({ color:'#e64400', points:[ [47.408435,11.047,1291], [47.408445,11.046717,1297] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.408445,11.046717,1297], [47.40842,11.046306,1301.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40842,11.046306,1301.75], [47.408303,11.046177,1295.75] ] });
+				trk[t].segments.push({ color:'#e6b000', points:[ [47.408303,11.046177,1295.75], [47.408268,11.045851,1300] ] });
+				trk[t].segments.push({ color:'#b6e600', points:[ [47.408268,11.045851,1300], [47.408219,11.045619,1301.25] ] });
+				trk[t].segments.push({ color:'#e66a00', points:[ [47.408219,11.045619,1301.25], [47.408281,11.045348,1306.5] ] });
+				trk[t].segments.push({ color:'#e6d500', points:[ [47.408281,11.045348,1306.5], [47.408268,11.045149,1308.5] ] });
+				trk[t].segments.push({ color:'#a2e600', points:[ [47.408268,11.045149,1308.5], [47.408237,11.045019,1309] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.408237,11.045019,1309], [47.408189,11.04453,1316.75] ] });
+				trk[t].segments.push({ color:'#e65a00', points:[ [47.408189,11.04453,1316.75], [47.408088,11.044011,1327.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408088,11.044011,1327.25], [47.408093,11.04393,1330.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408093,11.04393,1330.75], [47.407983,11.043656,1339.75] ] });
+				trk[t].segments.push({ color:'#e61e00', points:[ [47.407983,11.043656,1339.75], [47.407889,11.043501,1344.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407889,11.043501,1344.75], [47.407898,11.043415,1348.75] ] });
+				trk[t].segments.push({ color:'#e60800', points:[ [47.407898,11.043415,1348.75], [47.407861,11.04336,1350.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407861,11.04336,1350.75], [47.407794,11.043356,1349.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407794,11.043356,1349.75], [47.407734,11.043397,1346.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407734,11.043397,1346.75], [47.407644,11.043386,1345.5] ] });
+				trk[t].segments.push({ color:'#e6c400', points:[ [47.407644,11.043386,1345.5], [47.407559,11.043297,1347.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407559,11.043297,1347.25], [47.407395,11.043259,1345.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407395,11.043259,1345.5], [47.407279,11.043299,1343.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407279,11.043299,1343.75], [47.40688,11.043439,1338] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40688,11.043439,1338], [47.406772,11.043489,1336.75] ] });
+				trk[t].segments.push({ color:'#9be600', points:[ [47.406772,11.043489,1336.75], [47.406717,11.043478,1337] ] });
+				trk[t].segments.push({ color:'#bde600', points:[ [47.406717,11.043478,1337], [47.406683,11.043407,1337.5] ] });
+				trk[t].segments.push({ color:'#e63b00', points:[ [47.406683,11.043407,1337.5], [47.406513,11.042756,1352.75] ] });
+				trk[t].segments.push({ color:'#dfe600', points:[ [47.406513,11.042756,1352.75], [47.406499,11.042515,1354.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406499,11.042515,1354.75], [47.406424,11.041658,1351.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406424,11.041658,1351.25], [47.406421,11.041415,1350.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406421,11.041415,1350.75], [47.406579,11.040826,1345] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.406579,11.040826,1345], [47.406583,11.040646,1345.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406583,11.040646,1345.25], [47.4066,11.040356,1345.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.4066,11.040356,1345.25], [47.406605,11.040138,1345.25] ] });
+				trk[t].segments.push({ color:'#d1e600', points:[ [47.406605,11.040138,1345.25], [47.406492,11.039683,1348.75] ] });
+				trk[t].segments.push({ color:'#d4e600', points:[ [47.406492,11.039683,1348.75], [47.406497,11.039516,1350] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.406497,11.039516,1350], [47.406521,11.039322,1351.25] ] });
+				trk[t].segments.push({ color:'#e0e600', points:[ [47.406521,11.039322,1351.25], [47.406551,11.039088,1353.25] ] });
+				trk[t].segments.push({ color:'#e6af00', points:[ [47.406551,11.039088,1353.25], [47.406539,11.038857,1356.25] ] });
+				trk[t].segments.push({ color:'#e6dc00', points:[ [47.406539,11.038857,1356.25], [47.406514,11.038787,1357] ] });
+				trk[t].segments.push({ color:'#c9e600', points:[ [47.406514,11.038787,1357], [47.406466,11.038699,1357.75] ] });
+				trk[t].segments.push({ color:'#90e600', points:[ [47.406466,11.038699,1357.75], [47.406413,11.038619,1358] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406413,11.038619,1358], [47.406322,11.038535,1357.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406322,11.038535,1357.75], [47.406239,11.038449,1357.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406239,11.038449,1357.5], [47.406155,11.038397,1356.5] ] });
+				trk[t].segments.push({ color:'#e6e200', points:[ [47.406155,11.038397,1356.5], [47.406087,11.038025,1360] ] });
+				trk[t].segments.push({ color:'#e6cd00', points:[ [47.406087,11.038025,1360], [47.406059,11.037819,1362.25] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.406059,11.037819,1362.25], [47.406025,11.037555,1365.25] ] });
+				trk[t].segments.push({ color:'#a3e600', points:[ [47.406025,11.037555,1365.25], [47.405831,11.037265,1366.75] ] });
+				trk[t].segments.push({ color:'#e6c900', points:[ [47.405831,11.037265,1366.75], [47.405668,11.037131,1369.75] ] });
+				trk[t].segments.push({ color:'#d9e600', points:[ [47.405668,11.037131,1369.75], [47.405588,11.037082,1370.75] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.405588,11.037082,1370.75], [47.405517,11.037015,1371.75] ] });
+				trk[t].segments.push({ color:'#94e600', points:[ [47.405517,11.037015,1371.75], [47.405386,11.036991,1372.25] ] });
+				trk[t].segments.push({ color:'#96e600', points:[ [47.405386,11.036991,1372.25], [47.405264,11.036948,1372.75] ] });
+				trk[t].segments.push({ color:'#bde600', points:[ [47.405264,11.036948,1372.75], [47.405149,11.036812,1374] ] });
+				trk[t].segments.push({ color:'#c3e600', points:[ [47.405149,11.036812,1374], [47.405106,11.036663,1375] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405106,11.036663,1375], [47.40508,11.036527,1374.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40508,11.036527,1374.5], [47.405079,11.036463,1374.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405079,11.036463,1374.25], [47.405087,11.036405,1374] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405087,11.036405,1374], [47.405128,11.036187,1373.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405128,11.036187,1373.25], [47.405134,11.036004,1372.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405134,11.036004,1372.75], [47.405185,11.035895,1372.75] ] });
+				trk[t].segments.push({ color:'#85e600', points:[ [47.405185,11.035895,1372.75], [47.405225,11.035725,1373] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405225,11.035725,1373], [47.405205,11.035653,1373] ] });
+				trk[t].segments.push({ color:'#91e600', points:[ [47.405205,11.035653,1373], [47.405217,11.035438,1373.5] ] });
+				trk[t].segments.push({ color:'#a6e600', points:[ [47.405217,11.035438,1373.5], [47.405241,11.035315,1374] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405241,11.035315,1374], [47.405243,11.035282,1374] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.405243,11.035282,1374], [47.405273,11.034947,1375] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405273,11.034947,1375], [47.405281,11.034697,1374.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405281,11.034697,1374.75], [47.405277,11.034422,1374.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405277,11.034422,1374.25], [47.40523,11.034109,1373.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40523,11.034109,1373.25], [47.40519,11.034065,1372.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40519,11.034065,1372.75], [47.405112,11.034063,1371.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405112,11.034063,1371.75], [47.405102,11.034046,1371.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405102,11.034046,1371.5], [47.405101,11.033969,1371.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405101,11.033969,1371.25], [47.405075,11.033901,1370.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405075,11.033901,1370.5], [47.405007,11.03372,1368.75] ] });
+				trk[t].segments.push({ color:'#b6e600', points:[ [47.405007,11.03372,1368.75], [47.404939,11.033616,1369.5] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.404939,11.033616,1369.5], [47.404856,11.03356,1370.75] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.404856,11.03356,1370.75], [47.404653,11.033433,1374.5] ] });
+				trk[t].segments.push({ color:'#e6aa00', points:[ [47.404653,11.033433,1374.5], [47.40447,11.033302,1378.5] ] });
+				trk[t].segments.push({ color:'#e69100', points:[ [47.40447,11.033302,1378.5], [47.404278,11.033139,1383.5] ] });
+				trk[t].segments.push({ color:'#e6bc00', points:[ [47.404278,11.033139,1383.5], [47.404141,11.032929,1387] ] });
+				trk[t].segments.push({ color:'#e66f00', points:[ [47.404141,11.032929,1387], [47.403825,11.032674,1396.5] ] });
+				trk[t].segments.push({ color:'#e66e00', points:[ [47.403825,11.032674,1396.5], [47.403488,11.032539,1405.75] ] });
+				trk[t].segments.push({ color:'#e67400', points:[ [47.403488,11.032539,1405.75], [47.403421,11.032482,1407.75] ] });
+				trk[t].segments.push({ color:'#e65a00', points:[ [47.403421,11.032482,1407.75], [47.403361,11.032466,1409.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403361,11.032466,1409.5], [47.403259,11.032517,1414.25] ] });
+				trk[t].segments.push({ color:'#e68000', points:[ [47.403259,11.032517,1414.25], [47.403229,11.032405,1416.25] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.403229,11.032405,1416.25], [47.403204,11.032164,1418.75] ] });
+				trk[t].segments.push({ color:'#e6b800', points:[ [47.403204,11.032164,1418.75], [47.403168,11.031926,1421.75] ] });
+				trk[t].segments.push({ color:'#e62a00', points:[ [47.403168,11.031926,1421.75], [47.403033,11.031684,1429] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403033,11.031684,1429], [47.403057,11.031515,1427.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403057,11.031515,1427.5], [47.403051,11.031492,1427.5] ] });
+				trk[t].segments.push({ color:'#e6e300', points:[ [47.403051,11.031492,1427.5], [47.403017,11.031332,1429] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403017,11.031332,1429], [47.403025,11.031011,1427.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403025,11.031011,1427.75], [47.403155,11.030526,1424.25] ] });
+				trk[t].segments.push({ color:'#e65300', points:[ [47.403155,11.030526,1424.25], [47.402978,11.030099,1434.25] ] });
+				trk[t].segments.push({ color:'#e69200', points:[ [47.402978,11.030099,1434.25], [47.402846,11.029921,1438.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402846,11.029921,1438.25], [47.402784,11.029769,1438] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402784,11.029769,1438], [47.402706,11.029576,1436.75] ] });
+				trk[t].segments.push({ color:'#7ae600', points:[ [47.402706,11.029576,1436.75], [47.402439,11.029262,1437] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402439,11.029262,1437], [47.402423,11.029138,1436.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402423,11.029138,1436.5], [47.402492,11.028893,1435] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.402492,11.028893,1435], [47.40251,11.028801,1436] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.40251,11.028801,1436], [47.40271,11.028334,1441.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40271,11.028334,1441.75], [47.40285,11.028076,1441.75] ] });
+				trk[t].segments.push({ color:'#8ae600', points:[ [47.40285,11.028076,1441.75], [47.402913,11.027962,1442] ] });
+				trk[t].segments.push({ color:'#78e600', points:[ [47.402913,11.027962,1442], [47.403259,11.027467,1442.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403259,11.027467,1442.25], [47.403345,11.02725,1441.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403345,11.02725,1441.75], [47.403333,11.027002,1441.25] ] });
+				trk[t].segments.push({ color:'#8ce600', points:[ [47.403333,11.027002,1441.25], [47.403414,11.026773,1441.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403414,11.026773,1441.75], [47.403376,11.026641,1441.75] ] });
+				trk[t].segments.push({ color:'#cfe600', points:[ [47.403376,11.026641,1441.75], [47.403287,11.026522,1443] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.403287,11.026522,1443], [47.403282,11.026489,1443.25] ] });
+				trk[t].segments.push({ color:'#e6c000', points:[ [47.403282,11.026489,1443.25], [47.40323,11.026135,1447.5] ] });
+				trk[t].segments.push({ color:'#e6dd00', points:[ [47.40323,11.026135,1447.5], [47.40318,11.025881,1450] ] });
+				trk[t].segments.push({ color:'#7ae600', points:[ [47.40318,11.025881,1450], [47.403029,11.025559,1450.25] ] });
+				trk[t].segments.push({ color:'#b4e600', points:[ [47.403029,11.025559,1450.25], [47.402739,11.024997,1453.75] ] });
+				trk[t].segments.push({ color:'#9ee600', points:[ [47.402739,11.024997,1453.75], [47.402589,11.024694,1455] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.402589,11.024694,1455], [47.402581,11.024279,1457.25] ] });
+				trk[t].segments.push({ color:'#9de600', points:[ [47.402581,11.024279,1457.25], [47.40271,11.024147,1458] ] });
+				trk[t].segments.push({ color:'#e6a800', points:[ [47.40271,11.024147,1458], [47.402616,11.023886,1462] ] });
+				trk[t].segments.push({ color:'#e6ad00', points:[ [47.402616,11.023886,1462], [47.402478,11.023565,1467] ] });
+				trk[t].segments.push({ color:'#e64c00', points:[ [47.402478,11.023565,1467], [47.402391,11.023527,1469.75] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.402391,11.023527,1469.75], [47.402316,11.023514,1471.5] ] });
+				trk[t].segments.push({ color:'#e64200', points:[ [47.402316,11.023514,1471.5], [47.402198,11.023395,1476] ] });
+				trk[t].segments.push({ color:'#e61e00', points:[ [47.402198,11.023395,1476], [47.402116,11.023282,1480] ] });
+				trk[t].segments.push({ color:'#e61000', points:[ [47.402116,11.023282,1480], [47.402062,11.023223,1482.5] ] });
+				trk[t].segments.push({ color:'#e68300', points:[ [47.402062,11.023223,1482.5], [47.402079,11.023151,1483.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.402079,11.023151,1483.75], [47.402025,11.023067,1487] ] });
+				trk[t].segments.push({ color:'#e63400', points:[ [47.402025,11.023067,1487], [47.402028,11.022989,1488.75] ] });
+				trk[t].segments.push({ color:'#e67d00', points:[ [47.402028,11.022989,1488.75], [47.401958,11.022974,1490.5] ] });
+				trk[t].segments.push({ color:'#e61700', points:[ [47.401958,11.022974,1490.5], [47.401954,11.022791,1495] ] });
+				trk[t].segments.push({ color:'#e6a400', points:[ [47.401954,11.022791,1495], [47.401905,11.022787,1496] ] });
+				trk[t].segments.push({ color:'#e61200', points:[ [47.401905,11.022787,1496], [47.401898,11.022728,1497.5] ] });
+				trk[t].segments.push({ color:'#e66300', points:[ [47.401898,11.022728,1497.5], [47.401802,11.022693,1500.25] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.401802,11.022693,1500.25], [47.401843,11.022603,1501.5] ] });
+				trk[t].segments.push({ color:'#e63d00', points:[ [47.401843,11.022603,1501.5], [47.401844,11.022557,1502.5] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.401844,11.022557,1502.5], [47.401723,11.022559,1504.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.401723,11.022559,1504.5], [47.401706,11.022484,1506.75] ] });
+				trk[t].segments.push({ color:'#e62100', points:[ [47.401706,11.022484,1506.75], [47.401763,11.022339,1510.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.401763,11.022339,1510.75], [47.40174,11.022283,1513.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40174,11.022283,1513.25], [47.401639,11.022347,1513.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.401639,11.022347,1513.25], [47.401613,11.022316,1515.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.401613,11.022316,1515.5], [47.401612,11.02226,1517.5] ] });
+				trk[t].segments.push({ color:'#e62900', points:[ [47.401612,11.02226,1517.5], [47.401651,11.022098,1521.5] ] });
+				trk[t].segments.push({ color:'#e64f00', points:[ [47.401651,11.022098,1521.5], [47.4017,11.021984,1524.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.4017,11.021984,1524.25], [47.401732,11.021826,1529.5] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.401732,11.021826,1529.5], [47.401802,11.021764,1530.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.401802,11.021764,1530.75], [47.401904,11.021505,1541] ] });
+				trk[t].segments.push({ color:'#e6ac00', points:[ [47.401904,11.021505,1541], [47.40208,11.02139,1544.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.40208,11.02139,1544.75], [47.402137,11.021281,1549.5] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.402137,11.021281,1549.5], [47.402329,11.021189,1552.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402329,11.021189,1552.5], [47.402508,11.021319,1545] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402508,11.021319,1545], [47.40257,11.021364,1542.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40257,11.021364,1542.5], [47.402645,11.02141,1540.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402645,11.02141,1540.5], [47.402715,11.021469,1538] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.402715,11.021469,1538], [47.40279,11.021566,1533.25] ] });
+				trk[t].segments.push({ color:'#c8e600', points:[ [47.40279,11.021566,1533.25], [47.40292,11.021562,1534.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.40292,11.021562,1534.5], [47.402874,11.0215,1537.5] ] });
+				trk[t].segments.push({ color:'#e69100', points:[ [47.402874,11.0215,1537.5], [47.402972,11.021473,1539.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.402972,11.021473,1539.75], [47.402896,11.021331,1546.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.402896,11.021331,1546.75], [47.40287,11.021128,1557.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40287,11.021128,1557.25], [47.403149,11.021278,1551.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403149,11.021278,1551.5], [47.403098,11.020846,1574.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403098,11.020846,1574.25], [47.403272,11.020881,1573.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403272,11.020881,1573.75], [47.403274,11.020725,1583] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403274,11.020725,1583], [47.403243,11.020674,1585.75] ] });
+				trk[t].segments.push({ color:'#e68900', points:[ [47.403243,11.020674,1585.75], [47.403183,11.020641,1587.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403183,11.020641,1587.25], [47.403166,11.020601,1589.5] ] });
+				trk[t].segments.push({ color:'#e69600', points:[ [47.403166,11.020601,1589.5], [47.403279,11.020575,1592] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.403279,11.020575,1592], [47.403415,11.020687,1587.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403415,11.020687,1587.25], [47.403385,11.020568,1593.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403385,11.020568,1593.75], [47.403286,11.020339,1606.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403286,11.020339,1606.25], [47.403332,11.020206,1614.5] ] });
+				trk[t].segments.push({ color:'#e65800', points:[ [47.403332,11.020206,1614.5], [47.403468,11.020173,1618.5] ] });
+				trk[t].segments.push({ color:'#e6a400', points:[ [47.403468,11.020173,1618.5], [47.403714,11.020154,1623.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.403714,11.020154,1623.5], [47.40393,11.019926,1640] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40393,11.019926,1640], [47.404013,11.019948,1639.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404013,11.019948,1639.75], [47.404115,11.01984,1647.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404115,11.01984,1647.25], [47.40419,11.019763,1653] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.40419,11.019763,1653], [47.4043,11.019619,1662.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.4043,11.019619,1662.75], [47.404435,11.019479,1672.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404435,11.019479,1672.25], [47.404551,11.019314,1683.25] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.404551,11.019314,1683.25], [47.404471,11.019266,1685.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404471,11.019266,1685.25], [47.404493,11.0192,1689.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404493,11.0192,1689.5], [47.404474,11.019156,1691.75] ] });
+				trk[t].segments.push({ color:'#e64200', points:[ [47.404474,11.019156,1691.75], [47.404512,11.019139,1693] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404512,11.019139,1693], [47.404502,11.019061,1697] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.404502,11.019061,1697], [47.404569,11.019052,1698] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404569,11.019052,1698], [47.404552,11.018957,1702.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404552,11.018957,1702.75], [47.40459,11.018925,1704.75] ] });
+				trk[t].segments.push({ color:'#cbe600', points:[ [47.40459,11.018925,1704.75], [47.40469,11.018924,1705.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.40469,11.018924,1705.75], [47.404659,11.018793,1712] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404659,11.018793,1712], [47.404658,11.018693,1717] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404658,11.018693,1717], [47.404643,11.018597,1721.75] ] });
+				trk[t].segments.push({ color:'#bae600', points:[ [47.404643,11.018597,1721.75], [47.404737,11.018589,1722.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404737,11.018589,1722.5], [47.404728,11.018541,1725] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404728,11.018541,1725], [47.404692,11.018477,1728] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404692,11.018477,1728], [47.404771,11.018359,1734] ] });
+				trk[t].segments.push({ color:'#e61100', points:[ [47.404771,11.018359,1734], [47.404722,11.018306,1736.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404722,11.018306,1736.25], [47.404742,11.018266,1738] ] });
+				trk[t].segments.push({ color:'#e6d700', points:[ [47.404742,11.018266,1738], [47.404792,11.018247,1738.75] ] });
+				trk[t].segments.push({ color:'#e64f00', points:[ [47.404792,11.018247,1738.75], [47.404749,11.018209,1740.25] ] });
+				trk[t].segments.push({ color:'#e68800', points:[ [47.404749,11.018209,1740.25], [47.404806,11.018167,1741.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404806,11.018167,1741.75], [47.404792,11.01812,1743.75] ] });
+				trk[t].segments.push({ color:'#dfe600', points:[ [47.404792,11.01812,1743.75], [47.404851,11.018095,1744.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404851,11.018095,1744.5], [47.404809,11.018016,1747.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404809,11.018016,1747.75], [47.404836,11.017852,1753.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404836,11.017852,1753.75], [47.404794,11.017684,1760.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.404794,11.017684,1760.5], [47.404827,11.017489,1767.5] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.404827,11.017489,1767.5], [47.40485,11.017334,1770.5] ] });
+				trk[t].segments.push({ color:'#e63900', points:[ [47.40485,11.017334,1770.5], [47.40483,11.017317,1771.25] ] });
+				trk[t].segments.push({ color:'#e62a00', points:[ [47.40483,11.017317,1771.25], [47.404825,11.017231,1773.25] ] });
+				trk[t].segments.push({ color:'#e6c500', points:[ [47.404825,11.017231,1773.25], [47.404896,11.017036,1775.75] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.404896,11.017036,1775.75], [47.40495,11.016811,1778.25] ] });
+				trk[t].segments.push({ color:'#92e600', points:[ [47.40495,11.016811,1778.25], [47.405061,11.016685,1778.75] ] });
+				trk[t].segments.push({ color:'#cbe600', points:[ [47.405061,11.016685,1778.75], [47.405104,11.016321,1781.25] ] });
+				trk[t].segments.push({ color:'#b6e600', points:[ [47.405104,11.016321,1781.25], [47.405085,11.016036,1782.75] ] });
+				trk[t].segments.push({ color:'#e6db00', points:[ [47.405085,11.016036,1782.75], [47.405135,11.015898,1784.25] ] });
+				trk[t].segments.push({ color:'#e6d700', points:[ [47.405135,11.015898,1784.25], [47.405217,11.015809,1785.75] ] });
+				trk[t].segments.push({ color:'#a1e600', points:[ [47.405217,11.015809,1785.75], [47.405234,11.015743,1786] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405234,11.015743,1786], [47.40522,11.015682,1785.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.40522,11.015682,1785.5], [47.405226,11.015594,1785.5] ] });
+				trk[t].segments.push({ color:'#ace600', points:[ [47.405226,11.015594,1785.5], [47.405261,11.015493,1786] ] });
+				trk[t].segments.push({ color:'#e6c400', points:[ [47.405261,11.015493,1786], [47.405333,11.015466,1787.25] ] });
+				trk[t].segments.push({ color:'#e6a900', points:[ [47.405333,11.015466,1787.25], [47.405408,11.015448,1788.75] ] });
+				trk[t].segments.push({ color:'#d1e600', points:[ [47.405408,11.015448,1788.75], [47.405437,11.015394,1789.25] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.405437,11.015394,1789.25], [47.405449,11.015351,1789.5] ] });
+				trk[t].segments.push({ color:'#e69d00', points:[ [47.405449,11.015351,1789.5], [47.405508,11.015353,1790.75] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.405508,11.015353,1790.75], [47.405547,11.015459,1791] ] });
+				trk[t].segments.push({ color:'#e6a800', points:[ [47.405547,11.015459,1791], [47.405619,11.015427,1792.5] ] });
+				trk[t].segments.push({ color:'#e6a100', points:[ [47.405619,11.015427,1792.5], [47.405639,11.015407,1793] ] });
+				trk[t].segments.push({ color:'#c2e600', points:[ [47.405639,11.015407,1793], [47.405659,11.015435,1793.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405659,11.015435,1793.25], [47.40565,11.015494,1792.75] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.40565,11.015494,1792.75], [47.40567,11.015524,1793] ] });
+				trk[t].segments.push({ color:'#e6b700', points:[ [47.40567,11.015524,1793], [47.405721,11.015494,1794] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405721,11.015494,1794], [47.405716,11.015539,1793.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405716,11.015539,1793.75], [47.405711,11.015585,1793.5] ] });
+				trk[t].segments.push({ color:'#e6d400', points:[ [47.405711,11.015585,1793.5], [47.405761,11.015585,1794.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405761,11.015585,1794.25], [47.405763,11.015637,1794] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.405763,11.015637,1794], [47.405812,11.015628,1794.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405812,11.015628,1794.75], [47.405829,11.015666,1794.75] ] });
+				trk[t].segments.push({ color:'#e6bc00', points:[ [47.405829,11.015666,1794.75], [47.405876,11.015712,1795.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.405876,11.015712,1795.75], [47.4059,11.015841,1795.5] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.4059,11.015841,1795.5], [47.406005,11.015902,1797.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.406005,11.015902,1797.25], [47.406104,11.016087,1796.75] ] });
+				trk[t].segments.push({ color:'#e6b500', points:[ [47.406104,11.016087,1796.75], [47.406196,11.016121,1798.5] ] });
+				trk[t].segments.push({ color:'#a3e600', points:[ [47.406196,11.016121,1798.5], [47.406309,11.016234,1799.25] ] });
+				trk[t].segments.push({ color:'#e6a400', points:[ [47.406309,11.016234,1799.25], [47.406515,11.016272,1803.5] ] });
+				trk[t].segments.push({ color:'#e6cc00', points:[ [47.406515,11.016272,1803.5], [47.406687,11.016388,1806.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.406687,11.016388,1806.5], [47.406854,11.016461,1818.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.406854,11.016461,1818.5], [47.407021,11.016617,1829.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407021,11.016617,1829.25], [47.407108,11.016623,1836] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407108,11.016623,1836], [47.407162,11.016423,1843.75] ] });
+				trk[t].segments.push({ color:'#e63d00', points:[ [47.407162,11.016423,1843.75], [47.407187,11.016068,1851.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407187,11.016068,1851.5], [47.407224,11.015954,1856.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407224,11.015954,1856.25], [47.407294,11.015921,1862.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407294,11.015921,1862.25], [47.407405,11.015987,1870] ] });
+				trk[t].segments.push({ color:'#e63700', points:[ [47.407405,11.015987,1870], [47.407422,11.015797,1874.25] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.407422,11.015797,1874.25], [47.407423,11.015689,1875.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407423,11.015689,1875.5], [47.407341,11.015377,1873.75] ] });
+				trk[t].segments.push({ color:'#e62800', points:[ [47.407341,11.015377,1873.75], [47.407379,11.015148,1879.25] ] });
+				trk[t].segments.push({ color:'#e60900', points:[ [47.407379,11.015148,1879.25], [47.407399,11.015076,1881.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407399,11.015076,1881.25], [47.407516,11.015189,1887.25] ] });
+				trk[t].segments.push({ color:'#e6e000', points:[ [47.407516,11.015189,1887.25], [47.407463,11.014682,1892] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407463,11.014682,1892], [47.407565,11.014422,1903] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407565,11.014422,1903], [47.407755,11.014229,1917.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407755,11.014229,1917.75], [47.407811,11.014191,1921.5] ] });
+				trk[t].segments.push({ color:'#e6a200', points:[ [47.407811,11.014191,1921.5], [47.407833,11.014234,1922.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.407833,11.014234,1922.25], [47.40783,11.014298,1921.25] ] });
+				trk[t].segments.push({ color:'#e67a00', points:[ [47.40783,11.014298,1921.25], [47.407907,11.014432,1924.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.407907,11.014432,1924.25], [47.407953,11.014336,1928.25] ] });
+				trk[t].segments.push({ color:'#e60400', points:[ [47.407953,11.014336,1928.25], [47.408034,11.014432,1932.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408034,11.014432,1932.25], [47.40806,11.014446,1933.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.40806,11.014446,1933.75], [47.408075,11.014411,1935] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.408075,11.014411,1935], [47.408082,11.014325,1936] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408082,11.014325,1936], [47.408103,11.014312,1937.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408103,11.014312,1937.5], [47.408131,11.014331,1939] ] });
+				trk[t].segments.push({ color:'#e64500', points:[ [47.408131,11.014331,1939], [47.408198,11.014449,1942.25] ] });
+				trk[t].segments.push({ color:'#e65f00', points:[ [47.408198,11.014449,1942.25], [47.408294,11.014084,1949.75] ] });
+				trk[t].segments.push({ color:'#e69800', points:[ [47.408294,11.014084,1949.75], [47.408329,11.014191,1951.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408329,11.014191,1951.5], [47.408363,11.014208,1953.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408363,11.014208,1953.25], [47.408385,11.01422,1954.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408385,11.01422,1954.75], [47.408532,11.014395,1964.25] ] });
+				trk[t].segments.push({ color:'#c2e600', points:[ [47.408532,11.014395,1964.25], [47.408538,11.014355,1964.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.408538,11.014355,1964.5], [47.408535,11.014277,1964.25] ] });
+				trk[t].segments.push({ color:'#e6b200', points:[ [47.408535,11.014277,1964.25], [47.408583,11.014052,1967.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408583,11.014052,1967.25], [47.408601,11.014041,1968.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408601,11.014041,1968.5], [47.408757,11.014301,1978.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408757,11.014301,1978.5], [47.408775,11.014312,1979.75] ] });
+				trk[t].segments.push({ color:'#e68f00', points:[ [47.408775,11.014312,1979.75], [47.408869,11.014019,1984.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.408869,11.014019,1984.75], [47.408897,11.014006,1986.5] ] });
+				trk[t].segments.push({ color:'#e62100', points:[ [47.408897,11.014006,1986.5], [47.409002,11.014218,1992.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409002,11.014218,1992.75], [47.409028,11.014215,1994.25] ] });
+				trk[t].segments.push({ color:'#e65d00', points:[ [47.409028,11.014215,1994.25], [47.40912,11.01392,2000.5] ] });
+				trk[t].segments.push({ color:'#e6bb00', points:[ [47.40912,11.01392,2000.5], [47.409144,11.013695,2003.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409144,11.013695,2003.25], [47.40918,11.013622,2006] ] });
+				trk[t].segments.push({ color:'#e6dc00', points:[ [47.40918,11.013622,2006], [47.409189,11.013518,2007] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.409189,11.013518,2007], [47.409169,11.013389,2006.75] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.409169,11.013389,2006.75], [47.409155,11.013228,2007] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409155,11.013228,2007], [47.4092,11.013136,2010] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.4092,11.013136,2010], [47.409285,11.01303,2014.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409285,11.01303,2014.75], [47.409344,11.012993,2018] ] });
+				trk[t].segments.push({ color:'#cfe600', points:[ [47.409344,11.012993,2018], [47.409402,11.013147,2019.25] ] });
+				trk[t].segments.push({ color:'#e65c00', points:[ [47.409402,11.013147,2019.25], [47.409469,11.013208,2021.5] ] });
+				trk[t].segments.push({ color:'#e60900', points:[ [47.409469,11.013208,2021.5], [47.409502,11.013124,2024] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409502,11.013124,2024], [47.409529,11.01311,2025.25] ] });
+				trk[t].segments.push({ color:'#e6ae00', points:[ [47.409529,11.01311,2025.25], [47.409554,11.013154,2026] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.409554,11.013154,2026], [47.409549,11.013222,2025] ] });
+				trk[t].segments.push({ color:'#e64a00', points:[ [47.409549,11.013222,2025], [47.409664,11.013357,2029.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409664,11.013357,2029.5], [47.409832,11.013089,2039.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.409832,11.013089,2039.5], [47.410069,11.01295,2054.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.410069,11.01295,2054.25], [47.410167,11.012883,2061.75] ] });
+				trk[t].segments.push({ color:'#e63f00', points:[ [47.410167,11.012883,2061.75], [47.410229,11.012735,2065.5] ] });
+				trk[t].segments.push({ color:'#e61700', points:[ [47.410229,11.012735,2065.5], [47.410699,11.012293,2085.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.410699,11.012293,2085.75], [47.410908,11.012178,2098] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.410908,11.012178,2098], [47.410995,11.012157,2104.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.410995,11.012157,2104.5], [47.411043,11.01213,2108] ] });
+				trk[t].segments.push({ color:'#dce600', points:[ [47.411043,11.01213,2108], [47.411077,11.011983,2109.25] ] });
+				trk[t].segments.push({ color:'#e66b00', points:[ [47.411077,11.011983,2109.25], [47.411269,11.011701,2116.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411269,11.011701,2116.5], [47.411387,11.011569,2122.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411387,11.011569,2122.5], [47.411427,11.011513,2125.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411427,11.011513,2125.25], [47.411478,11.01152,2127.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411478,11.01152,2127.25], [47.411509,11.011516,2128.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411509,11.011516,2128.75], [47.411522,11.011515,2129.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411522,11.011515,2129.5], [47.411565,11.0114,2133] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.411565,11.0114,2133], [47.411656,11.011203,2140] ] });
+				trk[t].segments.push({ color:'#e65c00', points:[ [47.411656,11.011203,2140], [47.411862,11.010664,2152] ] });
+				trk[t].segments.push({ color:'#ace600', points:[ [47.411862,11.010664,2152], [47.41189,11.010497,2152.75] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.41189,11.010497,2152.75], [47.411961,11.010326,2155] ] });
+				trk[t].segments.push({ color:'#e67600', points:[ [47.411961,11.010326,2155], [47.412027,11.01024,2157.25] ] });
+				trk[t].segments.push({ color:'#e63600', points:[ [47.412027,11.01024,2157.25], [47.412137,11.010285,2161] ] });
+				trk[t].segments.push({ color:'#e65100', points:[ [47.412137,11.010285,2161], [47.412218,11.01035,2163.75] ] });
+				trk[t].segments.push({ color:'#e68000', points:[ [47.412218,11.01035,2163.75], [47.412284,11.010421,2165.75] ] });
+				trk[t].segments.push({ color:'#e63a00', points:[ [47.412284,11.010421,2165.75], [47.412451,11.010376,2171.25] ] });
+				trk[t].segments.push({ color:'#e64900', points:[ [47.412451,11.010376,2171.25], [47.41252,11.010412,2173.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.41252,11.010412,2173.5], [47.412611,11.010369,2177.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.412611,11.010369,2177.25], [47.412578,11.010244,2176.25] ] });
+				trk[t].segments.push({ color:'#8de600', points:[ [47.412578,11.010244,2176.25], [47.412571,11.010123,2176.5] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.412571,11.010123,2176.5], [47.412597,11.010053,2177.75] ] });
+				trk[t].segments.push({ color:'#e67e00', points:[ [47.412597,11.010053,2177.75], [47.412599,11.009844,2181.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.412599,11.009844,2181.25], [47.412617,11.00976,2183.75] ] });
+				trk[t].segments.push({ color:'#e60600', points:[ [47.412617,11.00976,2183.75], [47.412689,11.009759,2186.5] ] });
+				trk[t].segments.push({ color:'#e6b900', points:[ [47.412689,11.009759,2186.5], [47.412761,11.009821,2188] ] });
+				trk[t].segments.push({ color:'#e63400', points:[ [47.412761,11.009821,2188], [47.412776,11.009644,2192] ] });
+				trk[t].segments.push({ color:'#e65f00', points:[ [47.412776,11.009644,2192], [47.412766,11.009371,2197.25] ] });
+				trk[t].segments.push({ color:'#e64b00', points:[ [47.412766,11.009371,2197.25], [47.412779,11.009203,2200.75] ] });
+				trk[t].segments.push({ color:'#e63f00', points:[ [47.412779,11.009203,2200.75], [47.412827,11.00907,2204] ] });
+				trk[t].segments.push({ color:'#e68f00', points:[ [47.412827,11.00907,2204], [47.412853,11.008946,2206] ] });
+				trk[t].segments.push({ color:'#e69f00', points:[ [47.412853,11.008946,2206], [47.412885,11.008669,2210] ] });
+				trk[t].segments.push({ color:'#e6ce00', points:[ [47.412885,11.008669,2210], [47.412888,11.00848,2212] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.412888,11.00848,2212], [47.412866,11.008394,2212] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.412866,11.008394,2212], [47.41283,11.008349,2211.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41283,11.008349,2211.25], [47.412782,11.00831,2210] ] });
+				trk[t].segments.push({ color:'#b2e600', points:[ [47.412782,11.00831,2210], [47.412756,11.008214,2210.5] ] });
+				trk[t].segments.push({ color:'#e66a00', points:[ [47.412756,11.008214,2210.5], [47.412768,11.008134,2212] ] });
+				trk[t].segments.push({ color:'#e64700', points:[ [47.412768,11.008134,2212], [47.412802,11.008026,2214.5] ] });
+				trk[t].segments.push({ color:'#e67c00', points:[ [47.412802,11.008026,2214.5], [47.412812,11.007849,2217.5] ] });
+				trk[t].segments.push({ color:'#dbe600', points:[ [47.412812,11.007849,2217.5], [47.4128,11.007757,2218.25] ] });
+				trk[t].segments.push({ color:'#9be600', points:[ [47.4128,11.007757,2218.25], [47.412778,11.007683,2218.5] ] });
+				trk[t].segments.push({ color:'#c8e600', points:[ [47.412778,11.007683,2218.5], [47.412765,11.007609,2219] ] });
+				trk[t].segments.push({ color:'#e62200', points:[ [47.412765,11.007609,2219], [47.412809,11.007477,2222.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.412809,11.007477,2222.5], [47.412914,11.007339,2228.25] ] });
+				trk[t].segments.push({ color:'#e68100', points:[ [47.412914,11.007339,2228.25], [47.41292,11.007264,2229.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.41292,11.007264,2229.5], [47.413007,11.007141,2234.25] ] });
+				trk[t].segments.push({ color:'#e6d200', points:[ [47.413007,11.007141,2234.25], [47.41299,11.006825,2237.5] ] });
+				trk[t].segments.push({ color:'#e69d00', points:[ [47.41299,11.006825,2237.5], [47.41301,11.006653,2240] ] });
+				trk[t].segments.push({ color:'#e63900', points:[ [47.41301,11.006653,2240], [47.413177,11.006471,2246.75] ] });
+				trk[t].segments.push({ color:'#e6ba00', points:[ [47.413177,11.006471,2246.75], [47.413216,11.006273,2249.25] ] });
+				trk[t].segments.push({ color:'#e66b00', points:[ [47.413216,11.006273,2249.25], [47.413241,11.006215,2250.5] ] });
+				trk[t].segments.push({ color:'#e6c000', points:[ [47.413241,11.006215,2250.5], [47.413257,11.006133,2251.5] ] });
+				trk[t].segments.push({ color:'#e62e00', points:[ [47.413257,11.006133,2251.5], [47.413357,11.006021,2255.75] ] });
+				trk[t].segments.push({ color:'#e67a00', points:[ [47.413357,11.006021,2255.75], [47.413386,11.005912,2257.75] ] });
+				trk[t].segments.push({ color:'#e6bc00', points:[ [47.413386,11.005912,2257.75], [47.413404,11.005811,2259] ] });
+				trk[t].segments.push({ color:'#e67a00', points:[ [47.413404,11.005811,2259], [47.41341,11.005783,2259.5] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.41341,11.005783,2259.5], [47.413468,11.005619,2263] ] });
+				trk[t].segments.push({ color:'#e6ab00', points:[ [47.413468,11.005619,2263], [47.413499,11.005436,2265.5] ] });
+				trk[t].segments.push({ color:'#e6c900', points:[ [47.413499,11.005436,2265.5], [47.413518,11.00528,2267.25] ] });
+				trk[t].segments.push({ color:'#e68b00', points:[ [47.413518,11.00528,2267.25], [47.413548,11.005161,2269.25] ] });
+				trk[t].segments.push({ color:'#b1e600', points:[ [47.413548,11.005161,2269.25], [47.413529,11.004952,2270.25] ] });
+				trk[t].segments.push({ color:'#e6c300', points:[ [47.413529,11.004952,2270.25], [47.413466,11.004662,2273.75] ] });
+				trk[t].segments.push({ color:'#d2e600', points:[ [47.413466,11.004662,2273.75], [47.413386,11.004379,2276] ] });
+				trk[t].segments.push({ color:'#e6c600', points:[ [47.413386,11.004379,2276], [47.41332,11.00406,2279.75] ] });
+				trk[t].segments.push({ color:'#dfe600', points:[ [47.41332,11.00406,2279.75], [47.413254,11.003872,2281.5] ] });
+				trk[t].segments.push({ color:'#e64b00', points:[ [47.413254,11.003872,2281.5], [47.413254,11.003546,2288.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413254,11.003546,2288.25], [47.413093,11.003256,2285.75] ] });
+				trk[t].segments.push({ color:'#c4e600', points:[ [47.413093,11.003256,2285.75], [47.413104,11.003178,2286.25] ] });
+				trk[t].segments.push({ color:'#e68400', points:[ [47.413104,11.003178,2286.25], [47.413168,11.003038,2289] ] });
+				trk[t].segments.push({ color:'#e63300', points:[ [47.413168,11.003038,2289], [47.413244,11.002989,2291.75] ] });
+				trk[t].segments.push({ color:'#e61c00', points:[ [47.413244,11.002989,2291.75], [47.413339,11.003024,2295.25] ] });
+				trk[t].segments.push({ color:'#9ae600', points:[ [47.413339,11.003024,2295.25], [47.41336,11.00286,2295.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.41336,11.00286,2295.75], [47.413365,11.002674,2295.5] ] });
+				trk[t].segments.push({ color:'#7ce600', points:[ [47.413365,11.002674,2295.5], [47.413388,11.00231,2295.75] ] });
+				trk[t].segments.push({ color:'#cde600', points:[ [47.413388,11.00231,2295.75], [47.413434,11.002105,2297.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413434,11.002105,2297.25], [47.413446,11.001863,2297.25] ] });
+				trk[t].segments.push({ color:'#cbe600', points:[ [47.413446,11.001863,2297.25], [47.413468,11.001758,2298] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.413468,11.001758,2298], [47.413419,11.001598,2296.75] ] });
+				trk[t].segments.push({ color:'#dde600', points:[ [47.413419,11.001598,2296.75], [47.413426,11.001415,2298.25] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.413426,11.001415,2298.25], [47.413484,11.001267,2301.5] ] });
+				trk[t].segments.push({ color:'#e60100', points:[ [47.413484,11.001267,2301.5], [47.413598,11.00116,2306.75] ] });
+				trk[t].segments.push({ color:'#e68900', points:[ [47.413598,11.00116,2306.75], [47.413628,11.001009,2309.25] ] });
+				trk[t].segments.push({ color:'#e61100', points:[ [47.413628,11.001009,2309.25], [47.413776,11.001029,2314.75] ] });
+				trk[t].segments.push({ color:'#e63b00', points:[ [47.413776,11.001029,2314.75], [47.413919,11.000624,2324.75] ] });
+				trk[t].segments.push({ color:'#e62a00', points:[ [47.413919,11.000624,2324.75], [47.414035,11.000429,2330.75] ] });
+				trk[t].segments.push({ color:'#e65800', points:[ [47.414035,11.000429,2330.75], [47.414125,11.000258,2335] ] });
+				trk[t].segments.push({ color:'#e68f00', points:[ [47.414125,11.000258,2335], [47.41423,11.000168,2337.75] ] });
+				trk[t].segments.push({ color:'#e69d00', points:[ [47.41423,11.000168,2337.75], [47.414439,11.000004,2342.75] ] });
+				trk[t].segments.push({ color:'#e63400', points:[ [47.414439,11.000004,2342.75], [47.414505,10.999696,2350] ] });
+				trk[t].segments.push({ color:'#e67b00', points:[ [47.414505,10.999696,2350], [47.414484,10.999552,2352.5] ] });
+				trk[t].segments.push({ color:'#bde600', points:[ [47.414484,10.999552,2352.5], [47.414428,10.99945,2353.25] ] });
+				trk[t].segments.push({ color:'#e67b00', points:[ [47.414428,10.99945,2353.25], [47.414412,10.999365,2354.75] ] });
+				trk[t].segments.push({ color:'#e64600', points:[ [47.414412,10.999365,2354.75], [47.414452,10.999123,2360] ] });
+				trk[t].segments.push({ color:'#e64300', points:[ [47.414452,10.999123,2360], [47.414513,10.998807,2367] ] });
+				trk[t].segments.push({ color:'#87e600', points:[ [47.414513,10.998807,2367], [47.414431,10.998698,2367.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414431,10.998698,2367.25], [47.414378,10.998651,2367] ] });
+				trk[t].segments.push({ color:'#e66d00', points:[ [47.414378,10.998651,2367], [47.414381,10.998554,2368.75] ] });
+				trk[t].segments.push({ color:'#e63800', points:[ [47.414381,10.998554,2368.75], [47.414563,10.998347,2376.25] ] });
+				trk[t].segments.push({ color:'#e66d00', points:[ [47.414563,10.998347,2376.25], [47.414724,10.997988,2384] ] });
+				trk[t].segments.push({ color:'#e69400', points:[ [47.414724,10.997988,2384], [47.414761,10.997797,2387] ] });
+				trk[t].segments.push({ color:'#e69600', points:[ [47.414761,10.997797,2387], [47.414782,10.997598,2390] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.414782,10.997598,2390], [47.41481,10.997445,2393] ] });
+				trk[t].segments.push({ color:'#e65d00', points:[ [47.41481,10.997445,2393], [47.4148,10.997251,2396.75] ] });
+				trk[t].segments.push({ color:'#e60b00', points:[ [47.4148,10.997251,2396.75], [47.414829,10.997111,2400.5] ] });
+				trk[t].segments.push({ color:'#e60200', points:[ [47.414829,10.997111,2400.5], [47.414895,10.996947,2405.5] ] });
+				trk[t].segments.push({ color:'#e60600', points:[ [47.414895,10.996947,2405.5], [47.414972,10.996713,2412.25] ] });
+				trk[t].segments.push({ color:'#e61c00', points:[ [47.414972,10.996713,2412.25], [47.415201,10.996245,2426.25] ] });
+				trk[t].segments.push({ color:'#e64f00', points:[ [47.415201,10.996245,2426.25], [47.415236,10.99612,2429] ] });
+				trk[t].segments.push({ color:'#abe600', points:[ [47.415236,10.99612,2429], [47.415162,10.995984,2429.75] ] });
+				trk[t].segments.push({ color:'#e6bd00', points:[ [47.415162,10.995984,2429.75], [47.415141,10.995777,2432.25] ] });
+				trk[t].segments.push({ color:'#e6ba00', points:[ [47.415141,10.995777,2432.25], [47.415179,10.995717,2433.25] ] });
+				trk[t].segments.push({ color:'#e68f00', points:[ [47.415179,10.995717,2433.25], [47.41523,10.995656,2434.75] ] });
+				trk[t].segments.push({ color:'#e6bf00', points:[ [47.41523,10.995656,2434.75], [47.415265,10.995563,2436] ] });
+				trk[t].segments.push({ color:'#b3e600', points:[ [47.415265,10.995563,2436], [47.415246,10.995465,2436.5] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415246,10.995465,2436.5], [47.415188,10.995376,2435.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415188,10.995376,2435.75], [47.415172,10.995294,2435.75] ] });
+				trk[t].segments.push({ color:'#d3e600', points:[ [47.415172,10.995294,2435.75], [47.415183,10.995126,2437] ] });
+				trk[t].segments.push({ color:'#e6d900', points:[ [47.415183,10.995126,2437], [47.415207,10.994951,2438.75] ] });
+				trk[t].segments.push({ color:'#cde600', points:[ [47.415207,10.994951,2438.75], [47.41522,10.994771,2440] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.41522,10.994771,2440], [47.415228,10.994042,2445.75] ] });
+				trk[t].segments.push({ color:'#e4e600', points:[ [47.415228,10.994042,2445.75], [47.415206,10.993962,2446.5] ] });
+				trk[t].segments.push({ color:'#e6ae00', points:[ [47.415206,10.993962,2446.5], [47.415188,10.99389,2447.5] ] });
+				trk[t].segments.push({ color:'#e68a00', points:[ [47.415188,10.99389,2447.5], [47.415172,10.993718,2450.25] ] });
+				trk[t].segments.push({ color:'#e4e600', points:[ [47.415172,10.993718,2450.25], [47.415135,10.993617,2451.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415135,10.993617,2451.25], [47.415038,10.993555,2450] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415038,10.993555,2450], [47.414874,10.993582,2443.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414874,10.993582,2443.75], [47.414806,10.993543,2441.75] ] });
+				trk[t].segments.push({ color:'#c6e600', points:[ [47.414806,10.993543,2441.75], [47.414774,10.993395,2442.75] ] });
+				trk[t].segments.push({ color:'#98e600', points:[ [47.414774,10.993395,2442.75], [47.414753,10.993223,2443.25] ] });
+				trk[t].segments.push({ color:'#e6de00', points:[ [47.414753,10.993223,2443.25], [47.414758,10.993063,2444.75] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.414758,10.993063,2444.75], [47.414755,10.992938,2445.5] ] });
+				trk[t].segments.push({ color:'#e66a00', points:[ [47.414755,10.992938,2445.5], [47.41484,10.99265,2451.25] ] });
+				trk[t].segments.push({ color:'#e63000', points:[ [47.41484,10.99265,2451.25], [47.414895,10.992506,2455] ] });
+				trk[t].segments.push({ color:'#e66600', points:[ [47.414895,10.992506,2455], [47.414922,10.992322,2458.5] ] });
+				trk[t].segments.push({ color:'#e61200', points:[ [47.414922,10.992322,2458.5], [47.41508,10.992186,2465.25] ] });
+				trk[t].segments.push({ color:'#e66500', points:[ [47.41508,10.992186,2465.25], [47.41522,10.992014,2470.25] ] });
+				trk[t].segments.push({ color:'#e68400', points:[ [47.41522,10.992014,2470.25], [47.415294,10.991761,2474.75] ] });
+				trk[t].segments.push({ color:'#e68400', points:[ [47.415294,10.991761,2474.75], [47.41532,10.991597,2477.5] ] });
+				trk[t].segments.push({ color:'#e6a000', points:[ [47.41532,10.991597,2477.5], [47.415325,10.991402,2480.25] ] });
+				trk[t].segments.push({ color:'#e6c900', points:[ [47.415325,10.991402,2480.25], [47.415233,10.990965,2485.25] ] });
+				trk[t].segments.push({ color:'#dee600', points:[ [47.415233,10.990965,2485.25], [47.415209,10.990755,2487] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415209,10.990755,2487], [47.415204,10.990478,2486.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.415204,10.990478,2486.75], [47.415211,10.990181,2486.25] ] });
+				trk[t].segments.push({ color:'#a3e600', points:[ [47.415211,10.990181,2486.25], [47.415286,10.989936,2487.25] ] });
+				trk[t].segments.push({ color:'#b5e600', points:[ [47.415286,10.989936,2487.25], [47.415354,10.989764,2488.25] ] });
+				trk[t].segments.push({ color:'#9ce600', points:[ [47.415354,10.989764,2488.25], [47.415389,10.989616,2488.75] ] });
+				trk[t].segments.push({ color:'#8fe600', points:[ [47.415389,10.989616,2488.75], [47.415336,10.989285,2489.5] ] });
+				trk[t].segments.push({ color:'#bfe600', points:[ [47.415336,10.989285,2489.5], [47.415426,10.988922,2491.75] ] });
+				trk[t].segments.push({ color:'#c8e600', points:[ [47.415426,10.988922,2491.75], [47.415589,10.9884,2495.5] ] });
+				trk[t].segments.push({ color:'#e6ba00', points:[ [47.415589,10.9884,2495.5], [47.415618,10.988115,2499] ] });
+				trk[t].segments.push({ color:'#e69600', points:[ [47.415618,10.988115,2499], [47.415529,10.987666,2506] ] });
+				trk[t].segments.push({ color:'#e6c700', points:[ [47.415529,10.987666,2506], [47.415428,10.987565,2508] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.415428,10.987565,2508], [47.415333,10.987546,2508.75] ] });
+				trk[t].segments.push({ color:'#c1e600', points:[ [47.415333,10.987546,2508.75], [47.415178,10.987444,2510.25] ] });
+				trk[t].segments.push({ color:'#b8e600', points:[ [47.415178,10.987444,2510.25], [47.415096,10.987374,2511] ] });
+				trk[t].segments.push({ color:'#ade600', points:[ [47.415096,10.987374,2511], [47.415069,10.987335,2511.25] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.415069,10.987335,2511.25], [47.414992,10.987104,2512] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414992,10.987104,2512], [47.414856,10.986816,2508.5] ] });
+				trk[t].segments.push({ color:'#99e600', points:[ [47.414856,10.986816,2508.5], [47.414858,10.986647,2509] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.414858,10.986647,2509], [47.414829,10.986521,2508.5] ] });
+				trk[t].segments.push({ color:'#a1e600', points:[ [47.414829,10.986521,2508.5], [47.414822,10.986381,2509] ] });
+				trk[t].segments.push({ color:'#e6c200', points:[ [47.414822,10.986381,2509], [47.414924,10.985929,2514.5] ] });
+				trk[t].segments.push({ color:'#e6d000', points:[ [47.414924,10.985929,2514.5], [47.414974,10.985502,2519] ] });
+				trk[t].segments.push({ color:'#d9e600', points:[ [47.414974,10.985502,2519], [47.414997,10.985153,2521.75] ] });
+				trk[t].segments.push({ color:'#dde600', points:[ [47.414997,10.985153,2521.75], [47.415026,10.984911,2523.75] ] });
+				trk[t].segments.push({ color:'#e6e200', points:[ [47.415026,10.984911,2523.75], [47.41508,10.984705,2525.75] ] });
+				trk[t].segments.push({ color:'#dae600', points:[ [47.41508,10.984705,2525.75], [47.415145,10.984208,2529.75] ] });
+				trk[t].segments.push({ color:'#e6de00', points:[ [47.415145,10.984208,2529.75], [47.41517,10.984025,2531.5] ] });
+				trk[t].segments.push({ color:'#e6b900', points:[ [47.41517,10.984025,2531.5], [47.415226,10.983561,2537.25] ] });
+				trk[t].segments.push({ color:'#e69800', points:[ [47.415226,10.983561,2537.25], [47.415335,10.983024,2545.5] ] });
+				trk[t].segments.push({ color:'#e68d00', points:[ [47.415335,10.983024,2545.5], [47.41548,10.981769,2565.25] ] });
+				trk[t].segments.push({ color:'#e68400', points:[ [47.41548,10.981769,2565.25], [47.415492,10.981744,2565.75] ] });
+				trk[t].segments.push({ color:'#e68200', points:[ [47.415492,10.981744,2565.75], [47.415511,10.981708,2566.5] ] });
+				trk[t].segments.push({ color:'#e62700', points:[ [47.415511,10.981708,2566.5], [47.415688,10.981425,2575.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.415688,10.981425,2575.5], [47.415856,10.981191,2585.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.415856,10.981191,2585.75], [47.415998,10.981212,2593.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.415998,10.981212,2593.5], [47.416206,10.98121,2605.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416206,10.98121,2605.25], [47.416233,10.981034,2610.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416233,10.981034,2610.75], [47.416448,10.980579,2632.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416448,10.980579,2632.75], [47.416632,10.980331,2649] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416632,10.980331,2649], [47.416735,10.98025,2658.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416735,10.98025,2658.25], [47.416852,10.980321,2666.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416852,10.980321,2666.25], [47.416934,10.980392,2671.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.416934,10.980392,2671.5], [47.417255,10.980565,2694.5] ] });
+				trk[t].segments.push({ color:'#e60c00', points:[ [47.417255,10.980565,2694.5], [47.417275,10.980381,2699.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.417275,10.980381,2699.25], [47.417471,10.980214,2717.5] ] });
+				trk[t].segments.push({ color:'#e63800', points:[ [47.417471,10.980214,2717.5], [47.417567,10.980376,2722.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.417567,10.980376,2722.25], [47.417655,10.980202,2730.5] ] });
+				trk[t].segments.push({ color:'#b2e600', points:[ [47.417655,10.980202,2730.5], [47.417765,10.980745,2733.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.417765,10.980745,2733.25], [47.417865,10.980426,2743.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.417865,10.980426,2743.25], [47.417934,10.98042,2748.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.417934,10.98042,2748.25], [47.418077,10.980598,2758.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.418077,10.980598,2758.5], [47.418281,10.980942,2773.75] ] });
+				trk[t].segments.push({ color:'#e60c00', points:[ [47.418281,10.980942,2773.75], [47.418355,10.980803,2778.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.418355,10.980803,2778.25], [47.418443,10.980826,2775.75] ] });
+				trk[t].segments.push({ color:'#bfe600', points:[ [47.418443,10.980826,2775.75], [47.418787,10.981402,2780.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.418787,10.981402,2780.25], [47.418988,10.981635,2792] ] });
+				trk[t].segments.push({ color:'#e60200', points:[ [47.418988,10.981635,2792], [47.419094,10.981827,2798.5] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419094,10.981827,2798.5], [47.41917,10.98189,2803] ] });
+				trk[t].segments.push({ color:'#e3e600', points:[ [47.41917,10.98189,2803], [47.419281,10.982011,2804.75] ] });
+				trk[t].segments.push({ color:'#e66100', points:[ [47.419281,10.982011,2804.75], [47.419373,10.98219,2809] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419373,10.98219,2809], [47.419478,10.982461,2817.75] ] });
+				trk[t].segments.push({ color:'#e64c00', points:[ [47.419478,10.982461,2817.75], [47.419588,10.982718,2824] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419588,10.982718,2824], [47.419679,10.982793,2829] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419679,10.982793,2829], [47.419792,10.982911,2837.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419792,10.982911,2837.75], [47.419802,10.98306,2843.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419802,10.98306,2843.75], [47.419858,10.983177,2852.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419858,10.983177,2852.25], [47.419952,10.983221,2861.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.419952,10.983221,2861.75], [47.419974,10.983114,2858] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.419974,10.983114,2858], [47.420053,10.983128,2861.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420053,10.983128,2861.75], [47.42011,10.983214,2867.75] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.42011,10.983214,2867.75], [47.420152,10.983118,2863.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420152,10.983118,2863.75], [47.420275,10.983411,2878.5] ] });
+				trk[t].segments.push({ color:'#e60100', points:[ [47.420275,10.983411,2878.5], [47.420374,10.983913,2892.25] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.420374,10.983913,2892.25], [47.420384,10.983694,2887.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420384,10.983694,2887.75], [47.420427,10.983872,2894] ] });
+				trk[t].segments.push({ color:'#73e600', points:[ [47.420427,10.983872,2894], [47.420445,10.9838,2893] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420445,10.9838,2893], [47.420507,10.983964,2900.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420507,10.983964,2900.75], [47.420593,10.984113,2910.75] ] });
+				trk[t].segments.push({ color:'#e63c00', points:[ [47.420593,10.984113,2910.75], [47.420609,10.984272,2914.25] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.420609,10.984272,2914.25], [47.42069,10.984297,2919.75] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.42069,10.984297,2919.75], [47.42082,10.984576,2930] ] });
+				trk[t].segments.push({ color:'#e60000', points:[ [47.42082,10.984576,2930], [47.42083,10.984582,2931] ] });
+				GV_Draw_Track(t);
+				
+				t = 1; GV_Add_Track_to_Tracklist({bullet:'- ',name:trk[t].info.name,desc:trk[t].info.desc,color:trk[t].info.color,number:t});
+				
+				
+				GV_Draw_Marker({lat:47.4692676,lon:11.1193934,alt:802.806314970434,name:'1 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:176.6,track_number:1});
+				GV_Draw_Marker({lat:47.4600399,lon:11.1240186,alt:819.612765932421,name:'2 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:241.4,track_number:1});
+				GV_Draw_Marker({lat:47.4490616,lon:11.1136302,alt:878.75,name:'3 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:211.3,track_number:1});
+				GV_Draw_Marker({lat:47.4394897,lon:11.1055759,alt:973.737221288829,name:'4 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:169.2,track_number:1});
+				GV_Draw_Marker({lat:47.4274549,lon:11.1041650,alt:1031.33835057372,name:'5 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:234.8,track_number:1});
+				GV_Draw_Marker({lat:47.4177443,lon:11.0923136,alt:1076.45444613377,name:'6 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:271.6,track_number:1});
+				GV_Draw_Marker({lat:47.4132882,lon:11.0740619,alt:1117.55097763311,name:'7 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:197.1,track_number:1});
+				GV_Draw_Marker({lat:47.4086601,lon:11.0549621,alt:1267.61143428104,name:'8 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:257.9,track_number:1});
+				GV_Draw_Marker({lat:47.4058748,lon:11.0373305,alt:1366.41129628809,name:'9 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:225.3,track_number:1});
+				GV_Draw_Marker({lat:47.4018703,lon:11.0215905,alt:1537.61697515202,name:'10 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:300.2,track_number:1});
+				GV_Draw_Marker({lat:47.4087315,lon:11.0142585,alt:1976.86623278518,name:'11 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:48.4,track_number:1});
+				GV_Draw_Marker({lat:47.4144478,lon:10.9999631,alt:2343.71167562555,name:'12 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:287.6,track_number:1});
+				GV_Draw_Marker({lat:47.4158534,lon:10.9811947,alt:2585.589921824,name:'13 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:316.7,track_number:1});
+				GV_Draw_Marker({lat:47.4208300,lon:10.9845820,alt:2931,name:'13.555 mi',desc:'',color:'white',icon:'tickmark',type:'tickmark',folder:'New file 1 [tickmarks]',rotation:22.1,track_number:1});
+				
+				GV_Finish_Map();
+					
+			}
+			GV_Map(); // execute the above code
+			// https://www.gpsvisualizer.com/map_input?colorize_gray=0&colorize_max=35&colorize_min=0&colorize_reverse=1&cumulative_distance=1&form=leaflet&google_trk_outline=black&hue1=90&hue2=0&legend_steps=4&synthesize_tickmark_name=%7Bdistance%7D%20mi&tickmark_interval=1%20mi&tickmark_zero=1&trk_colorize=slope&trk_stats=1&units=us
+		</script>
+		
+		
+		
+	</body>
+	
+</html>

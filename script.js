@@ -116,3 +116,15 @@ window.onscroll = function() {  // simple but only one onscroll listener allowed
 //}, false); // end of window.addEventListener function
 
 //------------------------------------------------------------------------------------
+
+// animated showing of paragraphs...
+
+// const btn = document.querySelector('.toggle-btn');
+// const hutsExpansion = document.querySelector('.huts-expansion');
+
+// btn.addEventListener('click', () => {
+//     hutsExpansion.classList.toggle('expanded');
+//     btn.textContent = text.classList.contains('expanded') ? 'Show Less' : 'Show More';
+// });
+
+

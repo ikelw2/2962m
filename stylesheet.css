@@ -23,8 +23,7 @@ body {
 	color: #262626;
 	
 	/* darker background behind everything */
-	background-color: #023047; /* dark navy-ish blue */
-	/* background-color: #262626;  */
+	background: repeating-linear-gradient(75deg, #023047, #3d5a80, #023047 15%);
 }
 h1, h2, h3 {
 	font-family: "IM Fell English", serif;
@@ -58,6 +57,10 @@ section{
 	font-style: normal;
 	line-height: 2;
 }
+section img {
+	filter: grayscale();
+	border: 3px solid #262626;
+}
 section li {
 	margin-top: 1rem;
 	margin-left: 2rem;
@@ -83,6 +86,10 @@ table td {
 	padding: 0 2px;
 	border-top: 1px solid #3d5a80;
 }
+table .sp {
+	font-weight: bold;
+	background-color: #8aa8cf;
+}
 
 
 .flex-container-1{ /* at least used in hike route options */
@@ -92,6 +99,7 @@ table td {
 	gap: 20px; 
 	justify-content: space-evenly; 
 	align-items: center; 
+	margin-bottom: 0.5rem;
 }
 .flex-container-1 td {
 	padding: 3px 10px;
@@ -110,6 +118,111 @@ table td {
 .flex-container-2 td:nth-child(1) {
 	border-left: none;
 }
+/* bulleted links in row flexbox */
+.flex-container-bulleted-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	cursor: pointer;
+}
+.flex-container-bulleted-links a{
+	padding: 0.06rem 0.5rem;
+	align-self: center;
+	border-radius: 0.9rem;
+	white-space: nowrap;
+	background:#8aa8cf;
+	color: #262626;
+	text-decoration: none;
+}
+
+/* ========= expansion functionalities ============================= */
+#pack-expansion {
+	display: none;
+}
+#misc-expansion {
+	display: none;
+}
+#hike-expansion {
+	display: none;
+}
+#weat-expansion {
+	display: none;
+}
+#huts-expansion {
+    display: none;
+	/* height: 50px; */
+	/* height: 0; */
+	transition: height 0.5s;
+	/* max-height: 50px; */
+	overflow: hidden;
+	/* transition: max-height 0.5s ease-in-out; */
+	/* animation: slow 3s ease forwards; */
+}
+/* below is for JS solution, does not apply to css solution */
+/* #huts-expansion.expanded {
+	height: auto; 
+	height: calc-size(auto);
+} */
+/* @keyframes slow { from { max-height: 1rem; } to { max-height: calc-size(auto); } } */
+#pack-expand-toggle:checked + #pack-expansion {
+    display: block;
+}
+#misc-expand-toggle:checked + #misc-expansion {
+    display: block;
+}
+#huts-expand-toggle:checked + #huts-expansion {
+    display: block;
+}
+#hike-expand-toggle:checked + #hike-expansion {
+    display: block;
+}
+#weat-expand-toggle:checked + #weat-expansion {
+    display: block;
+}
+input[type="checkbox"] {
+    position: absolute;
+    left: -1000px;
+    /* appearance: none; */
+}
+label {
+    display: block;
+    text-decoration: underline;
+	color: #3d5a80;
+	/* color: gray; */
+}
+
+#pack-expand-toggle + #pack-expansion + label::before {
+	content: "Show more";
+}
+#misc-expand-toggle + #misc-expansion + label::before {
+	content: "Show more";
+}
+#huts-expand-toggle + #huts-expansion + label::before {
+	content: "Show more";
+}
+#hike-expand-toggle + #hike-expansion + label::before {
+    content: "Show more";
+}
+#weat-expand-toggle + #weat-expansion + label::before {
+    content: "Show more";
+}
+
+#pack-expand-toggle:checked ~ #pack-expansion + label::before {
+	content: "Show less";
+}
+#misc-expand-toggle:checked ~ #misc-expansion + label::before {
+	content: "Show less";
+}
+#huts-expand-toggle:checked ~ #huts-expansion + label::before {
+	content: "Show less";
+}
+#hike-expand-toggle:checked ~ #hike-expansion + label::before {
+    content: "Show less";
+}
+#weat-expand-toggle:checked ~ #weat-expansion + label::before {
+    content: "Show less";
+}
+
 
 /* ========== CONTACT FORM =================================================== */
 input,
@@ -126,13 +239,13 @@ form {
 		grid-template-columns: 1fr 1fr
 	} */
 }
-label {
+/* label {
 	font-size: 1rem;
-}
-input {
+} */
+/* input {
 	background: #3d5a80;
 	color:#b9d0de
-}
+} */
 
 /* ============ TOP-IMAGE ==================================================== */
 /* top image section */
@@ -142,7 +255,7 @@ section#top_image {
 	border: none;
 	
 	/* other styles for this section */
-	border-top: 86px solid #262626;
+	border-top: 126px solid #262626;
 	background-color: var(--b1);
 	background-image: url("images/2962m.jpg"); 
 	background-size: cover;
