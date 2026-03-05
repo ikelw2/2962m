@@ -3,6 +3,7 @@
 	--b4: #98c1d9;
 	--w2: #DEE3ED; 
 	--menu-height: 75px;
+	--img-height: 400px;
 }
 
 *{
@@ -96,7 +97,8 @@ table .sp {
 	display: flex;
 	flex-wrap: wrap;
 	flex: 1; 
-	gap: 20px; 
+	column-gap: 10px; 
+	row-gap: 20px;
 	justify-content: space-evenly; 
 	align-items: center; 
 	margin-bottom: 0.5rem;
@@ -123,7 +125,6 @@ table .sp {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
-	cursor: pointer;
 }
 .flex-container-bulleted-links a{
 	padding: 0.06rem 0.5rem;
@@ -133,20 +134,25 @@ table .sp {
 	background:#8aa8cf;
 	color: #262626;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 /* ========= expansion functionalities ============================= */
 #pack-expansion {
 	display: none;
+	overflow: hidden;
 }
 #misc-expansion {
 	display: none;
+	overflow: hidden;
 }
 #hike-expansion {
 	display: none;
+	overflow: hidden;
 }
 #weat-expansion {
 	display: none;
+	overflow: hidden;
 }
 #huts-expansion {
     display: none;
@@ -185,10 +191,13 @@ input[type="checkbox"] {
     /* appearance: none; */
 }
 label {
-    display: block;
+	/* changed block to inline, now can only click on underlined show more, rather than entirely across bottom */
+    /* display: inline; */
+	/* going to leave it block, it makes it easier to push this link */
+	display: block;
     text-decoration: underline;
 	color: #3d5a80;
-	/* color: gray; */
+	cursor: pointer;
 }
 
 #pack-expand-toggle + #pack-expansion + label::before {
@@ -261,7 +270,11 @@ section#top_image {
 	background-size: cover;
 	background-repeat: no-repeat;
 	
-	height: 400px;
+	/* width: 100%; */
+	/* height: var(--img-height); */
+	/* height: 50vh; */
+	/* height: (0.60 * (vh - 1280px)); */
+	height: 500px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -345,8 +358,15 @@ header a, header li {
 	background-color: #e0fbfc;
 }
 /* ====== MEDIA QUERY FOR MOBILE SIZE SCREENS ================================ */
+/* @media screen and (min-width: 651px) {
+section#top_image {
+		height: 500px;
+	}
+} */
 @media screen and (max-width: 650px) { /* if 600px is changed, also need to change the script.js file at "innerWidth" */
-	
+	/* section#top_image {
+		height: 50vh;
+	} */
 
 	.hamburger{ display: block; }
 	.hamburger.active .slice:nth-child(2){ opacity: 0; }
@@ -424,9 +444,10 @@ input {
 
 /* changes color of textarea when typing there citing help from
    https://www.w3schools.com/cssref/sel_focus.php */
-input:focus {
+/* commenting out because I don't want that functionality on hike page */
+/* input:focus {
     background-color: rgb(203, 233, 255);
-}
+} */
 
 .align-center {
     /* useful for centering flex-box items that would ordinarily be justified right */
