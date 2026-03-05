@@ -1,0 +1,844 @@
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+:root{
+	--b4: #98c1d9;
+	--w2: #DEE3ED; 
+	--menu-height: 1rem;
+	--img-height: 400px;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+*{
+	/* scroll-margin-top: 86px; put here for non-mobile device; changed in media query later on */
+	padding: 0; /* reset */
+	margin: 0;  /* reset */
+	box-sizing: border-box; /* simpler */
+	scroll-behavior: smooth; 
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+html, body{
+	/* to prevent Cumulative Layout Shift (CLS) */
+	overflow-x: hidden;
+    width: 100%;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+body {
+	margin: 0;
+	padding: 0;
+	/* color: #262626; */
+	
+	/* darker background behind everything */
+	/* background: repeating-linear-gradient(75deg, #023047, #3d5a80, #023047 15%); */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+h1, h2, h3 {
+	font-family: "IM Fell English", serif;
+	font-style: normal;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+h3{
+	font-size: 1.2rem;
+	padding-top: 0.5rem;
+	/* padding-bottom: 0.6rem; */
+	/* color: #262626; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+h2 {
+	font-size: 1.5rem;
+ 	text-indent: 1rem;
+	/* color: #262626; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+a:visited, a {
+	color: blue;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section{
+	margin: 10px 0;
+	/* changed 1vh to 0 on wide margins... to prevent Cumulative Layout Shift (CLS) */
+	padding: 5px 5px;
+	/* background-color: #b9d0de; */
+	border-radius: 18px;
+	border: 2px solid lightgray;
+
+	/* FONT OF REGULAR TEXT IN WEBPAGE */
+	/* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+	/* font-size: 1.1rem; */
+	font-family: "Montserrat", sans-serif; /* consider also Fira sans */
+	font-weight: 400;
+	font-style: normal;
+	line-height: 1.6;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section img {
+	filter: grayscale();
+	border: 3px solid #262626;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section li {
+	margin-top: 0.7rem;
+	margin-left: 2rem;
+	list-style-type: disc;
+	
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section p, section ul {
+	padding-bottom: 3px;
+	padding-top: 3px;
+	margin-top: 0.4rem;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+
+table {
+	border: 3px solid #282828; 
+	/* ///padding: 1px 1px; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+table th {
+	padding: 5px 10px;
+	background-color: lightgray;
+	/* color: #e0fbfc; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+table td {
+	padding: 0 2px;
+	border-top: 1px solid #3d5a80;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+table .sp {
+	font-weight: bold;
+	background-color: lightgray;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+
+.flex-container-1{ /* at least used in hike route options */
+	display: flex;
+	flex-wrap: wrap;
+	flex: 1; 
+	column-gap: 10px; 
+	row-gap: 20px;
+	justify-content: space-evenly; 
+	align-items: center; 
+	margin-bottom: 0.5rem;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-1 td {
+	padding: 3px 10px;
+	border-left: 1px solid #3d5a80;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-1 td:nth-child(1) {
+	border-left: none;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-2 table { /* at least used in hike route options */
+	margin: 0 auto;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-2 td {
+	padding: 1px 5px;
+	border-left: 1px solid #3d5a80;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-2 td:nth-child(1) {
+	border-left: none;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* bulleted links in row flexbox */
+.flex-container-bulleted-links {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 1rem;
+	row-gap: 0.3rem;
+	/* gap: 1rem; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.flex-container-bulleted-links a{
+	/* padding: 0.06rem 0.5rem; */
+	align-self: center;
+	/* border-radius: 0.9rem; */
+	white-space: nowrap;
+	/* background:#8aa8cf; */
+	/* color: #262626; */
+	/* text-decoration: none; */
+	cursor: pointer;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* ========= expansion functionalities ============================= */
+#pack-expansion {
+	display: none;
+	overflow: hidden;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#misc-expansion {
+	display: none;
+	overflow: hidden;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#hike-expansion {
+	display: none;
+	overflow: hidden;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#weat-expansion {
+	display: none;
+	overflow: hidden;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#huts-expansion {
+    display: none;
+	overflow: hidden;
+	/* height: 50px; */
+	/* height: 0; */
+	/* transition: height 0.5s; */
+	/* max-height: 50px; */
+	/* transition: max-height 0.5s ease-in-out; */
+	/* animation: slow 3s ease forwards; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* below is for JS solution, does not apply to css solution */
+/* #huts-expansion.expanded {
+	height: auto; 
+	height: calc-size(auto);
+} */
+/* @keyframes slow { from { max-height: 1rem; } to { max-height: calc-size(auto); } } */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#pack-expand-toggle:checked + #pack-expansion {
+    display: block;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#misc-expand-toggle:checked + #misc-expansion {
+    display: block;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#huts-expand-toggle:checked + #huts-expansion {
+    display: block;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#hike-expand-toggle:checked + #hike-expansion {
+    display: block;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#weat-expand-toggle:checked + #weat-expansion {
+    display: block;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+input[type="checkbox"] {
+    /* position: absolute;
+    left: -1000px; */
+    appearance: none;
+	display: none;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+label {
+	/* changed block to inline, now can only click on underlined show more, rather than entirely across bottom */
+    /* display: inline; */
+	/* going to leave it block, it makes it easier to push this link */
+	display: block;
+    text-decoration: underline;
+	color: #3d5a80;
+	cursor: pointer;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+
+#pack-expand-toggle + #pack-expansion + label::before {
+	content: "Show more";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#misc-expand-toggle + #misc-expansion + label::before {
+	content: "Show more";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#huts-expand-toggle + #huts-expansion + label::before {
+	content: "Show more";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#hike-expand-toggle + #hike-expansion + label::before {
+    content: "Show more";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#weat-expand-toggle + #weat-expansion + label::before {
+    content: "Show more";
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#pack-expand-toggle:checked ~ #pack-expansion + label::before {
+	content: "Show less";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#misc-expand-toggle:checked ~ #misc-expansion + label::before {
+	content: "Show less";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#huts-expand-toggle:checked ~ #huts-expansion + label::before {
+	content: "Show less";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#hike-expand-toggle:checked ~ #hike-expansion + label::before {
+    content: "Show less";
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#weat-expand-toggle:checked ~ #weat-expansion + label::before {
+    content: "Show less";
+}
+
+
+/* ========== CONTACT FORM =================================================== */
+input,
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+button,
+select,
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+textarea {
+	font: inherit;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+form {
+	display: grid;
+	gap: 1rem;
+	/* @media screen and (width > 600px) {
+		
+		grid-template-columns: 1fr 1fr
+	} */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* label {
+	font-size: 1rem;
+} */
+/* input {
+	background: #3d5a80;
+	color:#b9d0de
+} */
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* ============ TOP-IMAGE ==================================================== */
+/* top image section */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section#top_image {
+	/*undo styling which is applicable to other sections */
+	border-radius: 0; /* other sections use border-radius for better curved section boundaries */
+	border: none;
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+	
+	/* other styles for this section */
+	/* border-top: 126px solid #262626; */
+	background-color: var(--b1);
+	background-image: url("images/2962m.jpg"); 
+	background-size: cover;
+	background-repeat: no-repeat;
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+	
+	/* width: 100%; */
+	/* height: var(--img-height); */
+	/* height: 50vh; */
+	/* height: (0.60 * (vh - 1280px)); */
+	/* height: 500px; */
+	display: none;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+section#top_image h1 {
+	display: none; /* h1 is replaced by the image */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+header {
+	/* background-color: #262626; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+header a, header li {
+	/* color: #e0fbfc; */
+	text-decoration: none;	
+	list-style-type: none;
+	font-size: 1.2rem;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.center-viewport {
+	max-width: 1280px; /* limit width of viewport to prevent too wide */
+	margin: 0 auto; /* centers the content horizontally */
+}
+/* ========= NAV-BAR AND NAV-MENU ============================================ */
+/* placement of nav-bar and nav-menu */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-bar {
+	min-height: var(--menu-height);
+	/* position: fixed; */
+	width: 100%;
+	/* background-color: rgb(0,0,0, 0.4); */
+	
+    display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 2rem 0 1rem;
+
+	transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-up { /* class added to nav-bar when user scrolls down, removed when user scrolls up */
+    /* transform: translateY(-100%); Move nav-bar up by 100% of its height to hide it */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-menu { /* the nav-menu is the ul element containing the nav-links */
+	display: flex; /* ordinarily nav-menu is a horizontal list of nav-links 
+				but becomes vertical in smallScreen view (see media query below) */
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-bar .nav-branding { /* nav-branding is the h1 element with "2,962m asl" text */
+	/* nav-bar is the entire top bar including the 2962m text and the nav-links */
+	padding: 0rem 1rem;
+	color: black;
+
+	font-family: "IM Fell English", serif; /* font of "2,962m asl" in nav-bar */
+	font-size: 3rem;
+	font-style: italic;	
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-branding {
+	transition: 0.2s ease;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-branding:hover {
+	/* color: white; */
+	/* text-shadow: #B79047 1px 1px 6px; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-link {
+	transition: 0.2s ease;
+	font-style: italic;	
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-link:hover {
+	/* color: white; */
+	/* text-shadow: #B79047 1px 1px 8px; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.hamburger {
+	display: none;
+	cursor: pointer;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.slice {
+	display: block;
+	width: 25px;
+	height: 3px;
+	margin: 5px auto;
+	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	/* background-color: #e0fbfc; */
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+
+/* ====== MEDIA QUERY FOR MOBILE SIZE SCREENS ================================ */
+/* @media screen and (min-width: 651px) {
+section#top_image {
+		height: 500px;
+	}
+} */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+@media screen and (max-width: 650px) { /* if 600px is changed, also need to change the script.js file at "innerWidth" */
+	/* section#top_image {
+		height: 50vh;
+	} */
+
+	/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.hamburger{ display: block; }
+	.hamburger.active .slice:nth-child(2){ opacity: 0; }
+	.hamburger.active .slice:nth-child(1){ transform: translateY(8px) rotate(45deg); }
+	/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.hamburger.active .slice:nth-child(3){ transform: translateY(-8px) rotate(-45deg); }
+	.nav-menu {
+		position: fixed;
+		left: -100%;
+		top: 75px; /* close to nav-bar height */
+		display: flex;
+		gap: 0;
+		flex-direction: column;
+		background-color: #262626;
+		width: 100%;
+		text-align: center;
+		transition: 0.3s;
+	}
+	/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-item {
+		margin: 16px 0;
+	}
+	/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.nav-menu.active{
+		left: 0;
+	}
+	/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+header>a,header>li 
+	{
+		font-size: 1.3em;
+	}
+}
+
+
+
+
+/* *********************** Career Goals styles *********************** */
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#career-goals h1 {
+    padding-left: 0;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+#career-goals li, #other-goals li {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+form {
+    margin-left: 1vw;
+    margin-right: auto;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.contact-me-form-flex {
+    display: flex;
+    width: 21rem;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: #b6b2b2;
+    color: black;
+    border-radius: 1rem;
+    box-shadow: 5px 5px 5px rgb(29, 46, 0);
+    margin-bottom: 1rem;
+    padding-top: 0.7rem;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.form-group {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem;
+    
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+input {
+    background-color: white;
+    padding: 0.2rem;
+}
+
+/* changes color of textarea when typing there citing help from
+   https://www.w3schools.com/cssref/sel_focus.php */
+/* commenting out because I don't want that functionality on hike page */
+/* input:focus {
+    background-color: rgb(203, 233, 255);
+} */
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.align-center {
+    /* useful for centering flex-box items that would ordinarily be justified right */
+    align-self: center;
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+textarea {
+    align-self: center;
+    background-color: white;
+    width: 18rem;
+    /* width: 100%; // this causes 50% right-justified here, poss due to flex-box */
+    /* https://stackoverflow.com/questions/27939344/textarea-max-width
+       helped me to fix the resize so it will not resize horizontally */
+    resize: vertical;
+    padding: 0.2rem;
+}
+
+/* changes color of textarea when typing there citing help from
+   https://www.w3schools.com/cssref/sel_focus.php */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+textarea:focus {
+    background-color: rgb(203, 233, 255);
+}
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+button {
+    font-weight: 600;
+    font-size: large;
+    background-color: #B8A68E;
+    padding: 0.5rem 2rem;
+    margin: 1rem 0rem;
+    align-self: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px rgb(29, 46, 0);
+    cursor: pointer;
+}
+
+/* this youtube video helped with adding the shadow effect to the 
+   submit button https://www.youtube.com/watch?v=TGXRxYsfrZU */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+button:active {
+    box-shadow: -1px -1px rgb(29, 46, 0);
+}
