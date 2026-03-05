@@ -488,3 +488,11 @@ button {
 button:active {
     box-shadow: -1px -1px rgb(29, 46, 0);
 }
+
+
+.footer-flex {
+    margin-bottom: 1.2rem;
+    color: black;
+    display: flex;
+    justify-content: center;
+}

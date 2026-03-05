@@ -6,6 +6,25 @@
 //
 // --------------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+// console logging and date functioning for copyright notice at bottom
+
+    // print to console the message "finished loading html, running javascript at end of body now."
+// console.log("1. finished loading html, running javascript at end of body now.");
+
+    // print to console decision of whether to show skills as a list or a table; only prints 
+    // once upon initial load of html, even though user could resize the window later.
+// var decision_text = ( window.innerWidth < 900 ) ? "list" : "table";
+// console.log("2. Current width is " + window.innerWidth + "px. Showing skills in " + decision_text + " format.");
+
+    // populate "div-current-date" with copyright symbol followed by 4-digit year of current date.
+var d = new Date();
+// console.log("3. d.getFullYear is " + d.getFullYear() + ". Populating div with id 'div-current-date' in html.");
+document.getElementById("div-current-date").innerHTML = d.getFullYear();
+    // used the following sources for the above date functionality:
+    // https://www.w3schools.com/js/js_date_methods.asp
+    // https://www.w3schools.com/js/tryit.asp?filename=tryjs_date_getfullyear
+
 
 //===================================================================================
 
@@ -126,5 +145,4 @@ window.onscroll = function() {  // simple but only one onscroll listener allowed
 //     hutsExpansion.classList.toggle('expanded');
 //     btn.textContent = text.classList.contains('expanded') ? 'Show Less' : 'Show More';
 // });
-
 
