@@ -156,11 +156,11 @@ table .sp {
 }
 #huts-expansion {
     display: none;
+	overflow: hidden;
 	/* height: 50px; */
 	/* height: 0; */
-	transition: height 0.5s;
+	/* transition: height 0.5s; */
 	/* max-height: 50px; */
-	overflow: hidden;
 	/* transition: max-height 0.5s ease-in-out; */
 	/* animation: slow 3s ease forwards; */
 }
