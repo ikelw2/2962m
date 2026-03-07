@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="https://www.w3.org/1999/xhtml">
 	<head>
-		<title>route</title>
+		<title>GSPVisualizer</title>
 		<base target="_top"></base>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<meta name="geo.position" content="47.441425; 11.052866" />
 		<meta name="ICBM" content="47.441425, 11.052866" />
+		
+		<!-- set page automatic refresh rate of once per day, because will be undergoing updates -->
+		<meta http-equiv="refresh" content="86400">
+		<!-- <meta http-equiv="refresh" content="10"> -->		
 	</head>
 	<body style="margin:0px;">
 		
@@ -128,7 +132,7 @@
 			  gv_options.tracklist_options.tooltips = false;  // true|false: should the name of the track appear on the map when you mouse over the name in the list?
 			  gv_options.tracklist_options.draggable = true;  // true|false: can it be moved around the screen?
 			  gv_options.tracklist_options.collapsible = true;  // true|false: can it be collapsed by double-clicking its top bar?
-			  gv_options.tracklist_options.header = 'Tracks:'; // HTML code; be sure to put backslashes in front of any single quotes, and don't include any line breaks
+			  gv_options.tracklist_options.header = 'Zugspitze Hike Map 2026'; // HTML code; be sure to put backslashes in front of any single quotes, and don't include any line breaks
 			  gv_options.tracklist_options.footer = ''; // HTML code
 			gv_options.profile_options = { visible:false, icon:true, units:'us', filled:true, waypoints:true, height:120, width:'100%', y_min:null, y_max:null, gap_between_tracks:false }; // see https://www.gpsvisualizer.com/tutorials/profiles_in_maps.html
 
@@ -230,7 +234,7 @@
 				
 				// Track #1
 				t = 1; trk[t] = {info:[],segments:[]};
-				trk[t].info.name = 'New file 1'; trk[t].info.desc = '13.55 mi'; trk[t].info.clickable = true;
+				trk[t].info.name = 'Reintal Valley Route'; trk[t].info.desc = '13.55 mi'; trk[t].info.clickable = true;
 				trk[t].info.color = '#73e600'; trk[t].info.width = 3; trk[t].info.opacity = 0.9; trk[t].info.hidden = false; trk[t].info.z_index = null;
 				trk[t].info.outline_color = 'black'; trk[t].info.outline_width = 5; trk[t].info.fill_color = '#e60000'; trk[t].info.fill_opacity = 0;
 				trk[t].info.elevation = true;
@@ -1415,9 +1419,12 @@
 
 				
 				
-				GV_Draw_Marker({lat:47.4911125,lon:11.0980452,name:'Bus-station',desc:'hauptbahnhof',color:'gray',icon:''});
-				GV_Draw_Marker({lat:47.4825833,lon:11.1174444,name:'Skistadion-parkplatz',desc:'parkplatz',color:'gray',icon:''});
-				GV_Draw_Marker({lat:47.4558841,lon:10.9925618,name:'Zugspitze-parkplatz',desc:'parkplatz',color:'gray',icon:''});
+				GV_Draw_Marker({lat:47.4911125,lon:11.0980452,name:'Bus Station',desc:'hauptbahnhof',color:'gray',icon:''});
+				GV_Draw_Marker({lat:47.4893413,lon:11.0962186,name:'Cogwheel end-station',desc:'hauptbahnhof',color:'gray',icon:''});
+				GV_Draw_Marker({lat:47.4913968,lon:11.0970578,name:'Main Station',desc:'hauptbahnhof',color:'gray',icon:''});
+				
+				GV_Draw_Marker({lat:47.482592,lon:11.1172913,name:'Skistadion Parkplatz',desc:'parkplatz',color:'gray',icon:''});
+				GV_Draw_Marker({lat:47.4558841,lon:10.9925618,name:'Zugspitze Parkplatz',desc:'parkplatz',color:'gray',icon:''});
 				GV_Draw_Marker({lat:47.4841645,lon:11.1284835,name:'Hospital',desc:'emergency-room',color:'yellow',icon:''});
 				GV_Draw_Marker({lat:47.467177,lon:11.120345,name:'Bypass',desc:'turnstile',color:'white',icon:''});
 				GV_Draw_Marker({lat:47.4640751,lon:11.1239371,name:'Kaiserschmarrn-Alm',desc:'cafe',color:'white',icon:''});

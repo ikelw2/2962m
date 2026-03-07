@@ -486,7 +486,7 @@ section#top_image {
 	/* other styles for this section */
 	/* border-top: 126px solid #262626; */
 	background-color: var(--b1);
-	background-image: url("images/2962m.jpg"); 
+	background-image: url("2962m.jpg"); 
 	background-size: cover;
 	background-repeat: no-repeat;
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
