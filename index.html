@@ -44,6 +44,7 @@
         <a href="#" class="nav-branding nav-link">2,962m&nbsp;asl</a>
 
         <ul class="nav-menu">
+            <li class="nav-item"><a class="nav-link" href="#stat"    >Update</a></li>
             <li class="nav-item"><a class="nav-link" href="#hike"    >Hike</a></li>
             <li class="nav-item"><a class="nav-link" href="#huts"    >Huts</a></li>
             <li class="nav-item"><a class="nav-link" href="#weather" >Weather</a></li>
@@ -65,6 +66,7 @@
     <main>
 
     <div class="center-viewport">
+
     <div id="top-edge"></div>
     <section id="top_image" title="Image of the Zugspitze summit cross">
         <!-- image purchased from iStock by Getty Images on 12 Feb 2026 and altered -->
@@ -73,9 +75,44 @@
     </section></div>
 
 
-    <section id="hike">
-        <h2>The Hike</h2>
+    <section id="stat">
+        <h2>Status Update</h2>
+        <p class="red">As of early March 2026 it's still winter in Southern Bavaria.
+            There will be no good hike until weather and trail conditions improve. 
+            Next update should be in April.
+        </p>
+        <input id="stat-expand-toggle" type="checkbox">
+        <div id="stat-expansion">
         
+        <h3>Reservations</h3>
+        <p>Some hut reservations for have been made for the below dates, in the 
+            event the weather cooperates and people are interested in going. 
+            Reservations will be canceled if there's no interest, or if they tell 
+            me I cannot keep so many. There's still several vacancies in May 
+            and early June mid-week. <em>**If you know another date that would 
+            work for a group of people, let me know it so I can try to make 
+            reservations for it.**</em> 
+        </p>
+
+        <div class="flex-container-1"> 
+            <table>
+            <tr><th>Reservation Date</th><th>Reservation at</th></tr>
+            <tr><td>Wed-Thu 17-18 Jun</td><td>Reintalanger</td></tr>
+            <tr><td>Sat-Sun 20-21 Jun</td><td>Reintalanger</td></tr>
+            <tr><td>Thu-Fri 25-26 Jun</td><td>Knorrhütte</td></tr>
+            <tr><td>Sat-Sun 27-28 Jun</td><td>Reintalanger</td></tr>
+            <tr><td>Thu-Fri 02-03 Jul</td><td>Reintalanger</td></tr>
+            <tr><td>Sat-Sun 25-26 Jul</td><td>Reintalanger</td></tr>
+            <tr><td>Sat-Sun 15-16 Aug</td><td>Reintalanger</td></tr>
+            <tr><td>Sat-Sun 22-23 Aug</td><td>Reintalanger</td></tr>
+            <tr><td>Thu-Fri 27-28 Aug</td><td>Reintalanger</td></tr>
+            </table>            
+        </div>
+        </div><label for="stat-expand-toggle"></label>
+    </section>
+
+   <section id="hike">
+        <h2>The Hike</h2>
         <h3>Reintal Valley Route</h3>
         <p>Distance:&nbsp;13.5&nbsp;mi&nbsp;(21.7&nbsp;km) &nbsp;&nbsp; 
             Climb:&nbsp;7,200&nbsp;ft&nbsp;(2,200&nbsp;m) &nbsp;&nbsp; 
@@ -126,6 +163,7 @@
             <a target="_blank" href="map.jpg">map.jpg</a>
         </div>
         <p>Download one of these ~4mb files to your device as a backup map.</p>
+        
         <input id="hike-expand-toggle" type="checkbox">
         <div id="hike-expansion">
             <h3>Timing</h3>
@@ -252,10 +290,10 @@
                     One-way busfare from the hauptbahnhof to Skistadion costs around €3 per
                     person, or three to five people can share a taxi for around €15.
                 </li>
-                <li>In addition to the huts discussed in the next section, all huts offer food service
-                    during regular business hours. Plan to pay with cash. Off-season (outside of 
-                    summer), the huts are not open, even for meals. The restaurants at the top of the 
-                    Zugspitze are usually open on all days the tram is running.
+                <li>In addition to the hut and meal options discussed in the next section, all huts 
+                    offer food/snack service during regular business hours. Plan to pay with cash. 
+                    Off-season (outside of summer), the huts are not open, even for meals. The restaurants 
+                    at the top of the Zugspitze are usually open on all days the tram is running.
                 </li>                
             </ul>
         </div><label for="hike-expand-toggle"></label>
@@ -264,7 +302,7 @@
 
     <section id="huts">
         <h2>The Huts</h2>
-        <p>It is illegal to camp outside in the Zugspitze wilderness. Therefore, 
+        <p>It is illegal to camp outside in this region. Therefore, 
             mountain huts along the trail provide an essential service - they allow
             people to spend the night, and also to split the hike into multiple days.
             Some other benefits to staying an a hut are-- Hikers don't have to walk
@@ -274,8 +312,9 @@
             it to the top in time to catch the last tram down. Additionally, if good
             weather is predicted for the second day, staying overnight allows the 
             group to make an early start for the summit, potentially avoiding some
-            afternoon crowds. One disadvantage of staying at a hut, is that it usually
-            means having to carry more gear, like a towel and shower shoes. 
+            afternoon crowds. One disadvantage of staying at a hut, is that room and
+            board is an additional expense. Another disadvantage is that you may have
+            to carry more gear, like a towel and shower shoes. 
         </p>
 
             <h3>Reintalangerhütte</h3>
@@ -297,34 +336,11 @@
                 It sits more than halfway up the main uphill section of trail, at about 
                 11&nbsp;miles along. It's 2&nbsp;miles further and over 2,000 feet higher than the 
                 Reintalangerhütte, but also that much closer to the top. Per their website
-                they have pay-to-use showers, which take Euro coins.
+                they have pay-to-use showers.
             </p>
         <input id="huts-expand-toggle" type="checkbox">
         <div id="huts-expansion">
 
-
-            <h3>Reservations</h3>
-            <p>Earlier this year I made reservations for 10&nbsp;beds on each of the below 
-                dates. I hope to organize at least one more trip, either a hut-stay or
-                thru-hike, but I won't use all of them. If they remain unused, I will
-                cancel them while it's still free to do so. If you want to use one
-                let me know.
-            </p>
-
-            <div class="flex-container-1"> 
-                <table>
-                <tr><th>Reservation Date</th><th>Reservation at</th></tr>
-                <tr><td>Sat-Sun 20-21 Jun</td><td>Reintalanger</td></tr>
-                <tr><td>Thu-Fri 25-26 Jun</td><td>Knorrhütte</td></tr>
-                <tr><td>Sat-Sun 27-28 Jun</td><td>Reintalanger</td></tr>
-                <tr><td>Thu-Fri 02-03 Jul</td><td>Reintalanger</td></tr>
-                <tr><td>Sat-Sun 25-26 Jul</td><td>Reintalanger</td></tr>
-                <tr><td>Sat-Sun 15-16 Aug</td><td>Reintalanger</td></tr>
-                <tr><td>Sat-Sun 22-23 Aug</td><td>Reintalanger</td></tr>
-                <tr><td>Thu-Fri 27-28 Aug</td><td>Reintalanger</td></tr>
-                </table>            
-            </div>
-            
 
             <h3>Notes for Leaders</h3>
             <ul>
@@ -366,15 +382,20 @@
 
     
     <section id="weather">
-        <h2>Weather</h2>
-        <p>Weather and trail conditions are critical factors for this hike. If storms or
-            low visibility is forecasted (in particular below 3&nbsp;km altitude), it may be worth
-            rescheduling the hike for another time. Webcams also indicate what conditions
-            are like at altitude.
+        <h2>Weather & Safety</h2>
+        <p>Weather and trail conditions are critical factors from a safety standpoint. 
+            If stormy weather or poor visibility is forecasted, it may be worth rescheduling 
+            the hike for a later date. Webcams can be used to observe conditions at altitude.
         </p>
-        <input id="weat-expand-toggle" type="checkbox">
-        <div id="weat-expansion">
             <h3>Forecasts & Reports</h3>
+            <div class="flex-container-bulleted-links">
+                <a target="_blank" href="https://www.meteoblue.com/en/weather/14-days/zugspitze_germany_2760454">Meteoblue 14-day</a>
+                <a target="_blank" href="https://www.meteoblue.com/en/weather/forecast/seasonaloutlook/zugspitze_germany_2760454">Seasonal outlook</a>
+            </div><br>
+
+            <input id="weat-expand-toggle" type="checkbox">
+            <div id="weat-expansion">
+
             <div class="flex-container-bulleted-links">
                 <a target="_blank" href="https://www.alpenverein.de/bergwetter">German Alpine Club (DAV) 7-day</a>
                 <a target="_blank" href="https://www.alpenverein-muenchen-oberland.de/huetten/alpenvereinshuetten/reintalangerhuette/tourenverhaeltnisse">Tour&nbsp;conditions&nbsp;@&nbsp;Reintalanger</a>
@@ -392,7 +413,6 @@
                 <a target="_blank" href="https://www.meteoblue.com/en/weather/maps/index/zugspitze_germany_2760454#map=totalClouds~hourlyAll~auto~sfc~none&coords=5.22/46.818/11.511">Cloud-cover</a>
                 <a target="_blank" href="https://www.meteoblue.com/en/weather/aviation/air/zugspitze_germany_2760454">Aviation</a>
                 <a target="_blank" href="https://www.meteoblue.com/en/weather/warnings/index/zugspitze_germany_2760454">Warnings</a>
-                <a target="_blank" href="https://www.meteoblue.com/en/weather/forecast/seasonaloutlook/zugspitze_germany_2760454">Seasonal outlook</a>
             </div><br>
                 
             <h3>Webcams</h3>
@@ -403,6 +423,34 @@
                 <a target="_blank" href="https://www.foto-webcam.eu/webcam/meilerhuette/">Meilerhütte (Reintal valley top left)</a>
                 <a target="_blank" href="https://schneefernerhaus.de/en/daten/live-webcams/">Schneefernerhaus</a>
             </div><br>
+
+            <h3>Alpine Safety</h3>
+            <p>The German Alpine Club (DAV) 
+                <a target="_blank" href="https://www.alpenverein.de/artikel/sicher-auf-die-zugspitze_d6656f66-4dc5-4e9c-bd6e-ca81704a79f5">cautions</a>
+                hikers, <em>"This route should not be underestimated, as the distance to the next town 
+                is very long and you are on the trail in great seclusion,"</em> and offers three pieces 
+                of advice:
+            </p>
+            <ul>
+                <li>Beware of foggy conditions above treeline - the trail is not well-marked!</li>
+                <li>If you are exhausted at Sonnalpin, do not continue - take the tram instead!</li>
+                <li>Beware of snow and slippery spots on the summit flank - hold onto the cables!</li>
+            </ul>
+            <h3>Emergency Contacts</h3>
+            <p>The nearest hospital emergency room is at 
+                <a target="_blank" href="https://maps.app.goo.gl/yhKFRvED7fDKJ6WB6">Klinikum Garmisch-Partenkirchen Auenstraße 6, 82467</a>. The hospital telephone number is 08821-770.
+            </p>
+            <p>Dial 112 for regular emergency assistance, or to reach the <a target="_blank" href="https://bergwacht-bayern.de/">Bergwacht</a>,
+                Garmisch-Partenkirchen's Mountain Rescue Service responsible for emergency 
+                mountain rescue operations in the region. They work closely with helicopter 
+                crews to conduct aerial rescues. Dial 116117 in Germany for non-emergency, 
+                on-call or after-hours medical assistance.
+            </p>
+            <p>In Austria, dial 140 for the Austrian Mountain Rescue Service, or 144 for
+                Emergency Medical Assistance. If these numbers do not work, dial 112.
+            </p>
+
+
         </div><label for="weat-expand-toggle"></label>
     </section>
 
@@ -410,7 +458,12 @@
 
     <section id="gear">
         <h2>Packing List</h2>
-        <p>Blurb about clothing, and weather being a big concern...</p>
+        <p>In the Alps, the weather and temperature can change quickly and 
+            unexpectedly. You may encounter hot or cold temperatures both early or 
+            late in the hike, and you should be prepared for each contingency. 
+            Layered clothing is a must, and having water-resistant or warm layers 
+            is also important in case of bad weather.
+        </p>
         <!-- <input id="pack-expand-toggle" type="checkbox">
         <div id="pack-expansion"> -->
 
@@ -421,42 +474,45 @@
 
                     <tr class="sp"><td>Don't Forget Your...</td><td></td></tr>
                     <tr><td>ID/Passport</td><td></td></tr>
-                    <tr><td>Money/credit cards</td><td>hut-stay fees payable only in cash; shower takes coins</td></tr>
+                    <tr><td>Money/credit cards</td><td>most cafes accept card, but bring Euros to be safe</td></tr>
                     <tr><td>Phone & charging brick</td><td>limited to no charging ability at huts</td></tr>
 
-                    <tr class="sp"><td>Essential Gear & Clothing</td><td>consider the weather when packing <span class="st">*starred items</span></td></tr>
+                    <tr class="sp"><td>Essential Gear & Clothing</td><td>consider the weather when packing <span class="st"><span class="white">**</span>starred items</span></td></tr>
                     <tr><td>Headlamp or flashlight, small</td><td>for early hiking, and in the huts</td></tr>
-                    <tr><td class="st">*Hat, warm</td><td>neck gaiter would be a good addition in colder weather</td></tr>
-                    <tr><td class="st">*Gloves, light or warm</td><td>to hold wire cabling at the top; could get wet/cold</td></tr>
-                    <tr><td class="st">*Goggles, sunglasses or headband</td><td>to prevent snow-blindness</td></tr>
-                    <tr><td>Trash bag (small)</td><td>no garbage cans on trail; an empty snack bag works</td></tr>
-                    <tr><td>Sunscreen and/or hat</td><td>to prevent sunburn</td></tr>
-                    <tr><td>Boots, sturdy, broken-in</td><td>after mile&nbsp;9 it gets rocky, there may be snowfields</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Hat, warm</td><td>neck gaiter is a good addition if colder weather</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Gloves, light (or warm)</td><td>wire cabling at the top; could get wet/cold</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Goggles, sunglasses or headband</td><td>prevent snow-blindness</td></tr>
+                    <tr><td>Small bag for trash</td><td>pack out all trash</td></tr>
+                    <tr><td>Sunscreen and/or hat</td><td>prevent sunburn</td></tr>
+                    <tr><td>Boots, sturdy, broken-in</td><td>after mile&nbsp;9 it gets rocky, with some snow</td></tr>
                     <tr><td>Socks, hiking</td><td> </td></tr>
                     <tr><td>Extra pair hiking socks</td><td></td></tr>
                     <tr><td>Underwear</td><td></td></tr>
-                    <tr><td class="st">*Pants, hiking, athletic/light</td><td>non-cotton, pants best for when temps vary</td></tr>
-                    <tr><td class="st">*Shirt, hiking, athletic/light</td><td>non-cotton, long- or short-sleeved per temps</td></tr>
-                    <tr><td class="st">*Shorts, athletic/light</td><td>for warm weather, or relaxing at hut</td></tr>
-                    <tr><td class="st">*Shirt, long-sleeve, warm</td><td>warm layer #1, for cold weather or relaxing at the top</td></tr>
-                    <tr><td class="st">*Wind-breaker or rain jacket</td><td>warm layer #2</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Pants, hiking, athletic/light</td><td>non-cotton, pants best for when temps vary</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Shirt, hiking, athletic/light</td><td>non-cotton, long- or short-sleeved per temps</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Shorts, athletic/light</td><td>for warm weather, or relaxing at hut</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Shirt, long-sleeve, warm</td><td>warm layer #1, for cold weather or relaxing at the top</td></tr>
+                    <tr><td class="st"><span class="white">**</span>Wind-breaker or rain jacket</td><td>warm layer #2</td></tr>
                     <tr><td>Long-underwear bottom</td><td>extra warm layer</td></tr>
                     <tr><td>Long-underwear top</td><td>extra warm layer</td></tr>
-                    <tr><td>Backpack, light/medium</td><td>To hold anything you aren't wearing</td></tr>                    
+                    <tr><td>Backpack, light/medium</td><td>to hold anything you aren't wearing</td></tr>                    
                     <tr class="sp"><td>Food & Water</td><td></td></tr>
                     <tr><td>Water (2 liters minimum)</td><td>no safe refill locations</td></tr>
                     <tr><td>Snack food, light</td><td>snacks for the hike, knowing restaurants are at the end</td></tr>
+                    <tr class="sp"><td>For Leaders</td><td></td></tr>
+                    <tr><td>First-aid kit</td><td></td></tr>
+                    <tr><td>Physical map</td><td></td></tr>
                     <tr class="sp"><td>Important for Hut-Stay</td><td></td></tr>
-                    <tr><td>€100 and some change</td><td>room&nbsp;&&nbsp;board payable only in cash; shower takes coins</td></tr>
+                    <tr><td>€100 and some change</td><td>room&nbsp;&&nbsp;board payable only in cash</td></tr>
                     <tr><td>Shower shoes</td><td>boots not allowed inside huts</td></tr>
                     <tr><td>Toiletries (small)</td><td>both huts equipped with bathrooms, sinks</td></tr>
-                    <tr><td>Towel & soap (small)</td><td>only Knorrhütte has showers in 2026</td></tr>
+                    <tr><td>Towel & soap (small)</td><td></td></tr>
                     <tr><td>Sleeping bag liner</td><td>regular sleeping bags not allowed; see hut notes</td></tr>
-                    <tr><td>Ear plugs</td><td>optional</td></tr>
+                    <tr><td>Ear plugs</td><td>(optional)</td></tr>
                     <tr class="sp"><td>Leave in the Car/Hotel</td><td></td></tr>
                     <tr><td>Change of clothing, complete</td><td>for the trip home</td></tr>
                     <tr class="sp"><td>Optional Extras</td><td></td></tr>
-                    <tr><td>Swimsuit, or quick-dry clothing</td><td>for a dip in Partnach or Eibsee</td></tr>
+                    <tr><td>Swimsuit, or quick-dry clothing</td><td>for a dip in Partnach or Eibsee, if warm enough</td></tr>
                 </table>
             </div>
 
@@ -464,30 +520,6 @@
         <!-- </div><label for="pack-expand-toggle"></label> -->
     </section>
     
-    <section id="safe">
-        <h2>Safety</h2>
-        <h3>Alpine Safety</h3>
-        <p>See this link for a safety note from the German Alpine Club
-        <a target="_blank" href="https://www.alpenverein.de/artikel/sicher-auf-die-zugspitze_d6656f66-4dc5-4e9c-bd6e-ca81704a79f5">safety message</a>
-        </p>
-        <p>Beware of fog on the Zugspitze plateau. If you are exhausted at Sonnalpin, 
-        you should take the cable car to the summit. Beware of snowfields on the ridge.
-        </p>
-        <h3>Emergency Contacts</h3>
-        <p>The nearest hospital emergency room is at 
-            <a target="_blank" href="https://maps.app.goo.gl/yhKFRvED7fDKJ6WB6">Klinikum Garmisch-Partenkirchen Auenstraße 6, 82467</a>. The hospital telephone number is 08821-770.
-        </p>
-        <p>Dial 112 for regular emergency assistance, or to reach the <a target="_blank" href="https://bergwacht-bayern.de/">Bergwacht</a>,
-            Garmisch-Partenkirchen's Mountain Rescue Service responsible for emergency 
-            mountain rescue operations in the region. They work closely with helicopter 
-            crews to conduct aerial rescues. Dial 116117 in Germany for non-emergency, 
-            on-call or after-hours medical assistance.
-        </p>
-        <p>In Austria, dial 140 for the Austrian Mountain Rescue Service, or 144 for
-            Emergency Medical Assistance. If these numbers do not work, dial 112.
-        </p>
-    </section>
-
     <section id="misc">
         <h2>Etcetera</h2>
         <h3>Additional Notes</h3>
@@ -501,6 +533,13 @@
         <input id="misc-expand-toggle" type="checkbox">
         <div id="misc-expansion">
             <ul>
+                <li>The German Alpine Club (DAV)'s advertises the official
+                    <a target="_blank" href="https://www.alpenverein-muenchen-oberland.de/uploads/images/ERMndRmPnoldAlOaF6Deuw/2001_huettentrekking_zugspitztour.pdf">Zugspitze Tour</a>
+                    as a 3-day hike.
+                    The first night is spent in the Reintalangerhütte. Hikers climb the Zugspitze 
+                    on the second day, and then stay the second night in the Knorrhütte. Then on the
+                    third day they descend via the Gatterl, into Ehrwald, Austria.
+                </li>
                 <li>For additional lodging options closer to the Garmisch-Partenkirchen Skistadion, check out this 
                     <a target="_blank" href="https://www.airbnb.com/rooms/16077041">Airbnb</a> and this fancy 
                     <a target="_blank" href="https://www.das-graseck.de/">hotel</a>. The 
@@ -517,20 +556,13 @@
                     (via ferrata and glacier crossing requiring alpine equipment) from Hammersbach,
                     Germany, and Stopselzieher (via ferrata) from Obermoos, Austria.
                 </li>
-                <li style="display: none;">The German Alpine Club (DAV)'s advertises the official
-                    <a target="_blank" href="https://www.alpenverein-muenchen-oberland.de/uploads/images/ERMndRmPnoldAlOaF6Deuw/2001_huettentrekking_zugspitztour.pdf">Zugspitze Tour</a>
-                    as a 3-day hike.
-                    The first night is spent in the Reintalangerhütte. Hikers climb the Zugspitze 
-                    on the second day, and then stay the second night in the Knorrhütte. Then on the
-                    third day they descend via the Gatterl, into Ehrwald, Austria.
-                </li>
-                <li style="display: none;">For anyone interested in ascending Zugspitze via the Gatterl route, it may be
-                        shorter distance, but it's still a serious hike at 9&nbsp;mi&nbsp;(14.3&nbsp;km)
-                        long and up to 6,400&nbsp;ft&nbsp;(1,950&nbsp;) uphill. Like the Reintal valley 
-                        route, for enough time to reach the top, hikers would probably have to begin around 
-                        0430, or 0830 if staying overnight at the Knorrhütte. More information
-                        <a target="_blank" href="https://www.almbahn.at/en/summer/hiking/gatterl-tour/">here</a>. 
-                        Below are estimated hiking times.
+                <li>For anyone interested in ascending Zugspitze via the Gatterl route, it may be
+                    shorter distance, but it's still a serious hike at 9&nbsp;mi&nbsp;(14.3&nbsp;km)
+                    long and up to 6,400&nbsp;ft&nbsp;(1,950&nbsp;) uphill. Like the Reintal valley 
+                    route, for enough time to reach the top, hikers would probably have to begin around 
+                    0430, or 0830 if staying overnight at the Knorrhütte. More information
+                    <a target="_blank" href="https://www.almbahn.at/en/summer/hiking/gatterl-tour/">here</a>. 
+                    <!-- Below are estimated hiking times. -->
                 </li>
             </ul>
             
@@ -572,16 +604,14 @@
         </div><label for="misc-expand-toggle"></label>
     </section>
 
-
-    <section id="about">
-        <h3>About this page
-        </h3>
-        <p>Hello! The goal of this webpage is to share information and help people 
-			organize group hikes. Please contact the author if you have feedback or
-			questions.
+    <section>
+        <h3>About this Page</h3>
+        <p>Hello! I'm Michael, and I wrote this page to share information and
+            help motivate people to go on this really cool hike. Anyone is welcome to 
+            use this information, but do so safely and at your own risk. Please 
+            submit feedback or questions to me via signal.
         </p>
     </section>
-    
 
     </main>
     <!-- ========== FOOTER =========================================================================== -->

@@ -154,6 +154,10 @@ table .sp {
 	display: none;
 	overflow: hidden;
 }
+#stat-expansion {
+	display: none;
+	overflow: hidden;
+}
 #huts-expansion {
     display: none;
 	overflow: hidden;
@@ -183,6 +187,9 @@ table .sp {
     display: block;
 }
 #weat-expand-toggle:checked + #weat-expansion {
+    display: block;
+}
+#stat-expand-toggle:checked + #stat-expansion {
     display: block;
 }
 input[type="checkbox"] {
@@ -215,6 +222,9 @@ label {
 #weat-expand-toggle + #weat-expansion + label::before {
     content: "Show more";
 }
+#stat-expand-toggle + #stat-expansion + label::before {
+    content: "Show more";
+}
 
 #pack-expand-toggle:checked ~ #pack-expansion + label::before {
 	content: "Show less";
@@ -231,7 +241,9 @@ label {
 #weat-expand-toggle:checked ~ #weat-expansion + label::before {
     content: "Show less";
 }
-
+#stat-expand-toggle:checked ~ #stat-expansion + label::before {
+    content: "Show less";
+}
 
 /* ========== CONTACT FORM =================================================== */
 input,
@@ -257,6 +269,7 @@ form {
 } */
 
 /* ============ TOP-IMAGE ==================================================== */
+/* top_edge */
 /* top image section */
 section#top_image {
 	/*undo styling which is applicable to other sections */
@@ -399,96 +412,6 @@ section#top_image {
 
 
 
-/* *********************** Career Goals styles *********************** */
-
-#career-goals h1 {
-    padding-left: 0;
-}
-
-#career-goals li, #other-goals li {
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-
-form {
-    margin-left: 1vw;
-    margin-right: auto;
-}
-
-.contact-me-form-flex {
-    display: flex;
-    width: 21rem;
-    flex-direction: column;
-    align-items: flex-end;
-    background-color: #b6b2b2;
-    color: black;
-    border-radius: 1rem;
-    box-shadow: 5px 5px 5px rgb(29, 46, 0);
-    margin-bottom: 1rem;
-    padding-top: 0.7rem;
-}
-
-.form-group {
-    display: flex;
-    justify-content: center;
-    margin: 0.5rem;
-    
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-
-input {
-    background-color: white;
-    padding: 0.2rem;
-}
-
-/* changes color of textarea when typing there citing help from
-   https://www.w3schools.com/cssref/sel_focus.php */
-/* commenting out because I don't want that functionality on hike page */
-/* input:focus {
-    background-color: rgb(203, 233, 255);
-} */
-
-.align-center {
-    /* useful for centering flex-box items that would ordinarily be justified right */
-    align-self: center;
-}
-
-textarea {
-    align-self: center;
-    background-color: white;
-    width: 18rem;
-    /* width: 100%; // this causes 50% right-justified here, poss due to flex-box */
-    /* https://stackoverflow.com/questions/27939344/textarea-max-width
-       helped me to fix the resize so it will not resize horizontally */
-    resize: vertical;
-    padding: 0.2rem;
-}
-
-/* changes color of textarea when typing there citing help from
-   https://www.w3schools.com/cssref/sel_focus.php */
-textarea:focus {
-    background-color: rgb(203, 233, 255);
-}
-
-button {
-    font-weight: 600;
-    font-size: large;
-    background-color: #B8A68E;
-    padding: 0.5rem 2rem;
-    margin: 1rem 0rem;
-    align-self: center;
-    border-radius: 5px;
-    box-shadow: 2px 2px rgb(29, 46, 0);
-    cursor: pointer;
-}
-
-/* this youtube video helped with adding the shadow effect to the 
-   submit button https://www.youtube.com/watch?v=TGXRxYsfrZU */
-button:active {
-    box-shadow: -1px -1px rgb(29, 46, 0);
-}
-
 
 .footer-flex {
     margin-bottom: 1.2rem;
@@ -499,4 +422,13 @@ button:active {
 
 .st{
 	font-style:italic;
+}
+.red{
+	color: maroon;
+}
+.green {
+	color: green;
+}
+.white {
+	color: white;
 }

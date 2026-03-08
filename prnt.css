@@ -515,9 +515,9 @@ section#top_image h1 {
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
-header {
-	/* background-color: #262626; */
-}
+/* header {
+	background-color: #262626;
+} */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
@@ -559,9 +559,10 @@ header a, header li {
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
-.nav-up { /* class added to nav-bar when user scrolls down, removed when user scrolls up */
+/* .nav-up { 
+} */
+	/* class added to nav-bar when user scrolls down, removed when user scrolls up */
     /* transform: translateY(-100%); Move nav-bar up by 100% of its height to hide it */
-}
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
@@ -597,10 +598,10 @@ header a, header li {
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
-.nav-branding:hover {
-	/* color: white; */
-	/* text-shadow: #B79047 1px 1px 6px; */
-}
+/* .nav-branding:hover {
+	color: white; 
+	text-shadow: #B79047 1px 1px 6px;
+} */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
@@ -841,4 +842,31 @@ button {
 /* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
 button:active {
     box-shadow: -1px -1px rgb(29, 46, 0);
+}
+
+
+
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.footer-flex {
+    margin-bottom: 1.2rem;
+    color: black;
+    display: flex;
+    justify-content: center;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.st{
+	font-style:italic;
+}
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+/* THIS CSS FILE FOR PRINTING FORMAT - NOT FOR SCREENS */
+.status-update{
+	color: maroon;
 }
