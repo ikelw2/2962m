@@ -59,7 +59,7 @@ section{
 	line-height: 2;
 }
 section img {
-	filter: grayscale();
+	/* filter: grayscale(); */
 	border: 3px solid #262626;
 }
 section li {
