@@ -61,6 +61,7 @@ section{
 section img {
 	filter: grayscale();
 	border: 3px solid #262626;
+	z-index: -5;
 }
 section li {
 	margin-top: 1rem;
