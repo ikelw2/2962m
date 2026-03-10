@@ -62,6 +62,7 @@ section img {
 	filter: grayscale();
 	border: 3px solid #262626;
 	z-index: -5;
+	border-radius: 6px;	
 }
 section li {
 	margin-top: 1rem;
@@ -272,6 +273,19 @@ form {
 /* ============ TOP-IMAGE ==================================================== */
 /* top_edge */
 /* top image section */
+/* div#bottom_image {
+	border: 3px solid #262626;
+	z-index: -5;
+	border-radius: 5px;
+	background-image: url("all_smiles.jpg"); 
+	background-size: cover;
+	background-repeat: no-repeat;
+	margin: 0 10px 0 10px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+} */
 section#top_image {
 	/*undo styling which is applicable to other sections */
 	border-radius: 0; /* other sections use border-radius for better curved section boundaries */
