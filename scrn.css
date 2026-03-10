@@ -160,6 +160,10 @@ table .sp {
 	display: none;
 	overflow: hidden;
 }
+#lets-expansion {
+	display: none;
+	overflow: hidden;
+}
 #huts-expansion {
     display: none;
 	overflow: hidden;
@@ -192,6 +196,9 @@ table .sp {
     display: block;
 }
 #stat-expand-toggle:checked + #stat-expansion {
+    display: block;
+}
+#lets-expand-toggle:checked + #lets-expansion {
     display: block;
 }
 input[type="checkbox"] {
@@ -227,7 +234,9 @@ label {
 #stat-expand-toggle + #stat-expansion + label::before {
     content: "Show more";
 }
-
+#lets-expand-toggle + #lets-expansion + label::before {
+    content: "Show more";
+}
 #pack-expand-toggle:checked ~ #pack-expansion + label::before {
 	content: "Show less";
 }
@@ -246,7 +255,9 @@ label {
 #stat-expand-toggle:checked ~ #stat-expansion + label::before {
     content: "Show less";
 }
-
+#lets-expand-toggle:checked ~ #lets-expansion + label::before {
+    content: "Show less";
+}
 /* ========== CONTACT FORM =================================================== */
 input,
 button,
