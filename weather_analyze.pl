@@ -28,13 +28,18 @@ my $elevation = "2962";
 
 # open-meteo API requires no API key, and uses Deutscher Wetterdienst models
 # access reference pages at https://open-meteo.com/en/docs  # note: '.' concatenates strings together
-my $url = "https://open-meteo.com?" . 
-          "latitude=$latitude" . 
-          "&longitude=$longitude" .
-          "&elevation=$elevation" .
-          "&hourly=temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility" .
-          "&wind_speed_unit=mph" .
-          "&forecast_days=2";          # collect total of 48 hours of forecast data
+
+#$ my $url = "https://single-runs-api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m&models=ecmwf_ifs";
+
+my $url = " https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,cloud_cover_low,cloud_cover_mid,visibility&forecast_days=3&wind_speed_unit=mph"
+# my $url = "https://open-meteo.com?" . 
+# my $url = "https://api.open-meteo.com/v1/forecast?" .
+#           "latitude=$latitude" . 
+#           "&longitude=$longitude" .
+#           "&elevation=$elevation" .
+#           "&hourly=temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility" .
+#           "&wind_speed_unit=mph" .
+#           "&forecast_days=2";          # collect total of 48 hours of forecast data
 
 # set agent to wait on website response no more than 15 seconds, or fail
 my $myAgent = LWP::UserAgent->new(timeout => 15); 
