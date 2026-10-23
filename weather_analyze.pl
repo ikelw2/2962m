@@ -41,7 +41,7 @@ $myAgent->default_header("Accept" => "application/json");
 my $response = $myAgent->get($url);
 
 # return the failure error status number ie 400 and content, UNLESS success, in which case continue execution
-die "API Request Failed (" . $response->status_line . "): " . $response->decoded_content # if failure print out decoded_content 
+die "API Request Failed (" . $response->status_line . "): " . $response->content # if failure print out content 
     unless $response->is_success; 
 # note: above equivalent to below:
 # $response->is_success or die "API Request Failed: (" . $response->status_line . "): " . $response->decoded_content
