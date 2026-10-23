@@ -3,17 +3,19 @@ use strict;
 use warnings;
 
 # tells json to use UTF-8 layer - required for use of degree character ° used below in json processing
-# use utf8;   commented out because couldn't get it working properly; just skipping unicode currently
+use utf8;   
 
 # import Library for WWW (LWP) UserAgent to submit and receive web requests, i.e., access REST APIs on other sites     
 use LWP::UserAgent;
 
 # import PurePerl JSON module, used to encode and decode JSON data
-use JSON::PP;
+# use JSON::PP;
 
-# import unicode module, commented out because couldn't get it working properly; just skipping unicode currently
+use JSON::XS;       # Or use JSON;
+
+# import unicode module
 # use Encode qw(encode_utf8); 
-
+# use Encode qw(decode encode);
 
 ################################################################
 # PREPARE WEB API REQUEST ######################################
@@ -25,8 +27,8 @@ my $longitude = "10.98";
 my $elevation = "2962";
 
 # open-meteo API requires no API key, and uses Deutscher Wetterdienst models
-# access reference pages at https://open-meteo.com/en/docs
-my $url = "https://open-meteo.com?" .  # note: '.' concatenates strings together
+# access reference pages at https://open-meteo.com/en/docs  # note: '.' concatenates strings together
+my $url = "https://open-meteo.com?" . 
           "latitude=$latitude" . 
           "&longitude=$longitude" .
           "&elevation=$elevation" .
@@ -45,7 +47,7 @@ $myAgent->default_header("Accept" => "application/json");
 my $response = $myAgent->get($url);
 
 # return the failure error status number ie 400 and content, UNLESS success, in which case continue execution
-die "API Request Failed (" . $response->status_line . "): " . $response->content # if failure print out content 
+die "API Request Failed (" . $response->status_line . "): " . $response->content 
     unless $response->is_success; 
 # note: above equivalent to below:
 # $response->is_success or die "API Request Failed: (" . $response->status_line . "): " . $response->decoded_content
@@ -58,9 +60,8 @@ die "API Request Failed (" . $response->status_line . "): " . $response->content
 ################################################################
 
 # decodes and translates JSON response into Perl data structure for processing, likely array reference @example
-#my $data = decode_json($response->content);
-
-my $api_payload = $response->decoded_content;
+# my $data = decode_json($response->content);
+my $api_payload = $response->content;
 
 # attempt to decode the JSON response
 my $data;
@@ -80,14 +81,17 @@ if ($@) {
 my $hourly = $data->{hourly};
 
 # prepare output report structure, for eventual saving to output file
+# note: 'scalar gmtime()' creates human readable time_stamp for now, this moment in execution 
+# assigns value 1 to safe, and empty array to reasons
 my %report = (
-    meta => { generated_at => scalar gmtime() . " UTC" },   # note: 'scalar gmtime()' creates human readable time_stamp for now, this moment in execution 
-    next_24h => { safe => 1, reasons => [] },               # assigns value 1 to safe, and empty array to reasons
+    meta => { generated_at => scalar gmtime() . " UTC" },   
+    next_24h => { safe => 1, reasons => [] },               
     next_48h => { safe => 1, reasons => [] }
 );
 
 # Loop over all the hourly (array) data points
-for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {           # "scalar(@{$hourly->{time}})" equates to the LENGTH of $hourly array, "@{i}" reference array by index i.
+ # "scalar(@{$hourly->{time}})" equates to the LENGTH of $hourly array, "@{i}" reference array by index i.
+for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {          
     my $temp_c       = $hourly->{temperature_2m}->[$i];
     my $feels_like_c = $hourly->{apparent_temperature}->[$i];
     my $precip       = $hourly->{precipitation}->[$i]; 
@@ -134,8 +138,8 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
                                             # essentially it runs through each period (loops once for each variable = period)
     my %seen; # define new local hashmap var  
 
-    # remove duplicate items from an array while retaining original order
-    @{ $report{$period}->{reasons} } =                        # resultant array of reasons, is assigned values by... 
+    # remove duplicate items from an array while retaining original order   # resultant array of reasons, is assigned values by... 
+    @{ $report{$period}->{reasons} } =                        
     grep { !$seen{$_}++ } @{$report{$period}->{reasons}};     # grep goes through array @{} item by item, only passes one of each unique valie 
 
     if ($report{$period}->{safe}) {                           # define message to include as content if no risk_hazards flags
@@ -143,20 +147,29 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
     }
 }
 
-# Fix: Convert the structures to a flat structure first, then explicitly serialize with encode_utf8
-# my $raw_json_text = JSON::PP->new->pretty(1)->encode(\%report);
-# my $clean_bytes   = encode_utf8($raw_json_text);
+        # Fix: Convert the structures to a flat structure first, then explicitly serialize with encode_utf8
+        # my $raw_json_text = JSON::PP->new->pretty(1)->encode(\%report);
+        # my $clean_bytes   = encode_utf8($raw_json_text);
 
-# this encoding should work, since no unicode in json
-my $json_text = JSON::PP->new->pretty(1)->encode(\%report);
+        # this encoding should work, since no unicode in json
+        # my $json_text = JSON::PP->new->pretty(1)->encode(\%report);
 
+# FIX 3: Force the JSON encoder to spit out clean, raw UTF-8 bytes using ->utf8(1).
+# We switch to JSON::XS (or JSON) here to make sure it handles the object methods gracefully.
+my $json_bytes = JSON::XS->new->pretty(1)->utf8(1)->encode(\%report);
 
-# Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
+# Because $json_bytes is already raw UTF-8 data, we write it using standard sequential binary/byte mode '>'
 open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
-
-# safe $report in json format to file $filehandle, and close file
-print $filehandle $json_text;
+print $filehandle $json_bytes;
 close($filehandle);
+
+
+# # Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
+# open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
+
+# # safe $report in json format to file $filehandle, and close file
+# print $filehandle $json_text;
+# close($filehandle);
 
 # print success/completion message
 print "Weather analysis complete! status saved to weather_status.json\n";
