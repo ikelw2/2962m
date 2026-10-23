@@ -22,7 +22,17 @@ type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 function isHourly(value: unknown): value is Hourly {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  return Array.isArray(v.time) && v.time.length >= 48 && FIELDS.every(f => Array.isArray(v[f]) && (v[f] as unknown[]).length >= v.time.length);
+  // return Array.isArray(v.time) && v.time.length >= 48 && FIELDS.every(f => Array.isArray(v[f]) && (v[f] as unknown[]).length >= v.time.length);
+
+  const times = v.time;
+
+  return (
+    Array.isArray(times) &&
+    times.length >= 48 &&
+    FIELDS.every(
+      (f) => Array.isArray(v[f]) && (v[f] as unknown[]).length >= times.length
+    )
+  );
 }
 
 function valid(value: number | null): value is number {
