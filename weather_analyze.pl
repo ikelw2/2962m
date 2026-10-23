@@ -71,9 +71,9 @@ for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {           # "scalar(@{$hourly-
     my $snow_depth   = $hourly->{snow_depth}->[$i];  
     my $wind         = $hourly->{wind_speed_10m}->[$i];
     my $gust         = $hourly->{wind_gusts_10m}->[$i];
-    my $low_cloud    = $hourly->{cloud_cover_low}->[$i];
+    my $low_clouds   = $hourly->{cloud_cover_low}->[$i];
     my $mid_clouds   = $hourly->{cloud_cover_mid}->[$i];
-    my $visibility   = $hourly->{visibility}->[%i];
+    my $visibility   = $hourly->{visibility}->[$i];
 
     # append error messages to array of strings on the fly, as input variable conditions test true 
     my @risk_reasons; # add elements to risk_reasons array of strings
@@ -88,8 +88,8 @@ for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {           # "scalar(@{$hourly-
     push @risk_reasons, "Snowfall expected >1cm/hr" if $snowfall > 1.0; # cm
     push @risk_reasons, "Snow accumulation >5cm" if $snow_depth > 0.05; # meters
          # Visibility & storm cloud coverage
-    push @risk_reasons, ">20% cloudy at low elevations 0-3 km" if $low_cloud > 20; 
-    push @risk_reasons, ">50% cloudy at med elevations 3-8 km" if $mid_cloud > 50; # tbd, poss 70?
+    push @risk_reasons, ">20% cloudy at low elevations 0-3 km" if $low_clouds > 20; 
+    push @risk_reasons, ">50% cloudy at med elevations 3-8 km" if $mid_clouds > 50; # tbd, poss 70?
     push @risk_reasons, "Visibility <2km" if $visibility < 2000; # test value 2000m = 6000ft 
 
     if (@risk_reasons) { # if array contains any elements
@@ -115,8 +115,7 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
     grep { !$seen{$_}++ } @{$report{$period}->{reasons}};     # grep goes through array @{} item by item, only passes one of each unique valie 
 
     if ($report{$period}->{safe}) {                           # define message to include as content if no risk_hazards flags
-        push @{$report{$period}->{reasons}}, "No risk conditions. Keep checking on " .
-        "<a target="_blank" href="https://www.meteoblue.com/en/weather/maps/index/zugspitze_germany_2760454#map=totalClouds~hourlyAll~auto~sfc~none&coords=5.22/46.818/11.511">Cloud-cover</a>";
+        push @{$report{$period}->{reasons}}, "No risk conditions noted.</a>";
     }
 }
 
