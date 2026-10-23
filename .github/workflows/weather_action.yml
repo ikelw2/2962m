@@ -1,4 +1,4 @@
-name: Update Hike Planning Weather Status
+name: Update Weather Status
 on:
   schedule:
     - cron: "0 */6 * * *" # Runs every 6 hours
@@ -11,13 +11,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Uses the modern, actively supported Perl setup action
       - name: Setup Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
-          perl-version: "5.34"
+          perl-version: "5.38"
 
+      # Explicitly install system-level SSL libraries along with Perl modules
       - name: Install Perl Dependencies
-        run: cpanm LWP::UserAgent JSON::PP LWP::Protocol::https
+        run: |
+          sudo apt-get update && sudo apt-get install -y libssl-dev netbase
+          cpanm --notest LWP::UserAgent JSON::PP LWP::Protocol::https
 
       - name: Run Weather Analysis
         run: perl weather_analyze.pl
@@ -27,5 +31,5 @@ jobs:
           git config --global user.name "Github Actions Bot"
           git config --global user.email "actions@github.com"
           git add weather_status.json
-          git diff-index --quiet HEAD || git commit -m "Weather Widget Update"
+          git diff-index --quiet HEAD || git commit -m "Update Weather Widget"
           git push
