@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "generated_at": "Thu Oct 22 18:30:00 2026 UTC"
+  },
+  "next_24h": {
+    "safe": 1,
+    "reasons": [
+      "Weather conditions look clear and stable."
+    ]
+  },
+  "next_48h": {
+    "safe": 0,
+    "reasons": [
+      "Dangerous wind gusts (24.5 mph)",
+      "Peak likely in cloud fog (Low clouds 65%)"
+    ]
+  }
+}
