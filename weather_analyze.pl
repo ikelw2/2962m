@@ -58,7 +58,23 @@ die "API Request Failed (" . $response->status_line . "): " . $response->content
 ################################################################
 
 # decodes and translates JSON response into Perl data structure for processing, likely array reference @example
-my $data = decode_json($response->content);
+#my $data = decode_json($response->content);
+
+my $api_payload = $response->decoded_content;
+
+# attempt to decode the JSON response
+my $data;
+eval {
+    $data = decode_json($api_payload);
+};
+if ($@) {
+    # If decode_json crashes, capture the error ($@) and dump the server output
+    print STDERR "JSON Parsing Failed: $@\n";
+    print STDERR "================== RAW SERVER RESPONSE ==================\n";
+    print STDERR $api_payload . "\n";
+    print STDERR "=========================================================\n";
+    die "Stopping execution due to malformed payload.\n";
+}
 
 # assigned nested array of hourly data points to $hourly local var
 my $hourly = $data->{hourly};
