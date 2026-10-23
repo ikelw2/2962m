@@ -1,0 +1,102 @@
+/** Browser counterpart to weather_analyze.pl. No server or scheduled workflow required. */
+export interface PeriodData { safe: number; reasons: string[] }
+export interface WeatherData {
+  meta: { generated_at: string; source: string };
+  next_24h: PeriodData;
+  next_48h: PeriodData;
+}
+export interface CachedWeather { savedAt: number; report: WeatherData }
+
+export const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const CACHE_KEY = '2962m-weather-v1';
+const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
+  latitude: '47.42', longitude: '10.98', elevation: '2962',
+  hourly: 'temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility',
+  forecast_days: '3', wind_speed_unit: 'mph', timezone: 'UTC',
+}).toString();
+
+const FIELDS = ['temperature_2m','apparent_temperature','precipitation','snowfall','snow_depth','wind_speed_10m','wind_gusts_10m','cloud_cover_low','cloud_cover_mid','visibility'] as const;
+type Field = typeof FIELDS[number];
+type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
+
+function isHourly(value: unknown): value is Hourly {
+  if (!value || typeof value !== 'object') return false;
+  const v = value as Record<string, unknown>;
+  return Array.isArray(v.time) && v.time.length >= 48 && FIELDS.every(f => Array.isArray(v[f]) && (v[f] as unknown[]).length >= v.time.length);
+}
+
+function valid(value: number | null): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+/** Matches Perl's 0–24h and 24–48h windows, but anchors to the current UTC hour. */
+export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
+  const firstHour = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours());
+  const result: WeatherData = {
+    meta: { generated_at: now.toISOString(), source: 'Open-Meteo forecast API' },
+    next_24h: { safe: 1, reasons: [] },
+    next_48h: { safe: 1, reasons: [] },
+  };
+  const reasons24 = new Set<string>();
+  const reasons48 = new Set<string>();
+  let counted = 0;
+  for (let i = 0; i < hourly.time.length; i++) {
+    const timestamp = Date.parse(hourly.time[i] + 'Z'); // timezone=UTC gives timezone-less ISO hours
+    if (!Number.isFinite(timestamp)) continue;
+    const offset = Math.round((timestamp - firstHour) / 3600000);
+    if (offset < 0 || offset >= 48) continue;
+    counted++;
+    const values = FIELDS.map(f => hourly[f][i]);
+    // Never claim favorable weather when required forecast fields are absent.
+    if (values.some(v => !valid(v))) throw new Error('Forecast contains missing hourly measurements');
+    const [temp, feels, precip, snowfall, snowDepth, wind, gust, lowCloud, midCloud, visibility] = values as number[];
+    const reasons: string[] = [];
+    if (temp < -5) reasons.push('Low temperatures <-5 C');
+    if (feels < -5) reasons.push('Freezing windchill <-5 C');
+    if (wind > 30) reasons.push('Windspeed >30 mph');
+    if (gust > 40) reasons.push('Wind gusts >40 mph');
+    if (precip > 1) reasons.push('Precipitation >1mm/hr');
+    if (snowfall > 1) reasons.push('Snowfall expected >1cm/hr');
+    if (snowDepth > 0.05) reasons.push('Snow accumulation >5cm');
+    if (lowCloud > 20) reasons.push('>20% cloudy at low elevations 0-3 km');
+    if (midCloud > 50) reasons.push('>50% cloudy at med elevations 3-8 km');
+    if (visibility < 2000) reasons.push('Visibility <2km');
+    const target = offset < 24 ? reasons24 : reasons48;
+    reasons.forEach(r => target.add(r));
+  }
+  if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
+  result.next_24h = { safe: reasons24.size ? 0 : 1, reasons: reasons24.size ? [...reasons24] : ['No risk conditions noted.'] };
+  result.next_48h = { safe: reasons48.size ? 0 : 1, reasons: reasons48.size ? [...reasons48] : ['No risk conditions noted.'] };
+  return result;
+}
+
+export function readCachedWeather(): CachedWeather | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const value: unknown = JSON.parse(raw);
+    if (!value || typeof value !== 'object') return null;
+    const c = value as CachedWeather;
+    if (typeof c.savedAt !== 'number' || !Number.isFinite(c.savedAt) || c.savedAt > Date.now() ||
+        !c.report?.meta?.generated_at || !Array.isArray(c.report?.next_24h?.reasons) ||
+        !Array.isArray(c.report?.next_48h?.reasons)) return null;
+    return c;
+  } catch { return null; } // private browsing / disabled storage
+}
+
+export function cacheIsFresh(cached: CachedWeather): boolean {
+  return Date.now() - cached.savedAt < CACHE_TTL_MS;
+}
+
+export async function fetchWeather(signal?: AbortSignal): Promise<WeatherData> {
+  const response = await fetch(API_URL, { signal, cache: 'no-store' });
+  if (!response.ok) throw new Error(`Open-Meteo HTTP ${response.status}`);
+  const payload: unknown = await response.json();
+  if (!payload || typeof payload !== 'object' || !isHourly((payload as { hourly?: unknown }).hourly)) {
+    throw new Error('Open-Meteo returned incomplete forecast data');
+  }
+  const report = analyzeForecast((payload as { hourly: Hourly }).hourly);
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), report })); }
+  catch { /* Still show forecast if localStorage is blocked */ }
+  return report;
+}

@@ -1,74 +1,65 @@
 import { useState, useEffect } from 'react';
-
-// Explicit type definitions for the Perl backend JSON structure
-interface PeriodData {
-  safe: number;
-  reasons: string[];
-}
-
-interface WeatherData {
-  meta: { generated_at: string };
-  next_24h: PeriodData;
-  next_48h: PeriodData;
-}
+import { cacheIsFresh, fetchWeather, readCachedWeather } from './weather';
+import type { PeriodData, WeatherData } from './weather';
 
 export function Widget() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState(false);
+  const [stale, setStale] = useState(false);
 
   useEffect(() => {
-    // Fetches the weather JSON file updated by your Perl workflow
-    fetch('./weather_status.json')
-      .then((res) => {
-        if (!res.ok) throw new Error('File not found');
-        return res.json();
+    const controller = new AbortController();
+    const cached = readCachedWeather();
+    if (cached) {
+      setWeather(cached.report);
+      setStale(!cacheIsFresh(cached));
+    }
+    if (cached && cacheIsFresh(cached)) return () => controller.abort();
+
+    fetchWeather(controller.signal)
+      .then(report => {
+        if (!controller.signal.aborted) {
+          setWeather(report);
+          setStale(false);
+          setError(false);
+        }
       })
-      .then((data: WeatherData) => setWeather(data))
-      .catch(() => setError(true));
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          console.error('Weather forecast unavailable:', err);
+          setError(true);
+        }
+      });
+    return () => controller.abort();
   }, []);
 
-  if (error) {
-    return (
-      <div style={{ color: '#666', fontStyle: 'italic' }}>
-        -- Weather widget temporarily unavailable --
-      </div>
-    );
-  }
-  
-  if (!weather) {
-    return (
-      <div style={{ color: '#666' }}>
-        -- Evaluating conditions via weather models --
-      </div>
-    );
-  }
+  if (!weather && error) return <p role="status">-- Weather forecast temporarily unavailable. Please consult the linked official forecasts. --</p>;
+  if (!weather) return <p role="status">-- Evaluating conditions via weather models --</p>;
 
-  const renderWindow = (title: string, periodData: PeriodData) => (
-    <div style={{ 
-      whiteSpace: "nowrap",
-      padding: '8px', 
-      borderRadius: '8px', 
-      margin: '8px 0', 
-      border: '3px dashed #262626', 
-      backgroundColor: periodData.safe ? '#e6f4ea' : '#fce8e6' 
-    }}>
-      {title}: <span style={{ color: periodData.safe ? '#137333' : '#c5221f' }}>
-        {periodData.safe ? "Favorable conditions" : "Unfavorable conditions"}
+  const renderWindow = (title: string, period: PeriodData) => (
+    <div style={{ padding: '8px', borderRadius: '8px', margin: '8px 0', border: '3px dashed #262626', backgroundColor: stale ? '#fff3cd' : period.safe ? '#e6f4ea' : '#fce8e6' }}>
+      <strong>{title}:</strong>{' '}
+      <span style={{ color: stale ? '#664d03' : period.safe ? '#137333' : '#c5221f' }}>
+        {stale ? 'Outdated forecast — verify current conditions' : period.safe ? 'No flagged conditions' : 'Potentially hazardous conditions'}
       </span>
-      <ul style={{ margin: '0', color: '#555', padding: '0 0 0 0', paddingLeft: '15px' }}>
-        {periodData.reasons.slice(0, 3).map((r, idx) => <li style={{ padding: '0px', margin: '0px' }} key={idx}>{r}</li>)}
+      <ul style={{ margin: '4px 0 0', paddingLeft: '20px', whiteSpace: 'normal' }}>
+        {period.reasons.slice(0, 3).map((reason, i) => <li key={`${reason}-${i}`}>{reason}</li>)}
       </ul>
     </div>
   );
 
   return (
     <div style={{ fontFamily: 'sans-serif', marginTop: '15px', borderTop: '1px dashed #ccc', paddingTop: '15px' }}>
-      <h4 style={{ margin: '0 0 4px 0' }}>Automated Weather Forecast </h4>
-      <p style={{ color: '#666', margin: '0', padding: '0' }}>
-        Source: Deutscher Wetterdienst at {weather.meta.generated_at}
+      <h4 style={{ margin: '0 0 4px 0' }}>Automated Weather Forecast</h4>
+      <p style={{ color: '#666', margin: 0 }}>
+        Source: Open-Meteo forecast API · Checked {new Date(weather.meta.generated_at).toLocaleString()}
       </p>
-      {renderWindow("Next 24 Hours", weather.next_24h)}
-      {renderWindow("Next 48 Hours", weather.next_48h)}
+      {(stale || error) && <p role="alert" style={{ color: '#8a4b00', fontWeight: 600 }}>
+        Forecast refresh failed or cached data expired. Do not rely on these conditions for a hiking decision.
+      </p>}
+      {renderWindow('Next 24 Hours', weather.next_24h)}
+      {renderWindow('Hours 24–48', weather.next_48h)}
+      <p style={{ fontSize: '0.85em', color: '#666' }}>Automated screening only; not an official mountain safety assessment. Check current forecasts, warnings, and trail conditions before hiking.</p>
     </div>
   );
 }
