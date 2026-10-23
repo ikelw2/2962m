@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 # tells json to use UTF-8 layer - required for use of degree character ° used below in json processing
-use utf8; 
+# use utf8;   commented out because couldn't get it working properly; just skipping unicode currently
 
 # import Library for WWW (LWP) UserAgent to submit and receive web requests, i.e., access REST APIs on other sites     
 use LWP::UserAgent;
@@ -11,8 +11,8 @@ use LWP::UserAgent;
 # import PurePerl JSON module, used to encode and decode JSON data
 use JSON::PP;
 
-# import unicode module
-use Encode qw(encode_utf8); 
+# import unicode module, commented out because couldn't get it working properly; just skipping unicode currently
+# use Encode qw(encode_utf8); 
 
 
 ################################################################
@@ -86,8 +86,8 @@ for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {           # "scalar(@{$hourly-
     # append error messages to array of strings on the fly, as input variable conditions test true 
     my @risk_reasons; # add elements to risk_reasons array of strings
          # Temperature & apparent temperature in celcius because Europe; if farenheit needed, include API format field
-    push @risk_reasons, "Low temperatures <-5°C" if $temp_c < -5; # celcius
-    push @risk_reasons, "Freezing windchill <-5°C" if $feels_like_c < -5; # celcius
+    push @risk_reasons, "Low temperatures <-5 C" if $temp_c < -5; # celcius
+    push @risk_reasons, "Freezing windchill <-5 C" if $feels_like_c < -5; # celcius
          # Winds (adjusted for high alpine ridge estimated unsafe gusts)
     push @risk_reasons, "Windspeed >30 mph" if $wind > 30; # mph
     push @risk_reasons, "Wind gusts >40 mph" if $gust > 40; # mph
@@ -128,14 +128,18 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
 }
 
 # Fix: Convert the structures to a flat structure first, then explicitly serialize with encode_utf8
-my $raw_json_text = JSON::PP->new->pretty(1)->encode(\%report);
-my $clean_bytes   = encode_utf8($raw_json_text);
+# my $raw_json_text = JSON::PP->new->pretty(1)->encode(\%report);
+# my $clean_bytes   = encode_utf8($raw_json_text);
+
+# this encoding should work, since no unicode in json
+my $json_text = JSON::PP->new->pretty(1)->encode(\%report);
+
 
 # Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
 open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
 
 # safe $report in json format to file $filehandle, and close file
-print $filehandle $clean_bytes;
+print $filehandle $json_text;
 close($filehandle);
 
 # print success/completion message
