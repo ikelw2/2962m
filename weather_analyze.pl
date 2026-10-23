@@ -2,6 +2,9 @@
 use strict;
 use warnings;
 
+# tells json to use UTF-8 layer - required for use of degree character ° used below in json processing
+use utf8; 
+
 # import Library for WWW (LWP) UserAgent to submit and receive web requests, i.e., access REST APIs on other sites     
 use LWP::UserAgent;
 
@@ -123,8 +126,8 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
     }
 }
 
-# Write results to a static JSON file that your web page can fetch
-open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
+# Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
+open(my $filehandle, '>:utf8', 'weather_status.json') or die "Could not open file: $!";
 
 # safe $report in json format to file $filehandle, and close file
 print $filehandle encode_json(\%report);
