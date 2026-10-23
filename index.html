@@ -35,7 +35,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-
 </head>
 <body class="center-viewport">
     <!-- ========== HEADER =========================================================================== -->
@@ -76,12 +75,14 @@
 
 
     <section id="stat">
-        <h2>Servus!</h2>
-        <p>If you intend to go on this hike, get up-to-date information about weather and trail conditions from external 
-            sites like those linked to in the <a class="nav-link" href="#weather">Weather</a> section. If poor weather is
-            forecasted for your target dates, you should reschedule for a later date - this hike is not a walk in the park.</p>
-        <p>Hut stay policies may have updated since this page was last updated - check out updated policies and booking 
-            links in the <a class="nav-link" href="#huts">Huts</a> section.</p>
+        <h2>Servus</h2>
+        
+        <div id="react-widget"></div> <!-- React Widget insertion point here -->
+        
+        <p>Access reputable forecast data and trail conditions from the <a class="nav-link" href="#weather">Weather</a> 
+            section. If the forecast calls for inclement weather, it's best to cancel or postpone this hike.</p>
+        <p>Hut stay policies may have updated since this page was last updated - access hut pages and booking 
+            links from the <a class="nav-link" href="#huts">Huts</a> section.</p>
             
         <input id="stat-expand-toggle" type="checkbox">
         <div id="stat-expansion">
@@ -666,6 +667,9 @@
         <div>&nbsp;Michael Wood</div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script> <!-- load vanilla javascript for dynamic drop-down menu functionality -->
+
+    <script type="module" src="./react-widget/dist/assets/index.js"></script> <!-- load compiled production (js) version of react widget at this folder location -->
+
 </body>
 </html>
