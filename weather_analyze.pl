@@ -31,10 +31,14 @@ my $url = "https://open-meteo.com?" .  # note: '.' concatenates strings together
           "&forecast_days=2";          # collect total of 48 hours of forecast data
 
 # set agent to wait on website response no more than 15 seconds, or fail
-my $agent = LWP::UserAgent->new(timeout => 15); 
+my $myAgent = LWP::UserAgent->new(timeout => 15); 
+
+# set an agent profile string to mimic a human user so we get past the robot-drone-killers
+$myAgent->agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+$myAgent->default_header("Accept" => "application/json");
 
 # submit GET request to url with params, assign returned value to $response local var
-my $response = $agent->get($url);
+my $response = $myAgent->get($url);
 
 # return the failure error status number ie 400 and content, UNLESS success, in which case continue execution
 die "API Request Failed (" . $response->status_line . "): " . $response->decoded_content # if failure print out decoded_content 
