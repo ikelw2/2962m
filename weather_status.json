@@ -1,20 +1,19 @@
 {
    "next_24h" : {
-      "safe" : 0,
       "reasons" : [
          ">50% cloudy at med elevations 3-8 km",
          ">20% cloudy at low elevations 0-3 km"
-      ]
-   },
-   "next_48h" : {
-      "reasons" : [
-         ">20% cloudy at low elevations 0-3 km",
-         ">50% cloudy at med elevations 3-8 km",
-         "Precipitation >1mm/hr"
       ],
       "safe" : 0
    },
    "meta" : {
-      "generated_at" : "Fri Oct 23 12:21:13 2026 UTC"
+      "generated_at" : "Fri Oct 23 18:18:27 2026 UTC"
+   },
+   "next_48h" : {
+      "reasons" : [
+         ">50% cloudy at med elevations 3-8 km",
+         ">20% cloudy at low elevations 0-3 km"
+      ],
+      "safe" : 0
    }
 }
