@@ -30,7 +30,7 @@ my $url = "https://open-meteo.com?" .  # note: '.' concatenates strings together
           "latitude=$latitude" . 
           "&longitude=$longitude" .
           "&elevation=$elevation" .
-          "&hourly=temperature_2m,feels_like_temp,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility" .
+          "&hourly=temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility" .
           "&wind_speed_unit=mph" .
           "&forecast_days=2";          # collect total of 48 hours of forecast data
 
@@ -73,7 +73,7 @@ my %report = (
 # Loop over all the hourly (array) data points
 for my $i (0 .. scalar(@{$hourly->{time}}) - 1) {           # "scalar(@{$hourly->{time}})" equates to the LENGTH of $hourly array, "@{i}" reference array by index i.
     my $temp_c       = $hourly->{temperature_2m}->[$i];
-    my $feels_like_c = $hourly->{feels_like_temp}->[$i];
+    my $feels_like_c = $hourly->{apparent_temperature}->[$i];
     my $precip       = $hourly->{precipitation}->[$i]; 
     my $snowfall     = $hourly->{snowfall}->[$i];
     my $snow_depth   = $hourly->{snow_depth}->[$i];  
