@@ -11,7 +11,8 @@ use LWP::UserAgent;
 # import PurePerl JSON module, used to encode and decode JSON data
 use JSON::PP;
 
-
+# import unicode module
+use Encode qw(encode_utf8); 
 
 
 ################################################################
@@ -126,15 +127,15 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
     }
 }
 
-# Create an explicit JSON encoder instance configured to safely convert Unicode to UTF-8 bytes
-my $json_encoder = JSON::PP->new->utf8(1)->pretty(1);
-my $json_payload = $json_encoder->encode(\%report);
+# Fix: Convert the structures to a flat structure first, then explicitly serialize with encode_utf8
+my $raw_json_text = JSON::PP->new->pretty(1)->encode(\%report);
+my $clean_bytes   = encode_utf8($raw_json_text);
 
 # Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
 open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
 
 # safe $report in json format to file $filehandle, and close file
-print $filehandle $json_payload;
+print $filehandle $clean_bytes;
 close($filehandle);
 
 # print success/completion message
