@@ -126,11 +126,15 @@ for my $period (qw(next_24h next_48h)) {    # note: 'qw' is quoted words, is ano
     }
 }
 
+# Create an explicit JSON encoder instance configured to safely convert Unicode to UTF-8 bytes
+my $json_encoder = JSON::PP->new->utf8(1)->pretty(1);
+my $json_payload = $json_encoder->encode(\%report);
+
 # Write results to a static JSON file that your web page can fetch, ">" changes to ">:utf8" to work with unicode chars like °
-open(my $filehandle, '>:utf8', 'weather_status.json') or die "Could not open file: $!";
+open(my $filehandle, '>', 'weather_status.json') or die "Could not open file: $!";
 
 # safe $report in json format to file $filehandle, and close file
-print $filehandle encode_json(\%report);
+print $filehandle $json_payload;
 close($filehandle);
 
 # print success/completion message
