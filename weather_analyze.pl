@@ -58,7 +58,7 @@ die "API Request Failed (" . $response->status_line . "): " . $response->content
 ################################################################
 
 # decodes and translates JSON response into Perl data structure for processing, likely array reference @example
-my $data = decode_json($response->decoded_content);
+my $data = decode_json($response->content);
 
 # assigned nested array of hourly data points to $hourly local var
 my $hourly = $data->{hourly};
