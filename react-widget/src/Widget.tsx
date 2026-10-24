@@ -42,12 +42,21 @@ export function Widget() {
       <span style={{ color: stale ? '#664d03' : period.safe ? '#137333' : '#c5221f' }}>
         {stale ? 'Outdated forecast — verify current conditions' : period.safe ? 'No flagged conditions' : 'Potentially hazardous conditions'}
       </span>
-      <ul style={{ margin: '4px 0 0', paddingLeft: '20px', whiteSpace: 'normal' }}>
-        {period.reasons.slice(0, 3).map((reason, i) => <li key={`${reason}-${i}`}>{reason}</li>)}
+      <ul style={{ margin: 0, padding: '0 0 0 20px', lineHeight: 'normal', whiteSpace: 'normal' }}>
+        {period.reasons.slice(0, 3).map((reason, i) => <li key={`${reason}-${i}`} style={{ margin: 0, padding: 0 }}>{reason}</li>)}
       </ul>
     </div>
   );
 
+
+
+
+
+
+
+
+
+  
   return (
     <div style={{ fontFamily: 'sans-serif', marginTop: '15px', borderTop: '1px dashed #ccc', paddingTop: '15px' }}>
       <h4 style={{ margin: '0 0 4px 0' }}>Automated Weather Forecast</h4>
