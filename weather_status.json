@@ -1,19 +1,29 @@
 {
-   "next_24h" : {
-      "reasons" : [
-         ">50% cloudy at med elevations 3-8 km",
-         ">20% cloudy at low elevations 0-3 km"
-      ],
-      "safe" : 0
-   },
    "meta" : {
-      "generated_at" : "Fri Oct 23 18:18:27 2026 UTC"
+      "generated_at" : "Sat Oct 24 00:37:04 2026 UTC"
    },
    "next_48h" : {
+      "safe" : 0,
       "reasons" : [
+         "Low temperatures <-5 C",
+         "Freezing windchill <-5 C",
+         "Snow accumulation >5cm",
          ">50% cloudy at med elevations 3-8 km",
-         ">20% cloudy at low elevations 0-3 km"
-      ],
-      "safe" : 0
+         ">20% cloudy at low elevations 0-3 km",
+         "Wind gusts >40 mph",
+         "Precipitation >1mm/hr",
+         "Visibility <2km"
+      ]
+   },
+   "next_24h" : {
+      "safe" : 0,
+      "reasons" : [
+         "Low temperatures <-5 C",
+         "Freezing windchill <-5 C",
+         ">20% cloudy at low elevations 0-3 km",
+         ">50% cloudy at med elevations 3-8 km",
+         "Visibility <2km",
+         "Wind gusts >40 mph"
+      ]
    }
 }
