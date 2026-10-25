@@ -25,7 +25,7 @@ type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
   hourly: RISK_RULES.map(rule => rule.field).join(','),
-  forecast_hours: '48', wind_speed_unit: 'mph', timezone: 'UTC',
+  forecast_days: '3', wind_speed_unit: 'mph', timezone: 'UTC',
 }).toString();
 
 function isHourly(value: unknown): value is Hourly {
