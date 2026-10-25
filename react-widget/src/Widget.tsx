@@ -40,8 +40,8 @@ export function Widget() {
   const conditionMessage = stale
     ? 'Outdated forecast — verify current conditions'
     : weather.forecast.safe
-      ? 'Favorable Hike Conditions'
-      : 'Unfavorable Hike Conditions';
+      ? 'Favorable'
+      : 'Unfavorable';
 
   return (
     <div className='weather-widget-container'>
@@ -49,7 +49,7 @@ export function Widget() {
         Forecast generation failed or cached data expired.
       </p>}
       <div className={`weather-widget-container-inside weather-widget-container-inside--${condition}`}>
-        Next 48 Hours:{' '}
+        Assessment of Hike Conditions:{' '}
         <span className='weather-widget-condition'>{conditionMessage}</span>
         <ul>
           {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)}

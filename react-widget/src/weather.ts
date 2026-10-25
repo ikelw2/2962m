@@ -54,16 +54,16 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
     if (values.some(v => !valid(v))) throw new Error('Forecast contains missing hourly measurements');
     const [temp, feels, precip, snowfall, snowDepth, wind, gust, lowCloud, midCloud, visibility] = values as number[];
     const hourlyReasons: string[] = [];
-    if (temp < -5) hourlyReasons.push('Low temperatures <-5 C');
-    if (feels < -5) hourlyReasons.push('Freezing windchill <-5 C');
-    if (wind > 30) hourlyReasons.push('Windspeed >30 mph');
-    if (gust > 40) hourlyReasons.push('Wind gusts >40 mph');
-    if (precip > 1) hourlyReasons.push('Precipitation >1mm/hr');
-    if (snowfall > 1) hourlyReasons.push('Snowfall expected >1cm/hr');
-    if (snowDepth > 0.05) hourlyReasons.push('Snow accumulation >5cm');
-    if (lowCloud > 20) hourlyReasons.push('>20% cloudy at low elevations 0-3 km');
-    if (midCloud > 50) hourlyReasons.push('>50% cloudy at med elevations 3-8 km');
-    if (visibility < 2000) hourlyReasons.push('Visibility <2km');
+    if (temp < -5) hourlyReasons.push('Freezing Temperatures');
+    if (feels < -5) hourlyReasons.push('Freezing Windchill');
+    if (wind > 30) hourlyReasons.push('Hazardous Windspeed');
+    if (gust > 40) hourlyReasons.push('Hazardous Wind Gusts');
+    if (precip > 1) hourlyReasons.push('Precipitation');
+    if (snowfall > 1) hourlyReasons.push('Snowfall');
+    if (snowDepth > 0.05) hourlyReasons.push('Snow Accumulation');
+    if (lowCloud > 20) hourlyReasons.push('Cloudy below 3000m ASL');
+    if (midCloud > 50) hourlyReasons.push('Cloudy between 3000-8000m ASL');
+    if (visibility < 2000) hourlyReasons.push('Low Visibility');
     hourlyReasons.forEach(reason => riskReasons.add(reason));
   }
   if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
