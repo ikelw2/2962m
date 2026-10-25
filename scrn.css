@@ -92,15 +92,13 @@ section p, section ul {
 }
 .weather-widget-container-inside {
 	border: 3px solid #3d5a80; 
-	margin: 0.5rem 0;
-	padding: 0.5rem;
+	margin: 0;
+	padding: 0 0.5rem;
 }
 .weather-widget-container-inside ul,
 .weather-widget-container-inside li {
-	padding: 0;
-}
-.weather-widget-container-inside li {
 	margin-top: 0;
+	padding: 0;
 }
 .weather-widget-container-inside--stale {
 	background-color: #fff3cd;

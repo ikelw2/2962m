@@ -54,8 +54,10 @@ export function Widget() {
         <ul>
           {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)}
         </ul>
-        Generated {new Date(weather.meta.generated_at).toLocaleString()} from Deutscher Wetterdienst data. Not an official safety assessment.
       </div>
+      <p className='weather-widget-p'>
+      Generated {new Date(weather.meta.generated_at).toLocaleString()} from Deutscher Wetterdienst data. Not an official safety assessment.
+      </p>
     </div>
   );
 }
