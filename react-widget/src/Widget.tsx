@@ -49,15 +49,13 @@ export function Widget() {
         Forecast generation failed or cached data expired.
       </p>}
       <div className={`weather-widget-container-inside weather-widget-container-inside--${condition}`}>
-        Assessment of Hike Conditions:{' '}
+        Conditions Over Next 48 Hours:{' '}
         <span className='weather-widget-condition'>{conditionMessage}</span>
         <ul>
           {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)}
         </ul>
+        Generated {new Date(weather.meta.generated_at).toLocaleString()} from Deutscher Wetterdienst data. Not an official safety assessment.
       </div>
-      <p className='weather-widget-p'>
-        Generated {new Date(weather.meta.generated_at).toUTCString()} from Deutscher Wetterdienst data. Not an official safety assessment.
-      </p>
     </div>
   );
 }
