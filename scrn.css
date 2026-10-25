@@ -30,15 +30,15 @@ h1, h2, h3 {
 	font-family: "IM Fell English", serif;
 	font-style: normal;
 }
+h2 {
+	font-size: 2.5rem;
+ 	text-indent: 1rem;
+	color: #262626;
+}
 h3{
 	font-size: 1.5rem;
 	padding-top: 0.7rem;
 	padding-bottom: 0.6rem;
-	color: #262626;
-}
-h2 {
-	font-size: 2.5rem;
- 	text-indent: 1rem;
 	color: #262626;
 }
 
@@ -75,6 +75,49 @@ section p, section ul {
 	padding-top: 1rem;
 }
 
+.weather-widget-container {
+	/*border-top: 1px dashed #ccc;*/
+}
+.weather-widget-h4 {
+	margin-bottom: 0.25rem;
+}
+.weather-widget-p {
+	color: #666;
+	font-size: 0.85em;
+}
+.weather-widget-p-alert {
+	color: #8a4b00;
+	font-weight: 600;
+}
+.weather-widget-container-inside {
+	border: 3px solid #3d5a80; 
+	margin: 0.5rem 0;
+	padding: 0.5rem;
+}
+.weather-widget-container-inside ul,
+.weather-widget-container-inside li {
+	padding: 0;
+}
+.weather-widget-container-inside--stale {
+	background-color: #fff3cd;
+}
+.weather-widget-container-inside--safe {
+	background-color: #e6f4ea;
+}
+.weather-widget-container-inside--hazardous {
+	background-color: #8aa8cf;
+}
+.weather-widget-container-inside--stale .weather-widget-condition {
+	color: #664d03;
+}
+.weather-widget-container-inside--safe .weather-widget-condition {
+	font-weight: bold;
+	color: #137333;
+}
+.weather-widget-container-inside--hazardous .weather-widget-condition {
+	font-weight: bold;
+	color: #810806;
+}
 
 table {
 	border: 3px solid #3d5a80; 

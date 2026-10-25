@@ -1,14 +1,13 @@
 /** Browser counterpart to weather_analyze.pl. No server or scheduled workflow required. */
-export interface PeriodData { safe: number; reasons: string[] }
+interface Forecast { safe: boolean; reasons: string[] }
 export interface WeatherData {
   meta: { generated_at: string; source: string };
-  next_24h: PeriodData;
-  next_48h: PeriodData;
+  forecast: Forecast;
 }
 export interface CachedWeather { savedAt: number; report: WeatherData }
 
 export const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const CACHE_KEY = '2962m-weather-v1';
+const CACHE_KEY = '2962m-weather-v2';
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
   hourly: 'temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility',
@@ -39,16 +38,10 @@ function valid(value: number | null): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
-/** Matches Perl's 0–24h and 24–48h windows, but anchors to the current UTC hour. */
+/** Evaluates the 48-hour window beginning at the current UTC hour. */
 export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
   const firstHour = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours());
-  const result: WeatherData = {
-    meta: { generated_at: now.toISOString(), source: 'Open-Meteo forecast API' },
-    next_24h: { safe: 1, reasons: [] },
-    next_48h: { safe: 1, reasons: [] },
-  };
-  const reasons24 = new Set<string>();
-  const reasons48 = new Set<string>();
+  const riskReasons = new Set<string>();
   let counted = 0;
   for (let i = 0; i < hourly.time.length; i++) {
     const timestamp = Date.parse(hourly.time[i] + 'Z'); // timezone=UTC gives timezone-less ISO hours
@@ -60,24 +53,27 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
     // Never claim favorable weather when required forecast fields are absent.
     if (values.some(v => !valid(v))) throw new Error('Forecast contains missing hourly measurements');
     const [temp, feels, precip, snowfall, snowDepth, wind, gust, lowCloud, midCloud, visibility] = values as number[];
-    const reasons: string[] = [];
-    if (temp < -5) reasons.push('Low temperatures <-5 C');
-    if (feels < -5) reasons.push('Freezing windchill <-5 C');
-    if (wind > 30) reasons.push('Windspeed >30 mph');
-    if (gust > 40) reasons.push('Wind gusts >40 mph');
-    if (precip > 1) reasons.push('Precipitation >1mm/hr');
-    if (snowfall > 1) reasons.push('Snowfall expected >1cm/hr');
-    if (snowDepth > 0.05) reasons.push('Snow accumulation >5cm');
-    if (lowCloud > 20) reasons.push('>20% cloudy at low elevations 0-3 km');
-    if (midCloud > 50) reasons.push('>50% cloudy at med elevations 3-8 km');
-    if (visibility < 2000) reasons.push('Visibility <2km');
-    const target = offset < 24 ? reasons24 : reasons48;
-    reasons.forEach(r => target.add(r));
+    const hourlyReasons: string[] = [];
+    if (temp < -5) hourlyReasons.push('Low temperatures <-5 C');
+    if (feels < -5) hourlyReasons.push('Freezing windchill <-5 C');
+    if (wind > 30) hourlyReasons.push('Windspeed >30 mph');
+    if (gust > 40) hourlyReasons.push('Wind gusts >40 mph');
+    if (precip > 1) hourlyReasons.push('Precipitation >1mm/hr');
+    if (snowfall > 1) hourlyReasons.push('Snowfall expected >1cm/hr');
+    if (snowDepth > 0.05) hourlyReasons.push('Snow accumulation >5cm');
+    if (lowCloud > 20) hourlyReasons.push('>20% cloudy at low elevations 0-3 km');
+    if (midCloud > 50) hourlyReasons.push('>50% cloudy at med elevations 3-8 km');
+    if (visibility < 2000) hourlyReasons.push('Visibility <2km');
+    hourlyReasons.forEach(reason => riskReasons.add(reason));
   }
   if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
-  result.next_24h = { safe: reasons24.size ? 0 : 1, reasons: reasons24.size ? [...reasons24] : ['No risk conditions noted.'] };
-  result.next_48h = { safe: reasons48.size ? 0 : 1, reasons: reasons48.size ? [...reasons48] : ['No risk conditions noted.'] };
-  return result;
+  return {
+    meta: { generated_at: now.toISOString(), source: 'Open-Meteo forecast API' },
+    forecast: {
+      safe: riskReasons.size === 0,
+      reasons: riskReasons.size ? [...riskReasons] : ['No risk conditions noted.'],
+    },
+  };
 }
 
 export function readCachedWeather(): CachedWeather | null {
@@ -88,8 +84,8 @@ export function readCachedWeather(): CachedWeather | null {
     if (!value || typeof value !== 'object') return null;
     const c = value as CachedWeather;
     if (typeof c.savedAt !== 'number' || !Number.isFinite(c.savedAt) || c.savedAt > Date.now() ||
-        !c.report?.meta?.generated_at || !Array.isArray(c.report?.next_24h?.reasons) ||
-        !Array.isArray(c.report?.next_48h?.reasons)) return null;
+        !c.report?.meta?.generated_at || typeof c.report?.forecast?.safe !== 'boolean' ||
+        !Array.isArray(c.report.forecast.reasons)) return null;
     return c;
   } catch { return null; } // private browsing / disabled storage
 }
