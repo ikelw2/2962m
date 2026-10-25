@@ -9,16 +9,15 @@ export interface CachedWeather { savedAt: number; report: WeatherData }
 export const CACHE_TTL_MS = 1 * 60 * 60 * 1000; /* 1 hour */
 const CACHE_KEY = '2962m-weather-v2';
 const RISK_RULES = [
-  { field: 'temperature_2m', isRisk: (value: number) => value < -5, reason: 'Freezing Temperatures' },
+  { field: 'visibility', isRisk: (value: number) => value < 2000, reason: 'Low Visibility' },
   { field: 'apparent_temperature', isRisk: (value: number) => value < -5, reason: 'Freezing Windchill' },
   { field: 'wind_speed_10m', isRisk: (value: number) => value > 30, reason: 'Hazardous Windspeed' },
-  { field: 'wind_gusts_10m', isRisk: (value: number) => value > 40, reason: 'Hazardous Wind Gusts' },
-  { field: 'precipitation', isRisk: (value: number) => value > 1, reason: 'Precipitation' },
   { field: 'snowfall', isRisk: (value: number) => value > 1, reason: 'Snowfall' },
   { field: 'snow_depth', isRisk: (value: number) => value > 0.05, reason: 'Snow Accumulation' },
   { field: 'cloud_cover_low', isRisk: (value: number) => value > 20, reason: 'Cloudy below 3000m ASL' },
   { field: 'cloud_cover_mid', isRisk: (value: number) => value > 50, reason: 'Cloudy between 3000-8000m ASL' },
-  { field: 'visibility', isRisk: (value: number) => value < 2000, reason: 'Low Visibility' },
+  { field: 'precipitation', isRisk: (value: number) => value > 1, reason: 'Precipitation' },
+  { field: 'wind_gusts_10m', isRisk: (value: number) => value > 40, reason: 'Hazardous Wind Gusts' },
 ] as const;
 type Field = typeof RISK_RULES[number]['field'];
 type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
@@ -26,7 +25,7 @@ type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
   hourly: RISK_RULES.map(rule => rule.field).join(','),
-  forecast_days: '3', wind_speed_unit: 'mph', timezone: 'UTC',
+  forecast_days: '2', wind_speed_unit: 'mph', timezone: 'UTC',
 }).toString();
 
 function isHourly(value: unknown): value is Hourly {
