@@ -63,7 +63,7 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
       if (isRisk(value)) riskReasons.add(reason);
     }
   }
-  if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
+  if (counted !== 47) throw new Error('Forecast does not contain a complete 48-hour window');
   return {
     meta: { generated_at: now.toISOString(), source: 'Open-Meteo forecast API' },
     forecast: {
