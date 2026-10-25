@@ -25,7 +25,7 @@ type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
   hourly: RISK_RULES.map(rule => rule.field).join(','),
-  forecast_days: '2', wind_speed_unit: 'mph', timezone: 'UTC',
+  forecast_hours: '48', wind_speed_unit: 'mph', timezone: 'UTC',
 }).toString();
 
 function isHourly(value: unknown): value is Hourly {
@@ -35,7 +35,7 @@ function isHourly(value: unknown): value is Hourly {
 
   return (
     Array.isArray(times) &&
-    times.length >= 47 &&
+    times.length >= 48 &&
     RISK_RULES.every(
       ({ field }) => Array.isArray(v[field]) && (v[field] as unknown[]).length >= times.length
     )
@@ -55,7 +55,7 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
     const timestamp = Date.parse(hourly.time[i] + 'Z'); // timezone=UTC gives timezone-less ISO hours
     if (!Number.isFinite(timestamp)) continue;
     const offset = Math.round((timestamp - firstHour) / 3600000);
-    if (offset < 0 || offset >= 47) continue;
+    if (offset < 0 || offset >= 48) continue;
     counted++;
     for (const { field, isRisk, reason } of RISK_RULES) {
       const value = hourly[field][i];
@@ -63,7 +63,7 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
       if (isRisk(value)) riskReasons.add(reason);
     }
   }
-  if (counted !== 47) throw new Error('Forecast does not contain a complete 48-hour window');
+  if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
   return {
     meta: { generated_at: now.toISOString(), source: 'Open-Meteo forecast API' },
     forecast: {
