@@ -1,19 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-// import './index.css'
-import { Widget } from './Widget'
-// import App from './App'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Widget } from './Widget';
 
+const rootElement = document.getElementById('react-widget');
 
-const rootElement = document.getElementById('react-widget')
+if (!rootElement) throw new Error('Could not find #react-widget in index.html');
 
-if (rootElement) {
-  const root = createRoot(rootElement)
-  root.render(
-    <StrictMode>
-      <Widget />
-    </StrictMode>
-  )
-} else {
-  console.error("Could not find the #react-widget element in index.html")
-}
+createRoot(rootElement).render(
+  <StrictMode>
+    <Widget />
+  </StrictMode>,
+);

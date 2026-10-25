@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react';
 import { cacheIsFresh, fetchWeather, readCachedWeather } from './weather';
 import type { WeatherData } from './weather';
 
+const CONDITION_MESSAGES = {
+  stale: 'Outdated forecast — verify current conditions',
+  safe: 'Favorable',
+  hazardous: 'Unfavorable',
+};
+
 export function Widget() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [cached] = useState(readCachedWeather);
+  const [weather, setWeather] = useState<WeatherData | null>(cached?.report ?? null);
   const [error, setError] = useState(false);
-  const [stale, setStale] = useState(false);
+  const [stale, setStale] = useState(cached ? !cacheIsFresh(cached) : false);
 
   useEffect(() => {
     const controller = new AbortController();
-    const cached = readCachedWeather();
-    if (cached) {
-      setWeather(cached.report);
-      setStale(!cacheIsFresh(cached));
-    }
     if (cached && cacheIsFresh(cached)) return () => controller.abort();
 
     fetchWeather(controller.signal)
@@ -31,17 +33,13 @@ export function Widget() {
         }
       });
     return () => controller.abort();
-  }, []);
+  }, [cached]);
 
   if (!weather && error) return <p role="status">-- Forecast generator temporarily unavailable. Please consult the linked official forecasts. --</p>;
   if (!weather) return <p role="status">-- Evaluating conditions --</p>;
 
-  const condition = stale ? 'stale' : weather.forecast.safe ? 'safe' : 'hazardous';
-  const conditionMessage = stale
-    ? 'Outdated forecast — verify current conditions'
-    : weather.forecast.safe
-      ? 'Favorable'
-      : 'Unfavorable';
+  const condition: keyof typeof CONDITION_MESSAGES =
+    stale ? 'stale' : weather.forecast.safe ? 'safe' : 'hazardous';
 
   return (
     <div className='weather-widget-container'>
@@ -50,7 +48,7 @@ export function Widget() {
       </p>}
       <div className={`weather-widget-container-inside weather-widget-container-inside--${condition}`}>
         Conditions Over Next 48 Hours:{' '}
-        <span className='weather-widget-condition'>{conditionMessage}</span>
+        <span className='weather-widget-condition'>{CONDITION_MESSAGES[condition]}</span>
         <ul>
           {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)}
         </ul>

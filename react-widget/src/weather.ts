@@ -8,28 +8,37 @@ export interface CachedWeather { savedAt: number; report: WeatherData }
 
 export const CACHE_TTL_MS = 1 * 60 * 60 * 1000; /* 1 hour */
 const CACHE_KEY = '2962m-weather-v2';
+const RISK_RULES = [
+  { field: 'temperature_2m', isRisk: (value: number) => value < -5, reason: 'Freezing Temperatures' },
+  { field: 'apparent_temperature', isRisk: (value: number) => value < -5, reason: 'Freezing Windchill' },
+  { field: 'wind_speed_10m', isRisk: (value: number) => value > 30, reason: 'Hazardous Windspeed' },
+  { field: 'wind_gusts_10m', isRisk: (value: number) => value > 40, reason: 'Hazardous Wind Gusts' },
+  { field: 'precipitation', isRisk: (value: number) => value > 1, reason: 'Precipitation' },
+  { field: 'snowfall', isRisk: (value: number) => value > 1, reason: 'Snowfall' },
+  { field: 'snow_depth', isRisk: (value: number) => value > 0.05, reason: 'Snow Accumulation' },
+  { field: 'cloud_cover_low', isRisk: (value: number) => value > 20, reason: 'Cloudy below 3000m ASL' },
+  { field: 'cloud_cover_mid', isRisk: (value: number) => value > 50, reason: 'Cloudy between 3000-8000m ASL' },
+  { field: 'visibility', isRisk: (value: number) => value < 2000, reason: 'Low Visibility' },
+] as const;
+type Field = typeof RISK_RULES[number]['field'];
+type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
+
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
-  hourly: 'temperature_2m,apparent_temperature,precipitation,snowfall,snow_depth,wind_speed_10m,wind_gusts_10m,cloud_cover_low,cloud_cover_mid,visibility',
+  hourly: RISK_RULES.map(rule => rule.field).join(','),
   forecast_days: '3', wind_speed_unit: 'mph', timezone: 'UTC',
 }).toString();
-
-const FIELDS = ['temperature_2m','apparent_temperature','precipitation','snowfall','snow_depth','wind_speed_10m','wind_gusts_10m','cloud_cover_low','cloud_cover_mid','visibility'] as const;
-type Field = typeof FIELDS[number];
-type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 
 function isHourly(value: unknown): value is Hourly {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  // return Array.isArray(v.time) && v.time.length >= 48 && FIELDS.every(f => Array.isArray(v[f]) && (v[f] as unknown[]).length >= v.time.length);
-
   const times = v.time;
 
   return (
     Array.isArray(times) &&
     times.length >= 48 &&
-    FIELDS.every(
-      (f) => Array.isArray(v[f]) && (v[f] as unknown[]).length >= times.length
+    RISK_RULES.every(
+      ({ field }) => Array.isArray(v[field]) && (v[field] as unknown[]).length >= times.length
     )
   );
 }
@@ -49,22 +58,11 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
     const offset = Math.round((timestamp - firstHour) / 3600000);
     if (offset < 0 || offset >= 48) continue;
     counted++;
-    const values = FIELDS.map(f => hourly[f][i]);
-    // Never claim favorable weather when required forecast fields are absent.
-    if (values.some(v => !valid(v))) throw new Error('Forecast contains missing hourly measurements');
-    const [temp, feels, precip, snowfall, snowDepth, wind, gust, lowCloud, midCloud, visibility] = values as number[];
-    const hourlyReasons: string[] = [];
-    if (temp < -5) hourlyReasons.push('Freezing Temperatures');
-    if (feels < -5) hourlyReasons.push('Freezing Windchill');
-    if (wind > 30) hourlyReasons.push('Hazardous Windspeed');
-    if (gust > 40) hourlyReasons.push('Hazardous Wind Gusts');
-    if (precip > 1) hourlyReasons.push('Precipitation');
-    if (snowfall > 1) hourlyReasons.push('Snowfall');
-    if (snowDepth > 0.05) hourlyReasons.push('Snow Accumulation');
-    if (lowCloud > 20) hourlyReasons.push('Cloudy below 3000m ASL');
-    if (midCloud > 50) hourlyReasons.push('Cloudy between 3000-8000m ASL');
-    if (visibility < 2000) hourlyReasons.push('Low Visibility');
-    hourlyReasons.forEach(reason => riskReasons.add(reason));
+    for (const { field, isRisk, reason } of RISK_RULES) {
+      const value = hourly[field][i];
+      if (!valid(value)) throw new Error('Forecast contains missing hourly measurements');
+      if (isRisk(value)) riskReasons.add(reason);
+    }
   }
   if (counted !== 48) throw new Error('Forecast does not contain a complete 48-hour window');
   return {
@@ -98,10 +96,13 @@ export async function fetchWeather(signal?: AbortSignal): Promise<WeatherData> {
   const response = await fetch(API_URL, { signal, cache: 'no-store' });
   if (!response.ok) throw new Error(`Open-Meteo HTTP ${response.status}`);
   const payload: unknown = await response.json();
-  if (!payload || typeof payload !== 'object' || !isHourly((payload as { hourly?: unknown }).hourly)) {
+  if (!payload || typeof payload !== 'object') {
     throw new Error('Open-Meteo returned incomplete forecast data');
   }
-  const report = analyzeForecast((payload as { hourly: Hourly }).hourly);
+  const hourly = (payload as { hourly?: unknown }).hourly;
+  if (!isHourly(hourly)) throw new Error('Open-Meteo returned incomplete forecast data');
+  console.log('Open-Meteo fetched weather data:', hourly);
+  const report = analyzeForecast(hourly);
   try { localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), report })); }
   catch { /* Still show forecast if localStorage is blocked */ }
   return report;
