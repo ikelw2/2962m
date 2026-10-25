@@ -35,7 +35,7 @@ function isHourly(value: unknown): value is Hourly {
 
   return (
     Array.isArray(times) &&
-    times.length >= 48 &&
+    times.length >= 47 &&
     RISK_RULES.every(
       ({ field }) => Array.isArray(v[field]) && (v[field] as unknown[]).length >= times.length
     )
@@ -55,7 +55,7 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
     const timestamp = Date.parse(hourly.time[i] + 'Z'); // timezone=UTC gives timezone-less ISO hours
     if (!Number.isFinite(timestamp)) continue;
     const offset = Math.round((timestamp - firstHour) / 3600000);
-    if (offset < 0 || offset >= 48) continue;
+    if (offset < 0 || offset >= 47) continue;
     counted++;
     for (const { field, isRisk, reason } of RISK_RULES) {
       const value = hourly[field][i];
