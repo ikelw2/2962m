@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { cacheIsFresh, fetchWeather, readCachedWeather } from './weather';
 import type { WeatherData } from './weather';
 
+/*
+   UI text is keyed by the same condition name used in the CSS modifier class,
+   keeping the displayed message and visual state aligned.
+ */
 const CONDITION_MESSAGES = {
   stale: 'Outdated forecast — verify current conditions',
   safe: 'Favorable',
@@ -9,11 +13,19 @@ const CONDITION_MESSAGES = {
 };
 
 export function Widget() {
+  /*
+     Read localStorage only during initial state creation. A valid cached report
+     can render immediately while stale or missing data is refreshed below.
+   */
   const [cached] = useState(readCachedWeather);
   const [weather, setWeather] = useState<WeatherData | null>(cached?.report ?? null);
   const [error, setError] = useState(false);
   const [stale, setStale] = useState(cached ? !cacheIsFresh(cached) : false);
 
+  /*
+     Fresh cached data needs no request. Otherwise, request updated conditions
+     and abort the work if React unmounts the widget before it completes.
+   */
   useEffect(() => {
     const controller = new AbortController();
     if (cached && cacheIsFresh(cached)) return () => controller.abort();
@@ -35,9 +47,17 @@ export function Widget() {
     return () => controller.abort();
   }, [cached]);
 
+  /*
+     Before forecast data exists, render a small status message instead of the
+     full widget. An API failure receives a separate user-facing explanation.
+   */
   if (!weather && error) return <p role="status">-- Forecast generator temporarily unavailable. Please consult the linked official forecasts. --</p>;
   if (!weather) return <p role="status">-- Evaluating conditions --</p>;
 
+  /*
+     Stale data takes precedence over the analyzed safe/hazardous result so the
+     widget never presents an expired forecast as a current assessment.
+   */
   const condition: keyof typeof CONDITION_MESSAGES =
     stale ? 'stale' : weather.forecast.safe ? 'safe' : 'hazardous';
 

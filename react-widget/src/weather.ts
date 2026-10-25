@@ -1,4 +1,7 @@
-/** Browser counterpart to weather_analyze.pl. No server or scheduled workflow required. */
+/*
+   Defines the analyzed forecast stored by the browser and consumed by the
+   React widget. This is the browser-ran counterpart to weather_analyze.pl.
+ */
 interface Forecast { safe: boolean; reasons: string[] }
 export interface WeatherData {
   meta: { generated_at: string; source: string };
@@ -6,8 +9,14 @@ export interface WeatherData {
 }
 export interface CachedWeather { savedAt: number; report: WeatherData }
 
-export const CACHE_TTL_MS = 1 * 60 * 60 * 1000; /* 1 hour */
+export const CACHE_TTL_MS = 1   60   60   1000; /* 1 hour */
 const CACHE_KEY = '2962m-weather-v2';
+
+/*
+   Each risk rule identifies an Open-Meteo field, its hazardous threshold,
+   and the message shown to the user. The list also determines which hourly
+   fields are requested and validated, keeping those concerns synchronized.
+ */
 const RISK_RULES = [
   { field: 'visibility', isRisk: (value: number) => value < 2000, reason: 'Low Visibility' },
   { field: 'apparent_temperature', isRisk: (value: number) => value < -5, reason: 'Freezing Windchill' },
@@ -22,12 +31,21 @@ const RISK_RULES = [
 type Field = typeof RISK_RULES[number]['field'];
 type Hourly = { time: string[] } & Record<Field, Array<number | null>>;
 
+/*
+   forecast_hours requests a rolling 48-hour window beginning at the current
+   hour. forecast_days is intentionally avoided because it returns calendar
+   days beginning at midnight rather than 48 future hours.
+ */
 const API_URL = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
   latitude: '47.42', longitude: '10.98', elevation: '2962',
   hourly: RISK_RULES.map(rule => rule.field).join(','),
   forecast_hours: '48', wind_speed_unit: 'mph', timezone: 'UTC',
 }).toString();
 
+/*
+   Treat the external API response as untrusted until every required hourly
+   array exists and contains enough entries for all returned timestamps.
+ */
 function isHourly(value: unknown): value is Hourly {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
@@ -46,7 +64,11 @@ function valid(value: number | null): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
-/** Evaluates the 48-hour window beginning at the current UTC hour. */
+/*
+   Evaluates exactly 48 hours beginning at the current UTC hour. A Set keeps
+   each hazard message unique even when the same condition occurs repeatedly.
+   Missing measurements fail the analysis rather than claiming favorable data.
+ */
 export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
   const firstHour = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours());
   const riskReasons = new Set<string>();
@@ -73,6 +95,11 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
   };
 }
 
+/*
+   Cached data lets repeat visits avoid another API request. Invalid, future,
+   or outdated cache shapes are rejected so older application versions cannot
+   supply incompatible forecast data to the widget.
+ */
 export function readCachedWeather(): CachedWeather | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
@@ -91,6 +118,11 @@ export function cacheIsFresh(cached: CachedWeather): boolean {
   return Date.now() - cached.savedAt < CACHE_TTL_MS;
 }
 
+/*
+   Fetches and validates raw hourly data, logs it for developer inspection,
+   analyzes it, and stores only the compact analyzed report. localStorage is
+   optional; a blocked cache must not prevent a valid forecast from displaying.
+ */
 export async function fetchWeather(signal?: AbortSignal): Promise<WeatherData> {
   const response = await fetch(API_URL, { signal, cache: 'no-store' });
   if (!response.ok) throw new Error(`Open-Meteo HTTP ${response.status}`);
@@ -107,6 +139,8 @@ export async function fetchWeather(signal?: AbortSignal): Promise<WeatherData> {
   return report;
 }
 
-// To clear cache in browser, enter in console:
-//   localStorage.removeItem('2962m-weather-v2');
-//   location.reload();
+/*
+   To clear the cache while testing, enter these commands in the browser:
+   localStorage.removeItem('2962m-weather-v2');
+   location.reload();
+ */
