@@ -50,7 +50,7 @@ export function Widget() {
         Conditions Over Next 48 Hours:{' '}
         <span className='weather-widget-condition'>{CONDITION_MESSAGES[condition]}</span>
         <ul>
-          {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)}
+          {weather.forecast.reasons.map(reason => <li key={reason}>{reason}</li>)}
         </ul>
       </div>
       <p className='weather-widget-p'>
@@ -59,3 +59,6 @@ export function Widget() {
     </div>
   );
 }
+
+/* original slice removed all but 3 weather hazard warnings from list... 
+   {weather.forecast.reasons.slice(0, 3).map(reason => <li key={reason}>{reason}</li>)} */
