@@ -40,12 +40,11 @@ export function Widget() {
   const conditionMessage = stale
     ? 'Outdated forecast — verify current conditions'
     : weather.forecast.safe
-      ? 'No hazardous conditions'
-      : 'Potentially hazardous conditions';
+      ? 'Favorable Hike Conditions'
+      : 'Unfavorable Hike Conditions';
 
   return (
     <div className='weather-widget-container'>
-      <h4 className='weather-widget-h4'>Automated Weather Forecast</h4>
       {(stale || error) && <p role="alert" className='weather-widget-p-alert'>
         Forecast generation failed or cached data expired.
       </p>}

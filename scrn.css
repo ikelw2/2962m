@@ -84,6 +84,7 @@ section p, section ul {
 .weather-widget-p {
 	color: #666;
 	font-size: 0.85em;
+	padding: 0;
 }
 .weather-widget-p-alert {
 	color: #8a4b00;
@@ -97,6 +98,9 @@ section p, section ul {
 .weather-widget-container-inside ul,
 .weather-widget-container-inside li {
 	padding: 0;
+}
+.weather-widget-container-inside li {
+	margin-top: 0;
 }
 .weather-widget-container-inside--stale {
 	background-color: #fff3cd;
