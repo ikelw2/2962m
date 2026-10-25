@@ -9,7 +9,7 @@ export interface WeatherData {
 }
 export interface CachedWeather { savedAt: number; report: WeatherData }
 
-export const CACHE_TTL_MS = 1   60   60   1000; /* 1 hour */
+export const CACHE_TTL_MS = 1 * 60 * 60 * 1000; /* 1 hour */
 const CACHE_KEY = '2962m-weather-v2';
 
 /*
