@@ -22,7 +22,7 @@ const RISK_RULES = [
   { field: 'apparent_temperature', isRisk: (value: number) => value < -5, reason: 'Freezing Windchill' },
   { field: 'wind_speed_10m', isRisk: (value: number) => value > 30, reason: 'Hazardous Windspeed' },
   { field: 'snowfall', isRisk: (value: number) => value > 1, reason: 'Snowfall' },
-  { field: 'snow_depth', isRisk: (value: number) => value > 0.05, reason: 'Snow Accumulation' },
+  { field: 'snow_depth', isRisk: (value: number) => value > 0.005, reason: 'Snow Accumulation' },
   { field: 'cloud_cover_low', isRisk: (value: number) => value > 20, reason: 'Cloudy below 3000m ASL' },
   { field: 'cloud_cover_mid', isRisk: (value: number) => value > 50, reason: 'Cloudy between 3000-8000m ASL' },
   { field: 'precipitation', isRisk: (value: number) => value > 1, reason: 'Precipitation' },
@@ -76,7 +76,7 @@ export function analyzeForecast(hourly: Hourly, now = new Date()): WeatherData {
   for (let i = 0; i < hourly.time.length; i++) {
     const timestamp = Date.parse(hourly.time[i] + 'Z'); // timezone=UTC gives timezone-less ISO hours
     if (!Number.isFinite(timestamp)) continue;
-    const offset = Math.round((timestamp - firstHour) / 3600000);
+    const offset = Math.round((timestamp - firstHour) / 3600000); // one hour
     if (offset < 0 || offset >= 48) continue;
     counted++;
     for (const { field, isRisk, reason } of RISK_RULES) {

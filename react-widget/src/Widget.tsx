@@ -8,8 +8,8 @@ import type { WeatherData } from './weather';
  */
 const CONDITION_MESSAGES = {
   stale: 'Outdated forecast — verify current conditions',
-  safe: 'Favorable',
-  hazardous: 'Unfavorable',
+  safe: 'Favorable - confirm with official sources',
+  hazardous: 'Unfavorable / hazardous',
 };
 
 export function Widget() {
